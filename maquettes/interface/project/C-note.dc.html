@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Cairn C — une note</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'Space Grotesk', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden;">
+
+  <header style="display: flex; align-items: center; gap: 8px; padding: 14px 12px 8px;">
+    <a href="C-liste.dc.html" aria-label="Retour à la pile" style="width: 48px; height: 48px; border-radius: 16px; background: #1b1d21; color: #e6e6e6; display: flex; align-items: center; justify-content: center;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+    <span style="flex-grow: 1;"></span>
+    <div role="tablist" aria-label="Mode" style="display: flex; gap: 4px; padding: 4px; border-radius: 18px; background: #1b1d21;">
+      <button type="button" role="tab" aria-selected="false" style="height: 40px; padding: 0 16px; border: 0; border-radius: 14px; background: transparent; color: #c3c7cd; font: inherit; font-size: 14px; font-weight: 600;">Écrire</button>
+      <button type="button" role="tab" aria-selected="true" style="height: 40px; padding: 0 16px; border: 0; border-radius: 14px; background: #e6e6e6; color: #121212; font: inherit; font-size: 14px; font-weight: 700;">Lire</button>
+    </div>
+  </header>
+
+  <div style="margin: 10px 18px 4px; padding: 20px 20px 18px; border-radius: 24px; background: #f0b45a; color: #121212; transform: rotate(-1deg); display: flex; flex-direction: column; gap: 10px;">
+    <span style="font-size: 12px; font-weight: 600; color: #3a2a12;">Travail › Projets · enregistré à 22:30</span>
+    <h1 style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.03em;">Cairn — plan V1</h1>
+    <div style="display: flex; gap: 6px; font-size: 13px; font-weight: 700;"><span style="background: rgba(18,18,18,0.14); padding: 3px 10px; border-radius: 10px;">#dev</span><span style="background: rgba(18,18,18,0.14); padding: 3px 10px; border-radius: 10px;">#idée</span></div>
+  </div>
+
+  <article style="flex-grow: 1; padding: 18px 22px 0; display: flex; flex-direction: column; gap: 12px; font-size: 16px; line-height: 1.6;">
+    <p style="margin: 0;">Front statique sur GitHub Pages, Supabase pour l'auth et le stockage. Le schéma est dans <a href="#" style="color: #121212; background: #f0b45a; text-decoration: none; padding: 1px 8px; border-radius: 8px; font-weight: 600;">Modèle de données</a>.</p>
+    <h2 style="margin: 4px 0 0; font-size: 19px; font-weight: 700;">Étapes</h2>
+    <ul style="margin: 0; padding-left: 20px;">
+      <li>Squelette et connexion</li>
+      <li>CRUD et rendu Markdown</li>
+      <li>Dossiers, tags et <a href="#" style="color: #f0b45a; background: transparent; text-decoration: none; padding: 0 7px; border-radius: 8px; border: 1.5px dashed #f0b45a; font-weight: 600;">Liens entre notes</a></li>
+    </ul>
+    <pre style="margin: 0; padding: 12px 14px; border-radius: 16px; background: #1b1d21; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; color: #c3c7cd; overflow: hidden;"><span style="color: #f0b45a;">const</span> html = DOMPurify.sanitize(
+  marked.parse(note.content));</pre>
+  </article>
+
+  <section aria-label="Notes liées" style="padding: 14px 18px 22px; display: flex; flex-direction: column; gap: 8px;">
+    <h2 style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa0a8;">Posée sur 2 pierres</h2>
+    <div style="display: flex; gap: 10px;">
+      <a href="#" style="flex: 1 1 0; display: flex; align-items: center; min-height: 52px; padding: 0 14px; border-radius: 16px; background: #7a7f88; color: #121212; text-decoration: none; font-size: 14px; font-weight: 700; transform: rotate(1deg);">Idées d'export</a>
+      <a href="#" style="flex: 1 1 0; display: flex; align-items: center; min-height: 52px; padding: 0 14px; border-radius: 16px; background: #5b5f66; color: #f2f2f2; text-decoration: none; font-size: 14px; font-weight: 700; transform: rotate(-1deg);">Réunion du 4 nov.</a>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

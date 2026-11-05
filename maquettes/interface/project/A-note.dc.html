@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Cairn A — une note</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'Manrope', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden;">
+
+  <header style="display: flex; align-items: center; gap: 4px; padding: 12px 8px 4px;">
+    <a href="Main.dc.html" aria-label="Retour à la liste" style="width: 44px; height: 44px; border-radius: 12px; color: #9aa0a8; display: flex; align-items: center; justify-content: center;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+    <span style="flex-grow: 1; font-size: 13px; color: #9aa0a8;">Travail › Projets</span>
+    <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #9aa0a8; padding-right: 4px;"><span style="width: 7px; height: 7px; border-radius: 4px; background: #7fc48f;"></span>Enregistré</span>
+    <button type="button" aria-label="Plus d'actions" style="width: 44px; height: 44px; border-radius: 12px; border: 0; background: transparent; color: #9aa0a8; display: flex; align-items: center; justify-content: center;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+    </button>
+  </header>
+
+  <div role="tablist" aria-label="Mode" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 4px 16px 12px; padding: 4px; border-radius: 14px; background: #1b1d21; border: 1px solid #2a2d33;">
+    <button type="button" role="tab" aria-selected="false" style="height: 38px; border: 0; border-radius: 10px; background: transparent; color: #9aa0a8; font: inherit; font-size: 14px; font-weight: 600;">Édition</button>
+    <button type="button" role="tab" aria-selected="true" style="height: 38px; border: 0; border-radius: 10px; background: #2a2d33; color: #e6e6e6; font: inherit; font-size: 14px; font-weight: 700;">Aperçu</button>
+  </div>
+
+  <article style="flex-grow: 1; padding: 0 20px; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.6;">
+    <h1 style="margin: 0; font-size: 26px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em;">Cairn — plan V1</h1>
+    <div style="display: flex; gap: 8px; font-size: 12px; font-weight: 600;"><span style="color: #f0b45a; background: rgba(240,180,90,0.12); padding: 3px 9px; border-radius: 10px;">#dev</span><span style="color: #c3c7cd; background: #1b1d21; padding: 3px 9px; border-radius: 10px;">#idée</span></div>
+    <p style="margin: 0;">Front statique sur GitHub Pages, Supabase pour l'authentification et le stockage. Le schéma est dans <a href="#" style="color: #f0b45a; text-decoration: none; border-bottom: 1px dashed #f0b45a;">Modèle de données</a>.</p>
+    <h2 style="margin: 6px 0 0; font-size: 18px; font-weight: 700;">Étapes</h2>
+    <ul style="margin: 0; padding-left: 20px;">
+      <li>Squelette et connexion</li>
+      <li>CRUD et rendu Markdown</li>
+      <li>Dossiers, tags et <a href="#" style="color: #f0b45a; text-decoration: none; border-bottom: 1px dashed #f0b45a;">Liens entre notes</a></li>
+    </ul>
+    <blockquote style="margin: 0; padding: 8px 14px; border-radius: 12px; background: #1b1d21; color: #c3c7cd; font-style: italic;">Exporter avant chaque import = retour arrière.</blockquote>
+    <pre style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #0c0d0f; border: 1px solid #2a2d33; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; color: #c3c7cd; overflow: hidden;"><span style="color: #f0b45a;">const</span> html = DOMPurify.sanitize(
+  marked.parse(note.content));</pre>
+  </article>
+
+  <section aria-label="Notes liées" style="margin: 12px 16px 20px; padding: 14px 16px; border-radius: 16px; background: #1b1d21; border: 1px solid #2a2d33; display: flex; flex-direction: column; gap: 8px;">
+    <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #9aa0a8;">Citée dans 2 notes</h2>
+    <a href="#" style="color: #e6e6e6; text-decoration: none; font-size: 15px; font-weight: 600; min-height: 32px; display: flex; align-items: center;">Idées d'export</a>
+    <a href="#" style="color: #e6e6e6; text-decoration: none; font-size: 15px; font-weight: 600; min-height: 32px; display: flex; align-items: center;">Réunion du 4 novembre</a>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

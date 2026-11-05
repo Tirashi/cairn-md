@@ -44,4 +44,4 @@
 
 ## En cours / à vérifier
 Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).
-- **Démarrage** (05/11) : `CLAUDE.md`, plan V1 (`specs/plan-v1.md`) et logos (`assets/`) en place. Prochaine étape : maquette de l'interface (mobile et desktop, sombre) à valider, puis étape 1 (Supabase, à faire par l'utilisateur) et étape 2 (squelette et connexion).
+- **Démarrage** (05/11) : `CLAUDE.md`, plan V1 (`specs/plan-v1.md`) et logos (`assets/`) en place. **Maquette** (3 directions, téléphone, sombre ; [artefact](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ), sources dans `maquettes/interface/`) : à choisir par l'utilisateur, puis version desktop de la direction retenue, puis étape 1 (Supabase, à faire par l'utilisateur) et étape 2 (squelette et connexion).

@@ -100,6 +100,27 @@
       "w": 760,
       "x": 2510,
       "y": 3800
+    },
+    "I-dialogue.dc.html": {
+      "h": 844,
+      "title": "Import A · dialogue récapitulatif",
+      "w": 390,
+      "x": 1100,
+      "y": 5050
+    },
+    "I-statut.dc.html": {
+      "h": 844,
+      "title": "Import B · façon git status",
+      "w": 390,
+      "x": 1570,
+      "y": 5050
+    },
+    "I-conflit.dc.html": {
+      "h": 844,
+      "title": "Import C · conflits un par un",
+      "w": 390,
+      "x": 2040,
+      "y": 5050
     }
   },
   "createdOnFiles": {
@@ -162,6 +183,13 @@
       "text": "Code coloré et mermaid",
       "x": 2510,
       "y": 3500
+    },
+    "tH": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Étape 6 · export et import (vérifier avant d'importer)",
+      "x": 1100,
+      "y": 4750
     }
   },
   "order": [
@@ -178,7 +206,10 @@
     "L-palette.dc.html",
     "L-explorateur.dc.html",
     "L-bulle.dc.html",
-    "P-code.dc.html"
+    "P-code.dc.html",
+    "I-dialogue.dc.html",
+    "I-statut.dc.html",
+    "I-conflit.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

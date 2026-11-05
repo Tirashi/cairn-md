@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Import B — façon git status</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+
+  <header style="display: flex; align-items: center; gap: 6px; padding: 6px 8px 6px 4px; border-bottom: 1px solid #2a2d33;">
+    <span style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; font-size: 18px;">←</span>
+    <span style="flex-grow: 1; font-size: 14px; font-weight: 800;"><span style="color: #f0b45a;">$</span> cairn import</span>
+  </header>
+
+  <div style="padding: 12px 16px; border-bottom: 1px solid #2a2d33; font-size: 12px; line-height: 1.7; color: #9aa0a8;">
+    <div>cairn-2026-11-05.zip · 43 fichiers</div>
+    <div><span style="color: #7fc48f;">5 nouvelles</span> · <span style="color: #f0b45a;">12 modifiées</span> · <span style="color: #ff8a80;">2 conflits</span> · 24 identiques</div>
+  </div>
+
+  <ul style="list-style: none; margin: 0; padding: 0; flex-grow: 1; overflow: hidden; font-size: 13px;">
+    <li style="padding: 8px 16px 4px; font-size: 11px; letter-spacing: 0.1em; color: #6f747c;">CONFLITS — choisir</li>
+    <li style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #2a2d33;">
+      <span style="color: #ff8a80; font-weight: 800; width: 14px;">!</span>
+      <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">projets/cairn-plan-v1.md</span>
+      <span style="height: 32px; padding: 0 8px; display: flex; align-items: center; border: 1px solid #2a2d33; border-radius: 4px; font-size: 11px; color: #f0b45a;">cairn ▾</span>
+    </li>
+    <li style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #2a2d33;">
+      <span style="color: #ff8a80; font-weight: 800; width: 14px;">!</span>
+      <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">perso/pain-au-levain.md</span>
+      <span style="height: 32px; padding: 0 8px; display: flex; align-items: center; border: 1px solid #2a2d33; border-radius: 4px; font-size: 11px; color: #f0b45a;">fichier ▾</span>
+    </li>
+    <li style="padding: 12px 16px 4px; font-size: 11px; letter-spacing: 0.1em; color: #6f747c;">MODIFIÉES</li>
+    <li style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px;"><input type="checkbox" checked aria-label="importer" style="accent-color: #f0b45a; width: 18px; height: 18px;"><span style="color: #f0b45a; width: 14px;">~</span><span>projets/schema-de-la-base.md</span></li>
+    <li style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px;"><input type="checkbox" checked aria-label="importer" style="accent-color: #f0b45a; width: 18px; height: 18px;"><span style="color: #f0b45a; width: 14px;">~</span><span>reunions/4-novembre.md</span></li>
+    <li style="padding: 0 16px 0 58px; min-height: 28px; font-size: 12px; color: #6f747c;">… 10 autres</li>
+    <li style="padding: 12px 16px 4px; font-size: 11px; letter-spacing: 0.1em; color: #6f747c;">NOUVELLES</li>
+    <li style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px;"><input type="checkbox" checked aria-label="importer" style="accent-color: #f0b45a; width: 18px; height: 18px;"><span style="color: #7fc48f; width: 14px;">+</span><span>idees/liste-de-courses.md</span></li>
+    <li style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px;"><input type="checkbox" checked aria-label="importer" style="accent-color: #f0b45a; width: 18px; height: 18px;"><span style="color: #7fc48f; width: 14px;">+</span><span>idees/drives-comparatif.md</span></li>
+    <li style="padding: 0 16px 0 58px; min-height: 28px; font-size: 12px; color: #6f747c;">… 3 autres</li>
+  </ul>
+
+  <footer style="display: flex; flex-direction: column; gap: 8px; padding: 10px 16px 16px; border-top: 1px solid #2a2d33;">
+    <label style="display: flex; align-items: center; gap: 10px; min-height: 36px; font-size: 12px; color: #c3c7cd;"><input type="checkbox" checked style="accent-color: #f0b45a; width: 18px; height: 18px;">sauvegarde .zip avant d'importer</label>
+    <button type="button" style="height: 48px; border: 0; border-radius: 6px; background: #f0b45a; color: #121212; font: inherit; font-size: 14px; font-weight: 800;">$ import 19 notes</button>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

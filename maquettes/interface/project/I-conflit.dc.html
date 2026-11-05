@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Import C — conflits un par un</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+
+  <header style="display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 4px; border-bottom: 1px solid #2a2d33;">
+    <span style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; font-size: 18px;">×</span>
+    <span style="flex-grow: 1; font-size: 14px; font-weight: 800;">import · conflit <span style="color: #ff8a80;">1</span>/2</span>
+    <span style="font-size: 11px; color: #9aa0a8;">étape 2/3</span>
+  </header>
+
+  <div style="display: flex; gap: 4px; padding: 10px 16px 0;">
+    <span style="flex: 1; height: 4px; border-radius: 2px; background: #f0b45a;"></span>
+    <span style="flex: 1; height: 4px; border-radius: 2px; background: #f0b45a;"></span>
+    <span style="flex: 1; height: 4px; border-radius: 2px; background: #2a2d33;"></span>
+  </div>
+
+  <div style="padding: 14px 16px 8px; display: flex; flex-direction: column; gap: 4px;">
+    <span style="font-size: 15px; font-weight: 800;">cairn-plan-v1.md</span>
+    <span style="font-size: 12px; color: #9aa0a8;">travail/projets/ · modifiée dans Cairn depuis l'export</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px; padding: 0 16px; flex-grow: 1;">
+    <div style="border: 1px solid #2a2d33; border-radius: 6px; overflow: hidden;">
+      <div style="display: flex; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;"><span>dans Cairn</span><span>aujourd'hui 14:02</span></div>
+      <pre style="margin: 0; padding: 10px; font-family: inherit; font-size: 12px; line-height: 1.6; white-space: pre-wrap; color: #c3c7cd;">Front statique sur GitHub Pages.
+<span style="background: rgba(127,196,143,0.15); color: #7fc48f;">+ Export et import en zip.</span>
+<span style="background: rgba(127,196,143,0.15); color: #7fc48f;">+ Mermaid dans l'aperçu.</span></pre>
+    </div>
+    <div style="border: 1px solid #2a2d33; border-radius: 6px; overflow: hidden;">
+      <div style="display: flex; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;"><span>dans le fichier</span><span>4 nov. 22:30</span></div>
+      <pre style="margin: 0; padding: 10px; font-family: inherit; font-size: 12px; line-height: 1.6; white-space: pre-wrap; color: #c3c7cd;">Front statique sur GitHub Pages.
+<span style="background: rgba(240,180,90,0.15); color: #f0b45a;">~ Liens reformulés par Claude.</span></pre>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 16px 18px; border-top: 1px solid #2a2d33;">
+    <button type="button" style="height: 46px; border: 1px solid #2a2d33; border-radius: 6px; background: transparent; color: #e6e6e6; font: inherit; font-size: 13px;">garder la version de Cairn</button>
+    <button type="button" style="height: 46px; border: 1px solid #2a2d33; border-radius: 6px; background: transparent; color: #e6e6e6; font: inherit; font-size: 13px;">prendre le fichier</button>
+    <button type="button" style="height: 46px; border: 0; border-radius: 6px; background: #f0b45a; color: #121212; font: inherit; font-size: 13px; font-weight: 800;">garder les deux (copie « … (import) »)</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

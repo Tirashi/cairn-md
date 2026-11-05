@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Import A — dialogue récapitulatif</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; position: relative; overflow: hidden;">
+
+  <header style="display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px 16px; border-bottom: 1px solid #2a2d33; opacity: 0.35;">
+    <span style="font-size: 17px; font-weight: 800; flex-grow: 1;">cairn<span style="color: #f0b45a;">_</span></span>
+    <span style="height: 40px; padding: 0 12px; display: flex; align-items: center; border-radius: 6px; background: #f0b45a; color: #121212; font-size: 13px; font-weight: 800;">+ nouvelle</span>
+    <span style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #f0b45a; border-radius: 6px; color: #f0b45a;">⋯</span>
+  </header>
+
+  <section role="dialog" aria-label="Importer des notes" style="position: absolute; left: 8px; right: 8px; top: 72px; background: #1b1d21; border: 1px solid #2a2d33; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); padding: 18px 16px; display: flex; flex-direction: column; gap: 14px;">
+    <h2 style="margin: 0; font-size: 14px; font-weight: 800;"><span style="color: #f0b45a;">$ cairn import</span> cairn-2026-11-05.zip</h2>
+    <p style="margin: 0; font-size: 12px; color: #9aa0a8;">43 fichiers .md lus · rien n'est encore modifié.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+      <div style="padding: 10px; border: 1px solid #2a2d33; border-radius: 6px;"><div style="font-size: 22px; font-weight: 800; color: #7fc48f;">5</div><div style="font-size: 11px; color: #9aa0a8;">nouvelles</div></div>
+      <div style="padding: 10px; border: 1px solid #2a2d33; border-radius: 6px;"><div style="font-size: 22px; font-weight: 800; color: #f0b45a;">12</div><div style="font-size: 11px; color: #9aa0a8;">modifiées</div></div>
+      <div style="padding: 10px; border: 1px solid #ff8a80; border-radius: 6px;"><div style="font-size: 22px; font-weight: 800; color: #ff8a80;">2</div><div style="font-size: 11px; color: #9aa0a8;">en conflit</div></div>
+    </div>
+    <p style="margin: 0; font-size: 12px; color: #9aa0a8;">24 identiques, ignorées.</p>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 11px; letter-spacing: 0.1em; color: #6f747c;">CONFLITS · modifiées dans Cairn depuis l'export</span>
+      <div style="padding: 10px 12px; border: 1px solid #2a2d33; border-radius: 6px; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 13px;">travail/projets/cairn-plan-v1.md</span>
+        <span style="font-size: 11px; color: #9aa0a8;">Cairn : aujourd'hui 14:02 · fichier : 4 nov. 22:30</span>
+        <div role="radiogroup" style="display: flex; gap: 6px; font-size: 12px;">
+          <span style="flex: 1; min-height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid #f0b45a; border-radius: 4px; color: #f0b45a; background: rgba(240,180,90,0.12);">garder Cairn</span>
+          <span style="flex: 1; min-height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid #2a2d33; border-radius: 4px; color: #9aa0a8;">prendre le fichier</span>
+          <span style="flex: 1; min-height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid #2a2d33; border-radius: 4px; color: #9aa0a8;">les deux</span>
+        </div>
+      </div>
+      <div style="padding: 10px 12px; border: 1px solid #2a2d33; border-radius: 6px; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 13px;">perso/pain-au-levain.md</span>
+        <div style="display: flex; gap: 6px; font-size: 12px;">
+          <span style="flex: 1; min-height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid #2a2d33; border-radius: 4px; color: #9aa0a8;">garder Cairn</span>
+          <span style="flex: 1; min-height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid #f0b45a; border-radius: 4px; color: #f0b45a; background: rgba(240,180,90,0.12);">prendre le fichier</span>
+          <span style="flex: 1; min-height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid #2a2d33; border-radius: 4px; color: #9aa0a8;">les deux</span>
+        </div>
+      </div>
+    </div>
+
+    <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 12px; color: #c3c7cd;"><input type="checkbox" checked style="accent-color: #f0b45a; width: 18px; height: 18px;">télécharger une sauvegarde avant d'importer</label>
+
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button type="button" style="height: 44px; padding: 0 14px; border: 1px solid #2a2d33; border-radius: 6px; background: transparent; color: #9aa0a8; font: inherit; font-size: 13px;">annuler</button>
+      <button type="button" style="height: 44px; padding: 0 14px; border: 0; border-radius: 6px; background: #f0b45a; color: #121212; font: inherit; font-size: 13px; font-weight: 800;">importer 19 notes</button>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

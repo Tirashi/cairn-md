@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Cairn B — desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="min-height: 900px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column;">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 10px 16px; border-bottom: 1px solid #2a2d33;">
+    <span style="display: flex; align-items: center; gap: 10px; width: 208px;">
+      <svg width="26" height="26" viewBox="0 0 128 128" aria-hidden="true">
+        <g transform="rotate(-2 64 97)"><rect x="14" y="84" width="100" height="27" rx="9" fill="#5b5f66"/><g fill="none" stroke="#2a2d33" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M53 90 h-6 v14 h6"/><path d="M75 90 h6 v14 h-6"/></g></g>
+        <rect x="28" y="55" width="72" height="24" rx="9" fill="#7a7f88" transform="rotate(3 64 67)"/>
+        <rect x="42" y="27" width="44" height="22" rx="9" fill="#f0b45a" transform="rotate(-4 64 38)"/>
+      </svg>
+      <span style="font-size: 17px; font-weight: 800;">cairn<span style="color: #f0b45a;">_</span></span>
+    </span>
+    <label style="display: flex; align-items: center; gap: 8px; flex: 1 1 320px; max-width: 560px; height: 38px; padding: 0 12px; border-radius: 6px; background: #1b1d21; border: 1px solid #2a2d33;">
+      <span aria-hidden="true" style="color: #f0b45a; font-weight: 700;">&gt;</span>
+      <input type="search" placeholder="grep notes, ouvrir, créer…" style="flex-grow: 1; border: 0; background: transparent; color: #e6e6e6; font: inherit; font-size: 13px; outline: none;">
+      <span style="font-size: 11px; color: #9aa0a8; border: 1px solid #2a2d33; border-radius: 4px; padding: 1px 5px;">Ctrl K</span>
+    </label>
+    <span style="flex-grow: 1;"></span>
+    <button type="button" style="height: 38px; padding: 0 14px; border-radius: 6px; border: 0; background: #f0b45a; color: #121212; font: inherit; font-size: 13px; font-weight: 800;">+ nouvelle</button>
+    <button type="button" aria-label="Passer au thème clair" style="width: 38px; height: 38px; border-radius: 6px; border: 1px solid #2a2d33; background: transparent; color: #9aa0a8; font: inherit;">☾</button>
+    <button type="button" style="height: 38px; padding: 0 12px; border-radius: 6px; border: 1px solid #2a2d33; background: transparent; color: #9aa0a8; font: inherit; font-size: 12px;">export.zip</button>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; flex-grow: 1; min-height: 0;">
+
+    <nav aria-label="Dossiers et tags" style="flex: 0 0 240px; box-sizing: border-box; padding: 16px; border-right: 1px solid #2a2d33; font-size: 13px; line-height: 2; color: #9aa0a8; display: flex; flex-direction: column; gap: 18px;">
+      <div>
+        <div style="font-size: 11px; letter-spacing: 0.1em; color: #6f747c;">DOSSIERS</div>
+        <div><a href="#" style="color: #9aa0a8; text-decoration: none;">~/</a> <span>42</span></div>
+        <div>├─ <span style="color: #e6e6e6;">travail/</span> <span>9</span></div>
+        <div style="background: #1b1d21; box-shadow: inset 2px 0 0 #f0b45a; margin: 0 -16px; padding: 0 16px;">│  ├─ <span style="color: #f0b45a; font-weight: 700;">projets/</span> <span>6</span></div>
+        <div>│  └─ <a href="#" style="color: #e6e6e6; text-decoration: none;">reunions/</a> <span>3</span></div>
+        <div>├─ <a href="#" style="color: #e6e6e6; text-decoration: none;">perso/</a> <span>21</span></div>
+        <div>└─ <a href="#" style="color: #e6e6e6; text-decoration: none;">lectures/</a> <span>12</span></div>
+      </div>
+      <div>
+        <div style="font-size: 11px; letter-spacing: 0.1em; color: #6f747c;">TAGS</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 10px; line-height: 1.6;">
+          <span style="color: #f0b45a; font-weight: 700;">#dev</span><span>#idée</span><span>#supabase</span><span>#ux</span><span>#recette</span><span>#livre</span>
+        </div>
+      </div>
+    </nav>
+
+    <section aria-label="Notes" style="flex: 0 0 320px; box-sizing: border-box; border-right: 1px solid #2a2d33; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #2a2d33; font-size: 12px; color: #9aa0a8;">
+        <span style="flex-grow: 1;">travail/projets/ · #dev</span>
+        <span>tri: récent ▾</span>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 0;">
+        <li style="border-bottom: 1px solid #2a2d33;">
+          <a href="#" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; color: #e6e6e6; text-decoration: none; background: #1b1d21; box-shadow: inset 3px 0 0 #f0b45a;">
+            <span style="display: flex; justify-content: space-between; gap: 8px;"><span style="font-size: 13px; font-weight: 700;">cairn-plan-v1.md</span><span style="font-size: 11px; color: #9aa0a8;">22:30</span></span>
+            <span style="font-size: 12px; line-height: 1.5; color: #9aa0a8;">Front statique, Supabase… <span style="color: #f0b45a;">[[Modèle de données]]</span></span>
+            <span style="font-size: 11px; color: #9aa0a8;">#dev #idée</span>
+          </a>
+        </li>
+        <li style="border-bottom: 1px solid #2a2d33;">
+          <a href="#" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; color: #e6e6e6; text-decoration: none;">
+            <span style="display: flex; justify-content: space-between; gap: 8px;"><span style="font-size: 13px; font-weight: 700;">modele-de-donnees.md</span><span style="font-size: 11px; color: #9aa0a8;">hier</span></span>
+            <span style="font-size: 12px; line-height: 1.5; color: #9aa0a8;">Une table notes, titres uniques, RLS sur user_id.</span>
+            <span style="font-size: 11px; color: #9aa0a8;">#dev #supabase</span>
+          </a>
+        </li>
+        <li style="border-bottom: 1px solid #2a2d33;">
+          <a href="#" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; color: #e6e6e6; text-decoration: none;">
+            <span style="display: flex; justify-content: space-between; gap: 8px;"><span style="font-size: 13px; font-weight: 700;">idees-d-export.md</span><span style="font-size: 11px; color: #9aa0a8;">3 nov.</span></span>
+            <span style="font-size: 12px; line-height: 1.5; color: #9aa0a8;">Un zip, un .md par note, frontmatter qui fait foi.</span>
+            <span style="font-size: 11px; color: #9aa0a8;">#dev</span>
+          </a>
+        </li>
+        <li style="border-bottom: 1px solid #2a2d33;">
+          <a href="#" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; color: #e6e6e6; text-decoration: none;">
+            <span style="display: flex; justify-content: space-between; gap: 8px;"><span style="font-size: 13px; font-weight: 700;">liens-entre-notes.md</span><span style="font-size: 11px; color: #9aa0a8;">1 nov.</span></span>
+            <span style="font-size: 12px; line-height: 1.5; color: #9aa0a8;">Rendu des [[…]], backlinks, renommage.</span>
+            <span style="font-size: 11px; color: #9aa0a8;">#dev #ux</span>
+          </a>
+        </li>
+        <li style="border-bottom: 1px solid #2a2d33;">
+          <a href="#" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; color: #e6e6e6; text-decoration: none;">
+            <span style="display: flex; justify-content: space-between; gap: 8px;"><span style="font-size: 13px; font-weight: 700;">raccourcis-clavier.md</span><span style="font-size: 11px; color: #9aa0a8;">28 oct.</span></span>
+            <span style="font-size: 12px; line-height: 1.5; color: #9aa0a8;">Ctrl+K chercher, Ctrl+E édition / aperçu.</span>
+            <span style="font-size: 11px; color: #9aa0a8;">#dev #ux</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #2a2d33; font-size: 13px;">
+        <span style="flex-grow: 1; color: #9aa0a8;">travail/projets/<span style="color: #e6e6e6; font-weight: 700;">cairn-plan-v1</span></span>
+        <div role="tablist" aria-label="Disposition" style="display: flex; border: 1px solid #2a2d33; border-radius: 6px; overflow: hidden;">
+          <button type="button" role="tab" aria-selected="false" style="height: 32px; padding: 0 10px; border: 0; background: transparent; color: #9aa0a8; font: inherit; font-size: 12px;">edit</button>
+          <button type="button" role="tab" aria-selected="true" style="height: 32px; padding: 0 10px; border: 0; background: #f0b45a; color: #121212; font: inherit; font-size: 12px; font-weight: 800;">split</button>
+          <button type="button" role="tab" aria-selected="false" style="height: 32px; padding: 0 10px; border: 0; background: transparent; color: #9aa0a8; font: inherit; font-size: 12px;">view</button>
+        </div>
+        <button type="button" aria-label="Plus d'actions sur la note" style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #2a2d33; background: transparent; color: #9aa0a8; font: inherit;">⋯</button>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; flex-grow: 1;">
+        <div style="flex: 1 1 380px; min-width: 0; display: flex; border-right: 1px solid #2a2d33; font-size: 13px; line-height: 1.85;">
+          <div aria-hidden="true" style="width: 40px; padding: 14px 10px 0 0; box-sizing: border-box; text-align: right; color: #4a4e55; font-size: 12px; line-height: 2.05; flex-shrink: 0;">
+            <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div><div>17</div>
+          </div>
+          <div style="padding: 14px 16px 0 6px; flex-grow: 1; white-space: pre-wrap;"><span style="color: #9aa0a8;">---
+tags: [</span><span style="color: #f0b45a;">dev</span><span style="color: #9aa0a8;">, </span><span style="color: #f0b45a;">idée</span><span style="color: #9aa0a8;">]
+---</span>
+<span style="color: #f0b45a; font-weight: 800;"># Cairn — plan V1</span>
+
+Front statique sur GitHub Pages, Supabase pour l'auth. Schéma dans <span style="color: #f0b45a; background: rgba(240,180,90,0.12); border-radius: 3px;">[[Modèle de données]]</span>.
+
+<span style="color: #f0b45a; font-weight: 800;">## Étapes</span>
+<span style="color: #9aa0a8;">-</span> Squelette et connexion
+<span style="color: #9aa0a8;">-</span> CRUD et rendu Markdown
+<span style="color: #9aa0a8;">-</span> Dossiers, tags, <span style="color: #f0b45a; background: rgba(240,180,90,0.12); border-radius: 3px;">[[Liens entre notes]]</span>
+
+<span style="color: #9aa0a8;">&gt;</span> <span style="color: #c3c7cd; font-style: italic;">Exporter avant chaque import.</span>
+
+<span style="color: #9aa0a8;">```js</span>
+<span style="color: #f0b45a;">const</span> html = DOMPurify.sanitize(marked.parse(md));
+<span style="color: #9aa0a8;">```</span><span style="display: inline-block; width: 2px; height: 16px; background: #f0b45a; vertical-align: -3px;"></span></div>
+        </div>
+
+        <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column;">
+          <article style="flex-grow: 1; padding: 18px 24px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.7;">
+            <h1 style="margin: 0; font-size: 22px; font-weight: 800;">Cairn — plan V1</h1>
+            <p style="margin: 0;">Front statique sur GitHub Pages, Supabase pour l'auth. Schéma dans <a href="#" style="color: #f0b45a; text-decoration: none; border-bottom: 1px dashed #f0b45a;">Modèle de données</a>.</p>
+            <h2 style="margin: 4px 0 0; font-size: 16px; font-weight: 800;">Étapes</h2>
+            <ul style="margin: 0; padding-left: 20px;">
+              <li>Squelette et connexion</li>
+              <li>CRUD et rendu Markdown</li>
+              <li>Dossiers, tags, <a href="#" style="color: #f0b45a; text-decoration: none; border-bottom: 1px dashed #f0b45a;">Liens entre notes</a></li>
+            </ul>
+            <blockquote style="margin: 0; padding: 4px 12px; border-left: 2px solid #5b5f66; color: #c3c7cd; font-style: italic;">Exporter avant chaque import.</blockquote>
+            <pre style="margin: 0; padding: 10px 12px; border-radius: 6px; background: #0c0d0f; border: 1px solid #2a2d33; font-family: inherit; font-size: 12px; color: #c3c7cd; overflow-x: auto;"><span style="color: #f0b45a;">const</span> html = DOMPurify.sanitize(marked.parse(md));</pre>
+          </article>
+          <section aria-label="Liens entrants" style="border-top: 1px solid #2a2d33; padding: 12px 24px 16px; font-size: 13px; display: flex; flex-direction: column; gap: 4px;">
+            <h2 style="margin: 0 0 4px; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: #6f747c;">← LIENS ENTRANTS (2)</h2>
+            <a href="#" style="color: #e6e6e6; text-decoration: none;">idees-d-export.md <span style="color: #9aa0a8;">« …voir [[Cairn — plan V1]] pour le format »</span></a>
+            <a href="#" style="color: #e6e6e6; text-decoration: none;">reunion-du-4-novembre.md <span style="color: #9aa0a8;">« Point sur [[Cairn — plan V1]] »</span></a>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px; padding: 0 16px; height: 30px; border-top: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;">
+    <span><span style="color: #7fc48f;">●</span> enregistré</span>
+    <span>supabase · connecté</span>
+    <span style="flex-grow: 1;"></span>
+    <span>markdown · 312 mots</span>
+    <span>L17:C52</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

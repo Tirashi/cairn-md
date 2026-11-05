@@ -6,6 +6,7 @@
 - Front statique en **HTML/CSS/JS vanilla, sans build** : le fichier poussé est celui que sert GitHub Pages. Bibliothèques **via CDN, version exacte épinglée** : `supabase-js`, `marked`, `DOMPurify`, `JSZip`. Pas de npm.
 - Backend : **Supabase** (authentification + table `notes`, notes en Markdown brut dans `content`). Inscriptions publiques désactivées.
 - Structure prévue : `index.html`, `css/style.css`, `assets/` (`logo.svg`, `icon-maskable.svg`), `js/` (`main.js` routage par hash, `config.js`, `supabase.js`, `auth.js`, `notes.js`, `markdown.js`, `ui.js`, `export.js`).
+- **Direction visuelle retenue (05/11) : B « Terminal »** de la [maquette](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ) (`maquettes/interface/`) : tout en JetBrains Mono, coins de 6 px, filets `#2a2d33`, dossiers en arborescence `├─`, notes affichées comme `nom.md`, recherche façon invite `>`, éditeur avec numéros de ligne et Markdown coloré, suggestions à la frappe de `[[`, barre d'état (enregistré, liens entrants). Desktop : barre du haut, dossiers/tags (240 px), liste (320 px), note en `edit | split | view` avec liens entrants sous l'aperçu.
 - Identité : esprit ludique, minimaliste, geek ; **thème sombre par défaut** (fond `#121212`, texte `#e6e6e6`, accent ambre `#f0b45a`), couleurs en variables CSS sur `:root`, redéfinies par `[data-theme="light"]`. Le logo (trois tablettes de pierre, `[[ ]]` gravé en bas) est fourni : ne pas le redessiner sans demande.
 - Projet voisin : la **Ludothèque 16 bits** (**Tirashi/Claude**), dont ce fichier reprend les règles de travail. Les deux projets restent **indépendants** (pas de base ni de code partagés).
 
@@ -44,4 +45,4 @@
 
 ## En cours / à vérifier
 Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).
-- **Démarrage** (05/11) : `CLAUDE.md`, plan V1 (`specs/plan-v1.md`) et logos (`assets/`) en place. **Maquette** (3 directions, téléphone, sombre ; [artefact](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ), sources dans `maquettes/interface/`) : à choisir par l'utilisateur, puis version desktop de la direction retenue, puis étape 1 (Supabase, à faire par l'utilisateur) et étape 2 (squelette et connexion).
+- **Démarrage** (05/11) : `CLAUDE.md`, plan V1 (`specs/plan-v1.md`) et logos (`assets/`) en place. **Maquette** ([artefact](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ)) : direction B choisie, version desktop faite (à valider), puis étape 1 (Supabase, à faire par l'utilisateur) et étape 2 (squelette et connexion).

@@ -1,22 +1,25 @@
 {
   "v": 3,
-  "createdOnFiles": {"v": 1, "at": "2026-11-05T14:00:00Z"},
-  "title": "Cairn — maquette",
-  "launch": {"view": "canvas"},
-  "pages": [],
+  "attachments": {},
   "boards": {
-    "Main.dc.html": {"x": 0, "y": 0, "w": 390, "h": 844, "title": "A · Pierre — liste"},
-    "A-note.dc.html": {"x": 470, "y": 0, "w": 390, "h": 844, "title": "A · Pierre — note"},
-    "B-liste.dc.html": {"x": 1100, "y": 0, "w": 390, "h": 844, "title": "B · Terminal — liste"},
-    "B-note.dc.html": {"x": 1570, "y": 0, "w": 390, "h": 844, "title": "B · Terminal — note"},
-    "C-liste.dc.html": {"x": 2200, "y": 0, "w": 390, "h": 844, "title": "C · Cairn empilé — liste"},
-    "C-note.dc.html": {"x": 2670, "y": 0, "w": 390, "h": 844, "title": "C · Cairn empilé — note"}
+    "A-note.dc.html": {"h": 844, "title": "A · Pierre — note", "w": 390, "x": 470, "y": 0},
+    "B-liste.dc.html": {"h": 844, "title": "B · Terminal — liste", "w": 390, "x": 1100, "y": 0},
+    "B-note.dc.html": {"h": 844, "title": "B · Terminal — note", "w": 390, "x": 1570, "y": 0},
+    "C-liste.dc.html": {"h": 844, "title": "C · Cairn empilé — liste", "w": 390, "x": 2200, "y": 0},
+    "C-note.dc.html": {"h": 844, "title": "C · Cairn empilé — note", "w": 390, "x": 2670, "y": 0},
+    "Main.dc.html": {"h": 844, "title": "A · Pierre — liste", "w": 390, "x": 0, "y": 0},
+    "B-desktop.dc.html": {"h": 900, "title": "B · Terminal — desktop", "w": 1440, "x": 1100, "y": 1300, "expand": "fill"}
   },
-  "order": ["Main.dc.html", "A-note.dc.html", "B-liste.dc.html", "B-note.dc.html", "C-liste.dc.html", "C-note.dc.html"],
+  "createdOnFiles": {"at": "2026-11-05T14:00:00Z", "v": 1},
+  "designSystems": [],
+  "launch": {"view": "canvas"},
   "notes": {
-    "tA": {"x": 0, "y": -300, "text": "A · Pierre (sobre)", "kind": "title1", "maxW": 860},
-    "tB": {"x": 1100, "y": -300, "text": "B · Terminal (geek)", "kind": "title1", "maxW": 860},
-    "tC": {"x": 2200, "y": -300, "text": "C · Cairn empilé (ludique)", "kind": "title1", "maxW": 860}
+    "tA": {"kind": "title1", "maxW": 860, "text": "A · Pierre (sobre)", "w": 240, "x": 0, "y": -300},
+    "tB": {"kind": "title1", "maxW": 860, "text": "B · Terminal (geek)", "w": 240, "x": 1100, "y": -300},
+    "tC": {"kind": "title1", "maxW": 860, "text": "C · Cairn empilé (ludique)", "w": 240, "x": 2200, "y": -300},
+    "tD": {"kind": "title1", "maxW": 1440, "text": "B · Terminal — desktop (retenue)", "x": 1100, "y": 1000}
   },
-  "designSystems": []
+  "order": ["Main.dc.html", "A-note.dc.html", "B-liste.dc.html", "B-note.dc.html", "C-liste.dc.html", "C-note.dc.html", "B-desktop.dc.html"],
+  "pages": [],
+  "title": "Cairn — maquette"
 }

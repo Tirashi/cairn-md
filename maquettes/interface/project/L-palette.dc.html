@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Lien A — palette de recherche</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; position: relative; overflow: hidden;">
+
+  <div aria-hidden="true" style="opacity: 0.25; padding: 70px 16px 0 54px; font-size: 13.5px; line-height: 1.75; white-space: pre-wrap;"><span style="color: #f0b45a;"># Cairn — plan V1</span>
+
+Le schéma est dans <span style="color: #f0b45a;">[[</span></div>
+
+  <section role="dialog" aria-label="Lier une note" style="position: absolute; left: 8px; right: 8px; top: 96px; background: #1b1d21; border: 1px solid #f0b45a; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); display: flex; flex-direction: column; max-height: 600px;">
+    <label style="display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 14px; border-bottom: 1px solid #2a2d33; font-size: 15px;">
+      <span style="color: #f0b45a; font-weight: 800;">[[</span>
+      <input type="text" value="sch" aria-label="Chercher une note à lier" style="flex-grow: 1; min-width: 0; border: 0; background: transparent; color: #e6e6e6; font: inherit; outline: none;">
+      <span style="font-size: 11px; color: #9aa0a8;">Échap</span>
+    </label>
+    <div style="display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid #2a2d33; font-size: 12px; overflow: hidden;">
+      <span style="height: 30px; display: flex; align-items: center; padding: 0 8px; border: 1px solid #f0b45a; border-radius: 4px; color: #f0b45a;">partout</span>
+      <span style="height: 30px; display: flex; align-items: center; padding: 0 8px; border: 1px solid #2a2d33; border-radius: 4px; color: #9aa0a8;">même dossier</span>
+      <span style="height: 30px; display: flex; align-items: center; padding: 0 8px; border: 1px solid #2a2d33; border-radius: 4px; color: #9aa0a8;">récentes</span>
+    </div>
+    <ul role="listbox" aria-label="Résultats" style="list-style: none; margin: 0; padding: 4px 0; overflow: hidden;">
+      <li role="option" aria-selected="true" style="padding: 10px 14px; background: rgba(240,180,90,0.12); box-shadow: inset 3px 0 0 #f0b45a;">
+        <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 14px;"><span><b style="color: #f0b45a;">Sch</b>éma de la base</span><span style="font-size: 11px; color: #9aa0a8;">hier</span></div>
+        <div style="font-size: 12px; color: #9aa0a8;">travail/projets/ · Une table notes, titres uniques…</div>
+      </li>
+      <li role="option" aria-selected="false" style="padding: 10px 14px;">
+        <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 14px;"><span><b style="color: #f0b45a;">Sch</b>émas réseau</span><span style="font-size: 11px; color: #9aa0a8;">12 oct.</span></div>
+        <div style="font-size: 12px; color: #9aa0a8;">travail/infra/ · VLAN, routeur, NAS…</div>
+      </li>
+      <li role="option" aria-selected="false" style="padding: 10px 14px;">
+        <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 14px;"><span>Recette du pain (<b style="color: #f0b45a;">sch</b>wartz)</span><span style="font-size: 11px; color: #9aa0a8;">2 sept.</span></div>
+        <div style="font-size: 12px; color: #9aa0a8;">perso/cuisine/ · Farine de seigle…</div>
+      </li>
+      <li role="option" aria-selected="false" style="padding: 10px 14px;">
+        <div style="font-size: 14px; color: #9aa0a8;">Contenu : « … le <b style="color: #f0b45a;">sch</b>éma de migration… »</div>
+        <div style="font-size: 12px; color: #9aa0a8;">idees-d-export.md</div>
+      </li>
+      <li role="option" aria-selected="false" style="padding: 12px 14px; border-top: 1px solid #2a2d33; color: #9aa0a8; font-size: 13px;">+ nouvelle note « sch »</li>
+    </ul>
+    <div style="display: flex; justify-content: space-between; padding: 8px 14px; border-top: 1px solid #2a2d33; font-size: 11px; color: #6f747c;">
+      <span>↑↓ choisir · Entrée lier</span><span>4 sur 312 notes</span>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

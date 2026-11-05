@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Lien B — explorateur de dossiers</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; position: relative; overflow: hidden;">
+
+  <div aria-hidden="true" style="opacity: 0.25; padding: 70px 16px 0 54px; font-size: 13.5px; line-height: 1.75; white-space: pre-wrap;"><span style="color: #f0b45a;"># Cairn — plan V1</span>
+
+Le schéma est dans <span style="color: #f0b45a;">[[</span></div>
+
+  <section role="dialog" aria-label="Lier une note" style="position: absolute; left: 0; right: 0; bottom: 0; height: 640px; background: #1b1d21; border-top: 1px solid #f0b45a; border-radius: 12px 12px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.7); display: flex; flex-direction: column;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 0 16px;">
+      <h2 style="margin: 0; font-size: 13px; font-weight: 800;">$ ls <span style="color: #f0b45a;">~/travail/</span></h2>
+      <button type="button" aria-label="Fermer" style="width: 44px; height: 44px; border: 0; background: transparent; color: #9aa0a8; font: inherit; font-size: 18px;">×</button>
+    </div>
+    <label style="display: flex; align-items: center; gap: 8px; margin: 4px 16px 8px; height: 44px; padding: 0 12px; border: 1px solid #2a2d33; border-radius: 6px; background: #121212; font-size: 14px;">
+      <span style="color: #f0b45a; font-weight: 700;">&gt;</span>
+      <input type="text" placeholder="filtrer ce dossier…" aria-label="Filtrer" style="flex-grow: 1; min-width: 0; border: 0; background: transparent; color: #e6e6e6; font: inherit; outline: none;">
+    </label>
+    <nav aria-label="Fil d'Ariane" style="display: flex; gap: 2px; padding: 0 16px 8px; font-size: 14px; color: #9aa0a8;">
+      <span style="min-height: 36px; display: flex; align-items: center;">~/</span><span style="min-height: 36px; display: flex; align-items: center; color: #e6e6e6; font-weight: 700;">travail/</span>
+    </nav>
+    <ul style="list-style: none; margin: 0; padding: 0; border-top: 1px solid #2a2d33; overflow: hidden; flex-grow: 1; font-size: 14px;">
+      <li style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #2a2d33;"><span><span style="color: #6f747c;">▸ </span>projets/</span><span style="color: #9aa0a8; font-size: 12px;">48</span></li>
+      <li style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #2a2d33;"><span><span style="color: #6f747c;">▸ </span>reunions/</span><span style="color: #9aa0a8; font-size: 12px;">112</span></li>
+      <li style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #2a2d33;"><span><span style="color: #6f747c;">▸ </span>infra/</span><span style="color: #9aa0a8; font-size: 12px;">17</span></li>
+      <li style="display: flex; flex-direction: column; justify-content: center; min-height: 56px; padding: 0 16px; border-bottom: 1px solid #2a2d33; background: rgba(240,180,90,0.12); box-shadow: inset 3px 0 0 #f0b45a;"><span>schema-de-la-base.md</span><span style="font-size: 12px; color: #9aa0a8;">Une table notes, titres uniques…</span></li>
+      <li style="display: flex; flex-direction: column; justify-content: center; min-height: 56px; padding: 0 16px; border-bottom: 1px solid #2a2d33;"><span>objectifs-2027.md</span><span style="font-size: 12px; color: #9aa0a8;">Trois chantiers, un par trimestre…</span></li>
+      <li style="display: flex; flex-direction: column; justify-content: center; min-height: 56px; padding: 0 16px; border-bottom: 1px solid #2a2d33;"><span>contacts.md</span><span style="font-size: 12px; color: #9aa0a8;">Équipe, prestataires…</span></li>
+    </ul>
+    <div style="display: flex; gap: 8px; padding: 10px 16px 18px; border-top: 1px solid #2a2d33;">
+      <button type="button" style="flex: 1 1 0; height: 44px; border: 1px solid #2a2d33; border-radius: 6px; background: transparent; color: #9aa0a8; font: inherit; font-size: 13px;">+ nouvelle note ici</button>
+      <button type="button" style="flex: 1 1 0; height: 44px; border: 0; border-radius: 6px; background: #f0b45a; color: #121212; font: inherit; font-size: 13px; font-weight: 800;">lier schema-de-la…</button>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

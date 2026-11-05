@@ -2,28 +2,184 @@
   "v": 3,
   "attachments": {},
   "boards": {
-    "A-note.dc.html": {"h": 844, "title": "A · Pierre — note", "w": 390, "x": 470, "y": 0},
-    "B-liste.dc.html": {"h": 844, "title": "B · Terminal — liste", "w": 390, "x": 1100, "y": 0},
-    "B-note.dc.html": {"h": 844, "title": "B · Terminal — note", "w": 390, "x": 1570, "y": 0},
-    "C-liste.dc.html": {"h": 844, "title": "C · Cairn empilé — liste", "w": 390, "x": 2200, "y": 0},
-    "C-note.dc.html": {"h": 844, "title": "C · Cairn empilé — note", "w": 390, "x": 2670, "y": 0},
-    "Main.dc.html": {"h": 844, "title": "A · Pierre — liste", "w": 390, "x": 0, "y": 0},
-    "B-desktop.dc.html": {"h": 900, "title": "B · Terminal — desktop", "w": 1440, "x": 1100, "y": 1300, "expand": "fill"},
-    "D-chemin.dc.html": {"h": 844, "title": "Dossier A · chemin éditable", "w": 390, "x": 1100, "y": 2550},
-    "D-frontmatter.dc.html": {"h": 844, "title": "Dossier B · frontmatter", "w": 390, "x": 1570, "y": 2550},
-    "D-infos.dc.html": {"h": 844, "title": "Dossier C · panneau infos", "w": 390, "x": 2040, "y": 2550}
+    "A-note.dc.html": {
+      "h": 844,
+      "title": "A · Pierre — note",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "B-liste.dc.html": {
+      "h": 844,
+      "title": "B · Terminal — liste",
+      "w": 390,
+      "x": 1100,
+      "y": 0
+    },
+    "B-note.dc.html": {
+      "h": 844,
+      "title": "B · Terminal — note",
+      "w": 390,
+      "x": 1570,
+      "y": 0
+    },
+    "C-liste.dc.html": {
+      "h": 844,
+      "title": "C · Cairn empilé — liste",
+      "w": 390,
+      "x": 2200,
+      "y": 0
+    },
+    "C-note.dc.html": {
+      "h": 844,
+      "title": "C · Cairn empilé — note",
+      "w": 390,
+      "x": 2670,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "title": "A · Pierre — liste",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "B-desktop.dc.html": {
+      "h": 900,
+      "title": "B · Terminal — desktop",
+      "w": 1440,
+      "x": 1100,
+      "y": 1300,
+      "expand": "fill"
+    },
+    "D-chemin.dc.html": {
+      "h": 844,
+      "title": "Dossier A · chemin éditable",
+      "w": 390,
+      "x": 1100,
+      "y": 2550
+    },
+    "D-frontmatter.dc.html": {
+      "h": 844,
+      "title": "Dossier B · frontmatter",
+      "w": 390,
+      "x": 1570,
+      "y": 2550
+    },
+    "D-infos.dc.html": {
+      "h": 844,
+      "title": "Dossier C · panneau infos",
+      "w": 390,
+      "x": 2040,
+      "y": 2550
+    },
+    "L-palette.dc.html": {
+      "h": 844,
+      "title": "Lien A · palette de recherche",
+      "w": 390,
+      "x": 1100,
+      "y": 3800
+    },
+    "L-explorateur.dc.html": {
+      "h": 844,
+      "title": "Lien B · explorateur de dossiers",
+      "w": 390,
+      "x": 1570,
+      "y": 3800
+    },
+    "L-bulle.dc.html": {
+      "h": 844,
+      "title": "Lien C · bulle sous le curseur",
+      "w": 390,
+      "x": 2040,
+      "y": 3800
+    },
+    "P-code.dc.html": {
+      "h": 900,
+      "title": "Aperçu · code coloré et mermaid",
+      "w": 760,
+      "x": 2510,
+      "y": 3800
+    }
   },
-  "createdOnFiles": {"at": "2026-11-05T14:00:00Z", "v": 1},
+  "createdOnFiles": {
+    "at": "2026-11-05T14:00:00Z",
+    "v": 1
+  },
   "designSystems": [],
-  "launch": {"view": "canvas"},
-  "notes": {
-    "tA": {"kind": "title1", "maxW": 860, "text": "A · Pierre (sobre)", "w": 240, "x": 0, "y": -300},
-    "tB": {"kind": "title1", "maxW": 860, "text": "B · Terminal (geek)", "w": 240, "x": 1100, "y": -300},
-    "tC": {"kind": "title1", "maxW": 860, "text": "C · Cairn empilé (ludique)", "w": 240, "x": 2200, "y": -300},
-    "tD": {"kind": "title1", "maxW": 1440, "text": "B · Terminal — desktop (retenue)", "x": 1100, "y": 1000},
-    "tE": {"kind": "title1", "maxW": 1330, "text": "Étape 4 · changer le dossier et les tags d'une note", "x": 1100, "y": 2250}
+  "launch": {
+    "view": "canvas"
   },
-  "order": ["Main.dc.html", "A-note.dc.html", "B-liste.dc.html", "B-note.dc.html", "C-liste.dc.html", "C-note.dc.html", "B-desktop.dc.html", "D-chemin.dc.html", "D-frontmatter.dc.html", "D-infos.dc.html"],
+  "notes": {
+    "tA": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "A · Pierre (sobre)",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "tB": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "B · Terminal (geek)",
+      "w": 240,
+      "x": 1100,
+      "y": -300
+    },
+    "tC": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "C · Cairn empilé (ludique)",
+      "w": 240,
+      "x": 2200,
+      "y": -300
+    },
+    "tD": {
+      "kind": "title1",
+      "maxW": 1440,
+      "text": "B · Terminal — desktop (retenue)",
+      "x": 1100,
+      "y": 1000
+    },
+    "tE": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Étape 4 · changer le dossier et les tags d'une note",
+      "x": 1100,
+      "y": 2250
+    },
+    "tF": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Choisir une note à lier (centaines de notes)",
+      "x": 1100,
+      "y": 3500
+    },
+    "tG": {
+      "kind": "title1",
+      "maxW": 760,
+      "text": "Code coloré et mermaid",
+      "x": 2510,
+      "y": 3500
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "A-note.dc.html",
+    "B-liste.dc.html",
+    "B-note.dc.html",
+    "C-liste.dc.html",
+    "C-note.dc.html",
+    "B-desktop.dc.html",
+    "D-chemin.dc.html",
+    "D-frontmatter.dc.html",
+    "D-infos.dc.html",
+    "L-palette.dc.html",
+    "L-explorateur.dc.html",
+    "L-bulle.dc.html",
+    "P-code.dc.html"
+  ],
   "pages": [],
   "title": "Cairn — maquette"
 }

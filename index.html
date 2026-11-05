@@ -71,16 +71,16 @@
   </div>
 
   <!-- Application -->
-  <div id="ecran-appli" class="ecran appli" hidden>
+  <div id="ecran-appli" class="ecran appli" data-vue="liste" hidden>
     <header class="barre-haut">
       <span class="marque marque-petite"><img src="assets/logo.svg" alt="" width="26" height="26"><span>cairn<span class="accent">_</span></span></span>
       <label class="invite recherche">
         <span class="accent" aria-hidden="true">&gt;</span>
-        <input type="search" placeholder="grep notes…" aria-label="Rechercher dans les notes" disabled>
+        <input type="search" placeholder="grep notes… (étape 4)" aria-label="Rechercher dans les notes" disabled>
         <kbd>Ctrl K</kbd>
       </label>
       <span class="espace"></span>
-      <button type="button" class="bouton-principal bouton-petit" disabled>+ nouvelle</button>
+      <button type="button" class="bouton-principal bouton-petit" id="bouton-nouvelle">+ nouvelle</button>
       <button type="button" class="bouton-discret" data-action="theme" aria-label="Changer de thème">☾</button>
       <button type="button" class="bouton-discret" id="bouton-deconnexion">logout</button>
     </header>
@@ -88,23 +88,70 @@
     <div class="colonnes">
       <nav class="col-dossiers" aria-label="Dossiers et tags">
         <p class="titre-section">DOSSIERS</p>
-        <p class="muet">~/ <span>0</span></p>
+        <p class="muet">~/ <span id="compte-notes">0</span></p>
         <p class="titre-section">TAGS</p>
-        <p class="muet">—</p>
+        <p class="muet">— (étape 4)</p>
       </nav>
+
       <section class="col-liste" aria-label="Notes">
-        <p class="muet vide">aucune note pour l'instant</p>
+        <div class="entete-liste">
+          <span>~/ · <span id="compte-liste">0 note</span></span>
+          <span>tri : récent</span>
+        </div>
+        <p id="liste-message" class="muet vide">chargement<span class="curseur">_</span></p>
+        <ul id="liste-notes" class="liste-notes"></ul>
       </section>
-      <main class="col-note">
-        <p class="muet vide">// les notes arrivent à l'étape 3</p>
+
+      <main class="col-note" id="col-note">
+        <p id="note-vide" class="muet vide">// choisir une note, ou « + nouvelle »</p>
+
+        <div id="note" class="note" hidden>
+          <div class="entete-note">
+            <a href="#/" class="bouton-retour" aria-label="Retour à la liste">←</a>
+            <label class="titre-note">
+              <span class="muet" aria-hidden="true">~/</span>
+              <input id="note-titre" type="text" aria-label="Titre de la note" spellcheck="false" autocomplete="off">
+            </label>
+            <div class="bascule" role="group" aria-label="Affichage">
+              <button type="button" data-mode="edit" aria-pressed="false">edit</button>
+              <button type="button" data-mode="split" aria-pressed="false" class="mode-large">split</button>
+              <button type="button" data-mode="view" aria-pressed="false">view</button>
+            </div>
+            <button type="button" class="bouton-discret bouton-icone" id="bouton-supprimer" aria-label="Supprimer la note">rm</button>
+          </div>
+          <p id="note-message" class="message message-note" role="alert"></p>
+
+          <div class="panneaux">
+            <div class="panneau-edition">
+              <div class="editeur">
+                <div class="editeur-fond" id="editeur-fond" aria-hidden="true"></div>
+                <textarea id="note-contenu" class="editeur-saisie" aria-label="Contenu de la note (Markdown)" spellcheck="false" autocapitalize="sentences"></textarea>
+              </div>
+            </div>
+            <article class="panneau-apercu apercu" id="note-apercu" aria-label="Aperçu"></article>
+          </div>
+        </div>
       </main>
     </div>
 
     <footer class="barre-etat">
-      <span><span class="ok">●</span> connecté</span>
-      <span id="etat-utilisateur" class="muet"></span>
+      <span id="etat-sauvegarde"><span class="ok">●</span> connecté</span>
+      <span id="etat-mots"></span>
+      <span class="espace"></span>
+      <span id="etat-utilisateur" class="muet etat-utilisateur"></span>
     </footer>
   </div>
+
+  <dialog id="dialogue-suppression" class="dialogue" aria-labelledby="dialogue-titre">
+    <form method="dialog" class="dialogue-contenu">
+      <p id="dialogue-titre"><span class="erreur">$ rm</span> <span id="dialogue-nom"></span></p>
+      <p class="muet">Supprimer définitivement cette note ? Penser à exporter avant en cas de doute.</p>
+      <div class="dialogue-boutons">
+        <button value="annuler" class="bouton-discret" autofocus>annuler</button>
+        <button value="supprimer" class="bouton-danger">supprimer</button>
+      </div>
+    </form>
+  </dialog>
 
 </body>
 </html>

@@ -48,8 +48,10 @@ export function brancherConnexion() {
   });
 }
 
-export function brancherDeconnexion() {
+/** `avant` : fonction asynchrone appelée avant de se déconnecter (enregistrer la note ouverte). */
+export function brancherDeconnexion(avant) {
   document.getElementById('bouton-deconnexion').addEventListener('click', async () => {
+    try { if (avant) await avant(); } catch { /* on se déconnecte quand même */ }
     try {
       await deconnexion();
     } catch {

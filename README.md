@@ -12,11 +12,21 @@ Front statique (HTML/CSS/JS sans build) publié sur GitHub Pages ; Supabase pour
 
 En local : servir le dossier avec n'importe quel serveur statique (les modules ES ne se chargent pas en `file://`), par exemple `python3 -m http.server`.
 
+## Utilisation
+
+- **+ nouvelle** crée une note « sans titre » : taper le titre, Entrée, puis le contenu en Markdown.
+- Enregistrement automatique une seconde après la dernière frappe (barre d'état : `○ modifié`, `● enregistré`) ; `Ctrl+S` force l'enregistrement.
+- `edit | split | view` : éditeur, les deux côte à côte (ordinateur), ou aperçu. Sur téléphone, un seul panneau à la fois et ← pour revenir à la liste.
+- `rm` supprime la note après confirmation.
+- Deux notes ne peuvent pas avoir le même titre (sans tenir compte des majuscules), pour que les liens `[[Titre]]` restent sans ambiguïté.
+
 ## Essais
 
-`node outils/essai.js` (nécessite Playwright) : sert le dépôt en local, remplace `supabase-js` par un faux backend en mémoire ([`outils/faux-supabase.js`](outils/faux-supabase.js), compte `essai@cairn.local` / `secret`) et vérifie la connexion, la session, la déconnexion et le thème. Lancé aussi par la CI à chaque push.
+`node outils/essai.js` (nécessite Playwright) : sert le dépôt en local, remplace `supabase-js` par un faux backend en mémoire ([`outils/faux-supabase.js`](outils/faux-supabase.js), compte `essai@cairn.local` / `secret`) et vérifie la connexion, le thème, les notes (création, édition, sauvegarde automatique, titres en double, panne réseau, suppression), l'aperçu Markdown assaini et l'affichage sur téléphone. `marked` et `DOMPurify` sont pris sur le registre npm (même version que le CDN) et gardés dans `outils/.cache/`. Lancé aussi par la CI à chaque push.
 
 ## Crédits
 
 - [supabase-js](https://github.com/supabase/supabase-js) — Supabase, licence MIT, chargé depuis [jsDelivr](https://www.jsdelivr.com/package/npm/@supabase/supabase-js).
+- [marked](https://github.com/markedjs/marked) — Christopher Jeffrey et contributeurs, licence MIT, chargé depuis [jsDelivr](https://www.jsdelivr.com/package/npm/marked).
+- [DOMPurify](https://github.com/cure53/DOMPurify) — Cure53, licence MPL-2.0 ou Apache-2.0, chargé depuis [jsDelivr](https://www.jsdelivr.com/package/npm/dompurify).
 - [JetBrains Mono](https://www.jetbrains.com/lp/mono/) — JetBrains, licence SIL Open Font License 1.1, chargée depuis [Google Fonts](https://fonts.google.com/specimen/JetBrains+Mono).

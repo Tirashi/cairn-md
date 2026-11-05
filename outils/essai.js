@@ -34,6 +34,8 @@ const BIBLIOTHEQUES = [
   [/cdn\.jsdelivr\.net\/npm\/dompurify@([\d.]+)\/\+esm/, 'dompurify', 'dist/purify.es.mjs'],
   [/cdn\.jsdelivr\.net\/npm\/@highlightjs\/cdn-assets@([\d.]+)\/es\/highlight\.min\.js/, '@highlightjs/cdn-assets', 'es/highlight.min.js'],
   [/cdn\.jsdelivr\.net\/npm\/mermaid@([\d.]+)\/dist\/mermaid\.esm\.min\.mjs/, 'mermaid', null],
+  // JSZip n'existe qu'en UMD : on ajoute l'export que fabrique « +esm » sur jsDelivr.
+  [/cdn\.jsdelivr\.net\/npm\/jszip@([\d.]+)\/\+esm/, 'jszip', 'dist/jszip.min.js', '\nexport default window.JSZip;'],
 ];
 
 function telecharger(url, dest) {
@@ -55,7 +57,7 @@ function telecharger(url, dest) {
 async function preparerBibliotheques() {
   const sources = fs.readdirSync(path.join(RACINE, 'js')).map((f) => fs.readFileSync(path.join(RACINE, 'js', f), 'utf8')).join('\n');
   const routes = [];
-  for (const [motif, paquet, fichier] of BIBLIOTHEQUES) {
+  for (const [motif, paquet, fichier, suffixe = ''] of BIBLIOTHEQUES) {
     const m = sources.match(motif);
     if (!m) continue;
     const version = m[1];
@@ -69,7 +71,7 @@ async function preparerBibliotheques() {
       execFileSync('tar', ['xzf', tgz, '-C', dossier, '--strip-components=1']);
       fs.unlinkSync(tgz);
     }
-    if (fichier) routes.push({ url: `https://${m[0]}`, corps: fs.readFileSync(path.join(dossier, fichier), 'utf8') });
+    if (fichier) routes.push({ url: `https://${m[0]}`, corps: fs.readFileSync(path.join(dossier, fichier), 'utf8') + suffixe, dossier });
     else routes.push({ prefixe: `https://cdn.jsdelivr.net/npm/${paquet}@${version}/`, dossier });
   }
   return routes;
@@ -589,6 +591,139 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
         await page.waitForSelector('#palette-liens[open]');
         await page.setViewportSize({ width: 390, height: 844 });
         await page.screenshot({ path: path.join(dossier, 'palette-mobile.png') });
+        await page.keyboard.press('Escape');
+      }
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
+    console.log('Export et import');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      const JSZip = require(path.join(routesBibliotheques.find((r) => r.url && r.url.includes('jszip')).dossier, 'dist/jszip.min.js'));
+      const stockees = () => page.evaluate(() => JSON.parse(localStorage.getItem('faux-supabase-notes')));
+      const parTitre = async (t) => (await stockees()).find((n) => n.title === t);
+      const menu = async (action) => { await page.click('#bouton-menu'); await page.click(`#menu-principal [data-menu="${action}"]`); };
+
+      await page.goto(base + '/');
+      await page.evaluate(() => {
+        const moi = '00000000-0000-0000-0000-000000000001';
+        const n = (i, title, folder, tags, content) => ({ id: '0000000' + i + '-0000-4000-8000-00000000000' + i, user_id: moi, title, folder, tags, content,
+          created_at: '2026-11-0' + i + 'T10:00:00.000Z', updated_at: '2026-11-0' + i + 'T10:00:00.000Z' });
+        localStorage.setItem('faux-supabase-notes', JSON.stringify([
+          n(1, 'Cairn — plan V1', 'Travail/Projets', ['dev'], '# Cairn\n\nVoir [[Modèle de données]].'),
+          n(2, 'Modèle de données', 'Travail/Projets', ['dev'], 'Une table notes.'),
+          n(3, 'Pain au levain', 'Perso', ['recette'], 'Farine, eau, sel.\n\n---\n\nTitre: "piège": oui'),
+        ]));
+      });
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForFunction(() => document.querySelectorAll('.ln-nom').length === 3);
+
+      // En-tête : aller-retour avec des caractères piégeux, et en-têtes écrits à la main.
+      const allerRetour = await page.evaluate(async () => {
+        const m = await import('/js/export.js');
+        const note = { id: 'x', title: 'Titre: "guillemets" #1 — été', folder: 'A/B', tags: ['dev', 'idée'], content: '---\nnon: en-tête\n---\ncorps', created_at: 'c', updated_at: 'u' };
+        const lu = m.lireMarkdown(m.versMarkdown(note));
+        const main = m.lireMarkdown('---\ntitle: Ma note\nfolder: perso/idées\ntags:\n  - un\n  - "deux"\n---\nTexte');
+        const crochets = m.lireMarkdown("---\ntitle: 'L''été'\ntags: [a, 'b c']\n---\n");
+        const sans = m.noteDuFichier({ chemin: 'perso/journal.md', texte: '# Journal\nRien.' });
+        return { lu, main, crochets, sans };
+      });
+      verifier(allerRetour.lu.meta.title === 'Titre: "guillemets" #1 — été' && allerRetour.lu.meta.folder === 'A/B'
+        && JSON.stringify(allerRetour.lu.meta.tags) === '["dev","idée"]' && allerRetour.lu.contenu === '---\nnon: en-tête\n---\ncorps', 'en-tête : aller-retour exact (guillemets, deux-points, accents, --- dans le contenu)');
+      verifier(allerRetour.main.meta.title === 'Ma note' && allerRetour.main.meta.folder === 'perso/idées' && JSON.stringify(allerRetour.main.meta.tags) === '["un","deux"]', 'en-tête écrit à la main (liste en « - »)');
+      verifier(allerRetour.crochets.meta.title === "L'été" && JSON.stringify(allerRetour.crochets.meta.tags) === '["a","b c"]', 'en-tête avec apostrophes et liste [a, \'b c\']');
+      verifier(allerRetour.sans.title === 'journal' && allerRetour.sans.folder === 'perso' && allerRetour.sans.content === '# Journal\nRien.', 'fichier sans en-tête : titre et dossier tirés du chemin');
+
+      // Export.
+      const [telechargement] = await Promise.all([page.waitForEvent('download'), menu('export')]);
+      verifier(/^cairn-\d{4}-\d{2}-\d{2}\.zip$/.test(telechargement.suggestedFilename()), 'export : ' + telechargement.suggestedFilename());
+      const zipExport = await JSZip.loadAsync(fs.readFileSync(await telechargement.path()));
+      const noms = Object.keys(zipExport.files).filter((n) => !zipExport.files[n].dir).sort();
+      verifier(JSON.stringify(noms) === '["Perso/pain-au-levain.md","Travail/Projets/cairn-plan-v1.md","Travail/Projets/modele-de-donnees.md"]', 'export : un .md par note, rangé par dossier (' + noms.join(', ') + ')');
+      const texteModele = await zipExport.file('Travail/Projets/modele-de-donnees.md').async('string');
+      verifier(texteModele.startsWith('---\nid: 00000002-0000-4000-8000-000000000002\ntitle: "Modèle de données"\nfolder: "Travail/Projets"\ntags: ["dev"]\n'), 'export : en-tête id, title, folder, tags');
+      await page.waitForFunction(() => /exportée/.test(document.getElementById('etat-sauvegarde').textContent));
+
+      // On modifie « Modèle de données » dans Cairn après l'export : il sera en conflit.
+      const idModele = (await parTitre('Modèle de données')).id;
+      await page.evaluate((i) => { location.hash = '#/note/' + i; }, idModele);
+      await page.waitForFunction(() => document.getElementById('note-titre').value === 'Modèle de données');
+      await page.fill('#note-contenu', 'Une table notes, modifiée dans Cairn.');
+      await page.waitForFunction(() => /● enregistré \d/.test(document.getElementById('etat-sauvegarde').textContent));
+
+      // Le zip « retouché par Claude ».
+      const zip = new JSZip();
+      const plan = await zipExport.file('Travail/Projets/cairn-plan-v1.md').async('string');
+      zip.file('Travail/Projets/cairn-plan-v1.md', plan.replace('tags: ["dev"]', 'tags: ["dev", "Relu"]').replace('Voir [[Modèle de données]].', 'Voir [[Modèle de données]]. Retouché par Claude.'));
+      zip.file('Travail/Projets/modele-de-donnees.md', texteModele.replace('Une table notes.', 'Une table notes (version du fichier).'));
+      zip.file('Perso/pain-au-levain.md', await zipExport.file('Perso/pain-au-levain.md').async('string'));
+      zip.file('idees/liste-de-courses.md', '---\ntitle: Liste de courses\ntags:\n  - courses\n  - Drive\n---\n- pain\n- lait');
+      zip.file('perso/journal.md', '# Journal\nRien.');
+      zip.file('images/photo.png', 'pas une note');
+      zip.file('__MACOSX/._journal.md', 'ignoré');
+      const tampon = await zip.generateAsync({ type: 'nodebuffer' });
+
+      await page.setInputFiles('#import-fichier', { name: 'cairn-retouche.zip', mimeType: 'application/zip', buffer: tampon });
+      await page.waitForSelector('#import-resume:not([hidden])');
+      const compte = async (id) => Number(await page.textContent('#import-n-' + id));
+      verifier(await compte('nouvelles') === 2 && await compte('modifiees') === 1 && await compte('conflits') === 1,
+        'import : 2 nouvelles, 1 modifiée, 1 conflit');
+      const autres = await page.textContent('#import-autres');
+      verifier(autres.includes('1 identique') && autres.includes('1 fichier non Markdown'), 'import : identiques et fichiers non Markdown signalés (' + autres + ')');
+      verifier((await page.textContent('#import-ok')) === 'importer 3 notes', 'bouton : importer 3 notes (le conflit garde Cairn par défaut)');
+
+      await page.click('#import-conflits .bouton-lien');
+      await page.waitForSelector('#import-detail:not([hidden])');
+      verifier((await page.textContent('#import-detail-nom')) === 'Travail/Projets/modele-de-donnees.md', 'détail du conflit : la bonne note');
+      const propres = await page.locator('#import-versions .ligne-propre').allTextContents();
+      verifier(propres.some((t) => t.includes('modifiée dans Cairn')) && propres.some((t) => t.includes('version du fichier')), 'détail : les lignes différentes sont surlignées');
+      await page.click('#import-detail-choix button:has-text("garder les deux")');
+      await page.waitForSelector('#import-resume:not([hidden])');
+      verifier((await page.getAttribute('#import-conflits button[aria-pressed="true"]', 'aria-pressed')) === 'true'
+        && (await page.textContent('#import-conflits button[aria-pressed="true"]')) === 'les deux', 'retour au récapitulatif, choix « les deux » retenu');
+      verifier((await page.textContent('#import-ok')) === 'importer 4 notes', 'bouton : importer 4 notes');
+
+      const [sauvegarde] = await Promise.all([page.waitForEvent('download'), page.click('#import-ok')]);
+      verifier(/^cairn-.*\.zip$/.test(sauvegarde.suggestedFilename()), 'sauvegarde .zip téléchargée avant l\'import');
+      await page.waitForFunction(() => document.getElementById('import-progression').textContent.startsWith('✓'));
+      verifier((await page.textContent('#import-progression')).startsWith('✓ 3 notes créées, 1 note mise à jour.'), 'résultat : ' + (await page.textContent('#import-progression')).split('\n')[0]);
+      await page.click('#import-fermer');
+
+      const planApres = await parTitre('Cairn — plan V1');
+      verifier(planApres.content.includes('Retouché par Claude.') && JSON.stringify(planApres.tags) === '["dev","relu"]', 'note modifiée : contenu et tags du fichier (tag nettoyé « relu »)');
+      verifier((await parTitre('Modèle de données')).content === 'Une table notes, modifiée dans Cairn.', 'conflit : la version de Cairn est gardée');
+      verifier((await parTitre('Modèle de données (import)'))?.content === 'Une table notes (version du fichier).', 'conflit : la version du fichier en copie « (import) »');
+      const courses = await parTitre('Liste de courses');
+      verifier(courses && courses.folder === 'idees' && JSON.stringify(courses.tags) === '["courses","drive"]', 'nouvelle note : dossier et tags de l\'en-tête');
+      verifier((await parTitre('journal'))?.folder === 'perso', 'nouvelle note sans en-tête : titre et dossier du chemin');
+      verifier((await page.locator('.ln-nom').count()) === 6, 'la liste montre les 6 notes après l\'import');
+      verifier((await page.textContent('#note-contenu')) === 'Une table notes, modifiée dans Cairn.' || (await page.inputValue('#note-contenu')) === 'Une table notes, modifiée dans Cairn.', 'la note ouverte reste à jour');
+
+      // Réimporter le même zip : tout est identique sauf ce qui a bougé.
+      await page.setInputFiles('#import-fichier', { name: 'cairn-retouche.zip', mimeType: 'application/zip', buffer: tampon });
+      await page.waitForSelector('#import-resume:not([hidden])');
+      verifier(await compte('nouvelles') === 0, 'réimport : plus aucune nouvelle (titres déjà présents → conflits ou identiques)');
+      await page.click('#import-annuler');
+
+      // Téléphone : menu ⋯ avec thème et logout.
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.evaluate(() => { location.hash = '#/'; });
+      verifier(!(await page.locator('.barre-haut #bouton-deconnexion').isVisible()), 'téléphone : logout rangé dans le menu');
+      await page.click('#bouton-menu');
+      verifier(await page.locator('#menu-principal [data-menu="logout"]').isVisible() && await page.locator('#menu-principal [data-menu="theme"]').isVisible(), 'téléphone : menu ⋯ avec thème et logout');
+      await page.click('#menu-principal [data-menu="theme"]');
+      verifier((await page.getAttribute('html', 'data-theme')) === 'light', 'téléphone : thème changé depuis le menu');
+      if (process.argv.includes('--captures')) {
+        const dossier = process.argv[process.argv.indexOf('--captures') + 1] || '.';
+        await page.click('#ecran-appli .barre-haut [data-action="theme"]', { force: true }).catch(() => {});
+        await page.evaluate(() => document.querySelector('.barre-haut [data-action="theme"]').click());
+        await page.setInputFiles('#import-fichier', { name: 'cairn-retouche.zip', mimeType: 'application/zip', buffer: tampon });
+        await page.waitForSelector('#import-resume:not([hidden])');
+        await page.screenshot({ path: path.join(dossier, 'import-mobile.png') });
+        await page.click('#import-conflits .bouton-lien');
+        await page.screenshot({ path: path.join(dossier, 'import-detail-mobile.png') });
         await page.keyboard.press('Escape');
       }
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));

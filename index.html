@@ -83,6 +83,18 @@
       <button type="button" class="bouton-principal bouton-petit" id="bouton-nouvelle">+ nouvelle</button>
       <button type="button" class="bouton-discret" data-action="theme" aria-label="Changer de thème">☾</button>
       <button type="button" class="bouton-discret" id="bouton-deconnexion">logout</button>
+      <div class="menu-zone">
+        <button type="button" class="bouton-discret" id="bouton-menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-principal" aria-label="Plus d'actions : export, import">⋯</button>
+        <div id="menu-principal" class="menu" role="menu" aria-label="Actions" hidden>
+          <button type="button" role="menuitem" data-menu="export">$ export <span class="muet">.zip</span></button>
+          <button type="button" role="menuitem" data-menu="import">$ import <span class="muet">.zip ou .md</span></button>
+          <button type="button" role="menuitem" data-menu="import-dossier">$ import <span class="muet">dossier</span></button>
+          <button type="button" role="menuitem" data-menu="theme" class="menu-mobile">thème clair / sombre</button>
+          <button type="button" role="menuitem" data-menu="logout" class="menu-mobile">logout</button>
+        </div>
+      </div>
+      <input type="file" id="import-fichier" accept=".zip,.md,.markdown,application/zip,text/markdown" multiple hidden>
+      <input type="file" id="import-dossier" webkitdirectory multiple hidden>
     </header>
 
     <div class="colonnes">
@@ -185,6 +197,51 @@
       <span id="etat-utilisateur" class="muet etat-utilisateur"></span>
     </footer>
   </div>
+
+  <dialog id="dialogue-import" class="dialogue dialogue-import" aria-labelledby="import-titre">
+    <!-- Récapitulatif -->
+    <div id="import-resume" class="dialogue-contenu">
+      <p id="import-titre"><span class="accent">$ cairn import</span> <span id="import-nom"></span></p>
+      <p id="import-lus" class="muet"></p>
+      <div class="compteurs">
+        <div class="compteur"><span id="import-n-nouvelles" class="compteur-nombre ok">0</span><span class="muet">nouvelles</span></div>
+        <div class="compteur"><span id="import-n-modifiees" class="compteur-nombre accent">0</span><span class="muet">modifiées</span></div>
+        <div class="compteur compteur-conflit"><span id="import-n-conflits" class="compteur-nombre erreur">0</span><span class="muet">en conflit</span></div>
+      </div>
+      <p id="import-autres" class="muet"></p>
+      <div id="import-zone-conflits">
+        <p class="titre-section">CONFLITS · modifiées dans Cairn depuis l'export</p>
+        <ul id="import-conflits" class="conflits"></ul>
+      </div>
+      <details id="import-details" class="import-details">
+        <summary id="import-details-titre"></summary>
+        <ul id="import-liste"></ul>
+      </details>
+      <label class="case">
+        <input type="checkbox" id="import-sauvegarde" checked>
+        <span>télécharger une sauvegarde avant d'importer</span>
+      </label>
+      <div class="dialogue-boutons">
+        <button type="button" id="import-annuler" class="bouton-discret">annuler</button>
+        <button type="button" id="import-ok" class="bouton-principal">importer</button>
+      </div>
+    </div>
+    <!-- Détail d'un conflit -->
+    <div id="import-detail" class="dialogue-contenu" hidden>
+      <p><button type="button" id="import-retour" class="bouton-lien">← retour</button> · <span id="import-detail-titre"></span></p>
+      <p id="import-detail-nom" class="conflit-nom"></p>
+      <div id="import-versions" class="versions"></div>
+      <div id="import-detail-choix" class="detail-choix"></div>
+    </div>
+    <!-- Lecture, import en cours, résultat -->
+    <div id="import-travail" class="dialogue-contenu" hidden>
+      <p><span class="accent">$ cairn import</span></p>
+      <pre id="import-progression" class="import-progression" role="status" aria-live="polite"></pre>
+      <div class="dialogue-boutons">
+        <button type="button" id="import-fermer" class="bouton-principal" hidden>fermer</button>
+      </div>
+    </div>
+  </dialog>
 
   <dialog id="palette-liens" class="palette" aria-label="Lier une note">
     <div class="palette-contenu">

@@ -24,11 +24,26 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 - **Filtrer** : clic sur un dossier (sous-dossiers compris) ou un tag dans la colonne de gauche (sur téléphone : fil d'Ariane et puces au-dessus de la liste). `mv` renomme le dossier choisi.
 - **Rechercher** : `Ctrl+K`, dans les titres et le contenu, sans tenir compte des accents ni des majuscules.
 - **Liens** : `[[Titre]]` ou `[[Titre|texte affiché]]`. Taper `[[` (ou le bouton `[[ ]]`, ou `Ctrl+Maj+L`) ouvre une fenêtre de recherche : titres, dossiers et contenu, filtres *partout*, *même dossier* et *récentes* ; un texte sélectionné sert de recherche. Un lien vers une note qui n'existe pas (marqué `+`) propose de la créer. Les notes qui citent la note ouverte sont listées sous l'aperçu (liens entrants). Après avoir renommé une note, Cairn propose de mettre à jour les liens des autres notes.
+- **Exporter** : menu `⋯` › `$ export` télécharge `cairn-AAAA-MM-JJ.zip`, un fichier `.md` par note rangé dans ses dossiers, avec un en-tête :
+  ```markdown
+  ---
+  id: 8f3a…
+  title: "Ma note"
+  folder: "Travail/Projets"
+  tags: ["dev", "idée"]
+  created_at: …
+  updated_at: 2026-11-04T22:30:00Z
+  ---
+  Contenu en Markdown…
+  ```
+  C'est aussi la **sauvegarde** indépendante de Supabase : à faire régulièrement.
+- **Importer** : menu `⋯` › `$ import` (un `.zip` ou des `.md`) ou `$ import dossier`. Rien n'est modifié avant d'avoir vérifié le récapitulatif : notes **nouvelles** (pas d'`id`, ou `id` inconnu), **modifiées**, **en conflit** (modifiées dans Cairn depuis l'export, ou titre déjà pris par une autre note) et identiques (ignorées). Pour chaque conflit : garder Cairn (par défaut), prendre le fichier, ou garder les deux (copie « … (import) ») ; « voir le détail » compare les deux versions. L'en-tête fait foi (titre, dossier, tags) ; sans en-tête, le titre et le dossier viennent du nom et du chemin du fichier. Une sauvegarde `.zip` est téléchargée avant d'importer (case cochée par défaut) : c'est le retour arrière.
+- **Avec Claude** : exporter, ouvrir le dossier dans Claude Code, trier, reformuler, ajouter des `[[liens]]` (garder les `id` ; renommer un titre est possible), puis réimporter le zip ou le dossier.
 - Deux notes ne peuvent pas avoir le même titre (sans tenir compte des majuscules), pour que les liens `[[Titre]]` restent sans ambiguïté.
 
 ## Essais
 
-`node outils/essai.js` (nécessite Playwright) : sert le dépôt en local, remplace `supabase-js` par un faux backend en mémoire ([`outils/faux-supabase.js`](outils/faux-supabase.js), compte `essai@cairn.local` / `secret`) et vérifie la connexion, le thème, les notes (création, édition, sauvegarde automatique, titres en double, panne réseau, suppression), l'aperçu Markdown assaini, les dossiers, tags, recherche, liens et renommages, et l'affichage sur téléphone. `marked` et `DOMPurify` sont pris sur le registre npm (même version que le CDN) et gardés dans `outils/.cache/`. Lancé aussi par la CI à chaque push.
+`node outils/essai.js` (nécessite Playwright) : sert le dépôt en local, remplace `supabase-js` par un faux backend en mémoire ([`outils/faux-supabase.js`](outils/faux-supabase.js), compte `essai@cairn.local` / `secret`) et vérifie la connexion, le thème, les notes (création, édition, sauvegarde automatique, titres en double, panne réseau, suppression), l'aperçu Markdown assaini, les dossiers, tags, recherche, liens et renommages, le code coloré et mermaid, l'export et l'import, et l'affichage sur téléphone. `marked` et `DOMPurify` sont pris sur le registre npm (même version que le CDN) et gardés dans `outils/.cache/`. Lancé aussi par la CI à chaque push.
 
 ## Crédits
 
@@ -37,4 +52,5 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 - [DOMPurify](https://github.com/cure53/DOMPurify) — Cure53, licence MPL-2.0 ou Apache-2.0, chargé depuis [jsDelivr](https://www.jsdelivr.com/package/npm/dompurify).
 - [highlight.js](https://github.com/highlightjs/highlight.js) — Ivan Sagalaev et contributeurs, licence BSD-3-Clause, chargé à la demande depuis [jsDelivr](https://www.jsdelivr.com/package/npm/@highlightjs/cdn-assets).
 - [Mermaid](https://github.com/mermaid-js/mermaid) — Knut Sveidqvist et contributeurs, licence MIT, chargé à la demande depuis [jsDelivr](https://www.jsdelivr.com/package/npm/mermaid).
+- [JSZip](https://github.com/Stuk/jszip) — Stuart Knightley et contributeurs, licence MIT (ou GPLv3), chargé à la demande depuis [jsDelivr](https://www.jsdelivr.com/package/npm/jszip).
 - [JetBrains Mono](https://www.jetbrains.com/lp/mono/) — JetBrains, licence SIL Open Font License 1.1, chargée depuis [Google Fonts](https://fonts.google.com/specimen/JetBrains+Mono).

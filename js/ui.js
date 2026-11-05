@@ -9,6 +9,8 @@ import { brancherMeta, afficherMeta, majNomFichier } from './meta.js';
 import { brancherPalette, ouvrirPalette } from './palette.js';
 import { enrichir, brancherCopie } from './rendu-avance.js';
 import { demander } from './dialogue.js';
+import { slug } from './export.js';
+import { brancherImport, lancerImport, lancerExport } from './import-dialogue.js';
 
 const DELAI_SAUVEGARDE = 1000;
 const CLE_MODE = 'cairn-mode';
@@ -42,14 +44,6 @@ function ecrireMode(m) {
   try { localStorage.setItem(CLE_MODE, m); } catch { /* tant pis */ }
 }
 
-export function slug(titre) {
-  const s = (titre || '')
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  return s || 'sans-titre';
-}
 
 const fmtHeure = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' });
 const fmtJour = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' });
@@ -496,6 +490,80 @@ function lierSelection() {
   lierNote(d, f, choisi.includes('\n') ? '' : choisi.trim());
 }
 
+// ---------- Menu, export et import ----------
+
+function fermerMenu() {
+  $('menu-principal').hidden = true;
+  $('bouton-menu').setAttribute('aria-expanded', 'false');
+}
+
+async function exporter() {
+  await sauvegarder();
+  etatSauvegarde('<span class="accent">…</span> export');
+  try {
+    const n = await lancerExport(etat.notes);
+    etatSauvegarde('<span class="ok">●</span> ' + pluriel(n, 'note') + ' exportée' + (n > 1 ? 's' : ''));
+  } catch {
+    etatSauvegarde('<span class="erreur">!</span> export impossible (bibliothèque injoignable ?)');
+  }
+}
+
+async function importer(fichiers) {
+  await sauvegarder();
+  await lancerImport(fichiers, {
+    notes: etat.notes,
+    surFin: async () => {
+      // On recharge tout depuis le serveur : c'est lui qui fait foi.
+      const r = await listerNotes().catch(() => ({ erreur: 'reseau' }));
+      if (r.erreur) return;
+      etat.notes = r.notes;
+      trier();
+      rafraichir();
+      const note = noteCourante();
+      if (etat.courante && !note) { location.hash = '#/'; return; }
+      if (note) afficherNote(note);
+    },
+  });
+}
+
+function brancherMenu() {
+  const bouton = $('bouton-menu');
+  const menu = $('menu-principal');
+  const elements = () => [...menu.querySelectorAll('[role="menuitem"]')].filter((b) => b.offsetParent !== null);
+  bouton.addEventListener('click', () => {
+    const ouvrir = menu.hidden;
+    menu.hidden = !ouvrir;
+    bouton.setAttribute('aria-expanded', String(ouvrir));
+    if (ouvrir) elements()[0]?.focus();
+  });
+  menu.addEventListener('keydown', (e) => {
+    const liste = elements();
+    const i = liste.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); liste[(i + 1) % liste.length].focus(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); liste[(i - 1 + liste.length) % liste.length].focus(); }
+    if (e.key === 'Escape') { e.preventDefault(); fermerMenu(); bouton.focus(); }
+  });
+  document.addEventListener('click', (e) => { if (!menu.hidden && !e.target.closest('.menu-zone')) fermerMenu(); });
+  menu.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-menu]');
+    if (!item) return;
+    fermerMenu();
+    const action = item.dataset.menu;
+    if (action === 'export') exporter();
+    if (action === 'import') $('import-fichier').click();
+    if (action === 'import-dossier') $('import-dossier').click();
+    if (action === 'theme') document.querySelector('.barre-haut [data-action="theme"]').click();
+    if (action === 'logout') $('bouton-deconnexion').click();
+  });
+  for (const id of ['import-fichier', 'import-dossier']) {
+    $(id).addEventListener('change', async () => {
+      const fichiers = [...$(id).files];
+      $(id).value = '';                 // pour pouvoir rechoisir le même fichier
+      if (fichiers.length) await importer(fichiers);
+    });
+  }
+}
+
 // ---------- Routage ----------
 
 async function router() {
@@ -535,6 +603,10 @@ function brancher() {
     $('recherche').value = '';
     changerFiltre({ dossier: '', tag: null, recherche: '' });
   });
+
+  // Menu ⋯ : export, import (et, sur téléphone, thème et déconnexion).
+  brancherMenu();
+  brancherImport();
 
   // Recherche dans les titres et le contenu.
   const recherche = $('recherche');

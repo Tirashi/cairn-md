@@ -701,6 +701,77 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .mermaid-svg svg { display: block; margin: 0 auto; }
 .apercu .bloc-mermaid-erreur { border-color: var(--erreur); color: var(--erreur); font-size: 12px; }
 
+/* ---------- Menu ⋯ ---------- */
+
+.menu-zone { position: relative; }
+.menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--rayon);
+  background: var(--surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+.menu[hidden] { display: none; }
+.menu button {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  text-align: left;
+}
+.menu button:hover, .menu button:focus-visible { background: var(--accent-fond); color: var(--accent); outline: none; }
+.menu-mobile { display: none; }
+
+/* ---------- Fenêtre d'import ---------- */
+
+.dialogue-import { width: min(560px, calc(100vw - 16px)); max-width: none; max-height: calc(100dvh - 32px); }
+.dialogue-import .dialogue-contenu { max-height: calc(100dvh - 34px); overflow-y: auto; }
+.compteurs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.compteur { display: flex; flex-direction: column; padding: 10px; border: 1px solid var(--border); border-radius: var(--rayon); font-size: 11px; }
+.compteur-conflit { border-color: var(--erreur); }
+.compteur-nombre { font-size: 22px; font-weight: 800; line-height: 1.3; }
+.conflits { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.conflit { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--rayon); }
+.conflit-nom { font-size: 13px; overflow-wrap: anywhere; }
+.conflit-dates { font-size: 11px; }
+.choix-conflit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.choix-conflit button {
+  min-height: 40px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+}
+.choix-conflit button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-fond); }
+.conflit .bouton-lien { align-self: flex-start; min-height: 32px; }
+.import-details summary { cursor: pointer; color: var(--accent); font-size: 12px; min-height: 32px; display: flex; align-items: center; }
+.import-details ul { list-style: none; margin: 4px 0 0; padding: 0; font-size: 12px; max-height: 180px; overflow-y: auto; }
+.import-details li { padding: 2px 0; overflow-wrap: anywhere; }
+.case { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 12px; color: var(--text); }
+.case input { width: 18px; height: 18px; accent-color: var(--accent); }
+.import-progression { margin: 0; font-family: inherit; font-size: 13px; white-space: pre-wrap; color: var(--text); }
+
+.versions { display: flex; flex-direction: column; gap: 10px; }
+.version { border: 1px solid var(--border); border-radius: var(--rayon); overflow: hidden; }
+.version-tete { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+.version-texte { margin: 0; padding: 10px; max-height: 28vh; overflow: auto; font-family: inherit; font-size: 12px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--muted); }
+.ligne-propre.cote-cairn { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.ligne-propre.cote-fichier { color: var(--accent); background: var(--accent-fond); }
+.detail-choix { display: flex; flex-direction: column; gap: 8px; }
+.detail-choix button { min-height: 44px; }
+
 /* ---------- Téléphone : un seul panneau à la fois ---------- */
 
 @media (max-width: 760px) {
@@ -749,4 +820,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   #etat-mots { display: none; }
   .palette { margin-top: 8px; max-height: calc(100dvh - 16px); }
   .palette-resultats li { padding: 11px 14px; }
+  .barre-haut [data-action="theme"], .barre-haut #bouton-deconnexion { display: none; }
+  .menu-mobile { display: block; }
+  .choix-conflit button { min-height: 44px; }
 }

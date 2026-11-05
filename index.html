@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cairn</title>
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#121212">
+  <script>
+    // Thème appliqué avant le rendu pour éviter le flash blanc.
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem('cairn-theme'); } catch (e) {}
+      if (theme !== 'light' && theme !== 'dark') {
+        theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'light' ? '#f6f6f4' : '#121212');
+    })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+
+  <!-- Chargement : rien n'est affiché tant que la session n'est pas connue -->
+  <div id="ecran-chargement" class="ecran ecran-centre">
+    <p class="muet">chargement<span class="curseur">_</span></p>
+  </div>
+
+  <!-- Configuration manquante -->
+  <div id="ecran-config" class="ecran ecran-centre" hidden>
+    <section class="carte">
+      <h1 class="marque"><img src="assets/logo.svg" alt="" width="32" height="32"><span>cairn<span class="accent">_</span></span></h1>
+      <p><span class="erreur">!</span> Configuration manquante.</p>
+      <p class="muet">Renseigner l'URL du projet Supabase et la clé <code>anon</code> dans <code>js/config.js</code>.</p>
+    </section>
+  </div>
+
+  <!-- Connexion -->
+  <div id="ecran-connexion" class="ecran ecran-centre" hidden>
+    <form id="form-connexion" class="carte" novalidate>
+      <h1 class="marque"><img src="assets/logo.svg" alt="" width="40" height="40"><span>cairn<span class="accent">_</span></span></h1>
+      <p class="muet">$ cairn login</p>
+
+      <label class="champ">
+        <span class="champ-etiquette">email</span>
+        <span class="invite">
+          <span class="accent" aria-hidden="true">&gt;</span>
+          <input id="connexion-email" name="email" type="email" autocomplete="username" inputmode="email" required>
+        </span>
+      </label>
+
+      <label class="champ">
+        <span class="champ-etiquette">mot de passe</span>
+        <span class="invite">
+          <span class="accent" aria-hidden="true">&gt;</span>
+          <input id="connexion-mdp" name="password" type="password" autocomplete="current-password" required>
+        </span>
+      </label>
+
+      <p id="connexion-message" class="message" role="alert" aria-live="polite"></p>
+
+      <button id="connexion-bouton" type="submit" class="bouton-principal">se connecter</button>
+    </form>
+    <button type="button" class="bouton-discret bouton-theme" data-action="theme" aria-label="Changer de thème">☾</button>
+  </div>
+
+  <!-- Application -->
+  <div id="ecran-appli" class="ecran appli" hidden>
+    <header class="barre-haut">
+      <span class="marque marque-petite"><img src="assets/logo.svg" alt="" width="26" height="26"><span>cairn<span class="accent">_</span></span></span>
+      <label class="invite recherche">
+        <span class="accent" aria-hidden="true">&gt;</span>
+        <input type="search" placeholder="grep notes…" aria-label="Rechercher dans les notes" disabled>
+        <kbd>Ctrl K</kbd>
+      </label>
+      <span class="espace"></span>
+      <button type="button" class="bouton-principal bouton-petit" disabled>+ nouvelle</button>
+      <button type="button" class="bouton-discret" data-action="theme" aria-label="Changer de thème">☾</button>
+      <button type="button" class="bouton-discret" id="bouton-deconnexion">logout</button>
+    </header>
+
+    <div class="colonnes">
+      <nav class="col-dossiers" aria-label="Dossiers et tags">
+        <p class="titre-section">DOSSIERS</p>
+        <p class="muet">~/ <span>0</span></p>
+        <p class="titre-section">TAGS</p>
+        <p class="muet">—</p>
+      </nav>
+      <section class="col-liste" aria-label="Notes">
+        <p class="muet vide">aucune note pour l'instant</p>
+      </section>
+      <main class="col-note">
+        <p class="muet vide">// les notes arrivent à l'étape 3</p>
+      </main>
+    </div>
+
+    <footer class="barre-etat">
+      <span><span class="ok">●</span> connecté</span>
+      <span id="etat-utilisateur" class="muet"></span>
+    </footer>
+  </div>
+
+</body>
+</html>

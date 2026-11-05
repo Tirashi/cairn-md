@@ -5,7 +5,8 @@
 - **Cahier des charges : [`specs/plan-v1.md`](specs/plan-v1.md)** (modèle de données, structure, étapes 1 à 7, portabilité). **Le lire avant** de toucher au schéma, à l'accès aux données, à l'export/import ou au thème.
 - Front statique en **HTML/CSS/JS vanilla, sans build** : le fichier poussé est celui que sert GitHub Pages. Bibliothèques **via CDN, version exacte épinglée** : `supabase-js`, `marked`, `DOMPurify`, `JSZip`. Pas de npm.
 - Backend : **Supabase** (authentification + table `notes`, notes en Markdown brut dans `content`). Inscriptions publiques désactivées.
-- Structure prévue : `index.html`, `css/style.css`, `assets/` (`logo.svg`, `icon-maskable.svg`), `js/` (`main.js` routage par hash, `config.js`, `supabase.js`, `auth.js`, `notes.js`, `markdown.js`, `ui.js`, `export.js`).
+- Structure : `index.html` (tous les écrans : chargement, config manquante, connexion, appli), `css/style.css`, `assets/` (`logo.svg`, `icon-maskable.svg`), `js/` en **modules ES** (`main.js` choix de l'écran et routage par hash, `config.js`, `supabase.js` client + fonctions d'auth, `auth.js` écran de connexion, `theme.js` bascule sombre/clair ; à venir : `notes.js`, `markdown.js`, `ui.js`, `export.js`), `supabase/schema.sql`, `outils/` (essais), `maquettes/`.
+- `supabase-js` épinglé en **2.118.0** (`+esm` sur jsDelivr) dans `js/supabase.js` ; Playwright **1.63.0** dans la CI.
 - **Direction visuelle retenue (05/11) : B « Terminal »** de la [maquette](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ) (`maquettes/interface/`) : tout en JetBrains Mono, coins de 6 px, filets `#2a2d33`, dossiers en arborescence `├─`, notes affichées comme `nom.md`, recherche façon invite `>`, éditeur avec numéros de ligne et Markdown coloré, suggestions à la frappe de `[[`, barre d'état (enregistré, liens entrants). Desktop : barre du haut, dossiers/tags (240 px), liste (320 px), note en `edit | split | view` avec liens entrants sous l'aperçu.
 - Identité : esprit ludique, minimaliste, geek ; **thème sombre par défaut** (fond `#121212`, texte `#e6e6e6`, accent ambre `#f0b45a`), couleurs en variables CSS sur `:root`, redéfinies par `[data-theme="light"]`. Le logo (trois tablettes de pierre, `[[ ]]` gravé en bas) est fourni : ne pas le redessiner sans demande.
 - Projet voisin : la **Ludothèque 16 bits** (**Tirashi/Claude**), dont ce fichier reprend les règles de travail. Les deux projets restent **indépendants** (pas de base ni de code partagés).
@@ -22,9 +23,10 @@
 - **Maquette d'abord** : avant de programmer une nouvelle fonctionnalité visible ou de refaire une interface, faire une petite maquette (artefact, dans `maquettes/`, 2 ou 3 directions) et **attendre que l'utilisateur la valide** ; on ne programme qu'ensuite, d'après la direction choisie.
 - Développer et pousser **uniquement sur la branche de travail** de la session. Ne pousser sur `main` **que quand l'utilisateur dit « mets à jour main »**, en avance rapide uniquement.
 - Messages de commit en français, écrits dans un fichier puis `git commit -F`.
-- Tests : lancer en local seulement les vérifications rapides avant chaque push ; les tests lourds sont laissés à la CI (à lancer en local seulement pour déboguer un échec). Après le push, regarder le résultat de la CI **avant de mettre à jour `main`**.
+- Tests : `node outils/essai.js` avant chaque push (Playwright, sans réseau : faux `supabase-js` dans `outils/faux-supabase.js`, compte `essai@cairn.local` / `secret` ; `--captures <dossier>` pour des captures). La CI (`.github/workflows/essais.yml`) le relance à chaque push : regarder son résultat **avant de mettre à jour `main`**. Chaque nouvelle fonctionnalité ajoute ses vérifications à l'essai (et au faux backend si besoin).
+- Le CDN (jsDelivr) et Supabase **ne sont pas joignables** depuis l'environnement de Claude : les versions se vérifient sur `registry.npmjs.org`.
 - **Sécurité** : ne jamais demander, stocker ni committer la clé `service_role`, le mot de passe de la base ou du compte, ni aucune note. Seules l'URL du projet Supabase et la clé `anon` (publique, la sécurité repose sur la RLS) sont dans le code, dans `js/config.js`. Vérifier la RLS avec un second compte de test avant de publier.
-- **Supabase n'est sans doute pas joignable** depuis l'environnement de Claude (proxy) : tester avec un faux backend en mémoire, puis demander un essai réel à l'utilisateur.
+- Supabase n'étant pas joignable d'ici, tester avec le faux backend, puis demander un essai réel à l'utilisateur.
 - **Crédits** : toute ressource venue d'ailleurs (bibliothèques, graphismes, polices, données) est citée **dès qu'on l'ajoute** : nom, créateur, licence, lien vers l'endroit où on l'a prise.
 - **Économie de tokens** : on peut rester dans la même conversation d'un chantier à l'autre en **compactant le contexte** (`/compact`) ; demandes précises ; peu de captures ; pas de sous-agents ; lire les fichiers par morceaux plutôt qu'en entier. Choix du modèle :
   | Chantier | Modèle |
@@ -45,4 +47,5 @@
 
 ## En cours / à vérifier
 Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).
-- **Démarrage** (05/11) : `CLAUDE.md`, plan V1 (`specs/plan-v1.md`) et logos (`assets/`) en place. **Maquette** ([artefact](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ)) : direction B choisie, version desktop faite (à valider), puis étape 1 (Supabase, à faire par l'utilisateur) et étape 2 (squelette et connexion).
+- **Démarrage** (05/11) : `CLAUDE.md`, plan V1 (`specs/plan-v1.md`) et logos (`assets/`) en place. **Maquette** ([artefact](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ)) : direction B choisie, desktop validé.
+- **Étape 2** (05/11) : squelette, connexion, déconnexion, thème sombre/clair faits et testés avec le faux backend. **À faire par l'utilisateur** : étape 1 (projet Supabase, `supabase/schema.sql`, compte, inscriptions coupées), remplir `js/config.js`, essai réel. Ensuite : étape 3 (CRUD et rendu Markdown).

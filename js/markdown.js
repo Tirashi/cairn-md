@@ -81,8 +81,9 @@ export function colorer(texte) {
     } else {
       html = colorerEnLigne(brut);
     }
-    // Une ligne vide doit garder sa hauteur.
-    return `<div class="ed-ligne">${html || '​'}</div>`;
+    // Une ligne vide doit garder sa hauteur, même dans un bloc de code (où `html` est
+    // un <span> vide, donc pas une chaîne vide) : sinon le texte affiché se décale du curseur.
+    return `<div class="ed-ligne">${ligne === '' ? '\u200b' : html}</div>`;
   }).join('');
 }
 

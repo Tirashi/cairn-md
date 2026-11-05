@@ -534,6 +534,21 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
         '```mermaid', 'flowchart LR', '  A[frappe] --> B{supabase}', '  B -->|ok| C[enregistré]', '  B -->|erreur| D[réessai]', '```', '',
         '```mermaid', 'ceci n est pas un diagramme', '```',
       ].join('\n');
+      // Lignes vides dans un bloc de code : l'éditeur doit rester aligné ligne par ligne.
+      await page.click('.bascule [data-mode="edit"]');
+      // (note plus haute que l'écran, pour que la zone de saisie ait la hauteur de son contenu)
+      await page.fill('#note-contenu', '```cs\nint banane = 2;\n\n\n\nd\n```\nfin' + '\nligne'.repeat(40));
+      const alignement = await page.evaluate(() => {
+        const lignes = [...document.querySelectorAll('#editeur-fond .ed-ligne')];
+        const hauteurs = lignes.map((l) => l.getBoundingClientRect().height);
+        const zone = document.getElementById('note-contenu');
+        return { nulles: hauteurs.filter((h) => h < 1).length, n: lignes.length,
+          ecart: Math.abs(document.getElementById('editeur-fond').offsetHeight - zone.scrollHeight) };
+      });
+      verifier(alignement.n === 48 && alignement.nulles === 0 && alignement.ecart <= 2,
+        'lignes vides dans un bloc de code : hauteur gardée, éditeur aligné (' + JSON.stringify(alignement) + ')');
+      await page.click('.bascule [data-mode="split"]');
+
       await page.fill('#note-contenu', md);
       await page.waitForSelector('#note-apercu .hljs-keyword', { timeout: 15000 });
       verifier(true, 'code coloré (highlight.js chargé à la demande)');

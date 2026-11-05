@@ -46,7 +46,7 @@
 À chaque chantier, quand c'est pertinent : `CLAUDE.md` (nouvelle règle, **une ligne** dans « En cours ») ; `specs/suivi.md` (détails du chantier) ; `IDEES.md` (✅, nouvelles idées, préférences) ; `README.md` (description pour les utilisateurs).
 
 ## Leçons apprises
-*(Rien pour l'instant.)*
+- **Éditeur aligné** (05/11) : chaque `.ed-ligne` doit garder une hauteur, même vide et même dans un bloc de code (caractère invisible `\u200b`). Une ligne de hauteur nulle décale tout le texte affiché par rapport au curseur réel. L'essai vérifie l'alignement sur une note plus haute que l'écran (sinon la mesure est faussée).
 
 ## En cours / à vérifier
 Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).

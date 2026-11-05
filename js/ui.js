@@ -3,10 +3,11 @@
 import { listerNotes, creerNote, modifierNote, supprimerNote } from './notes.js';
 import { rendre, colorer, extrait, compterMots, definirResolveur } from './markdown.js';
 import { normaliserDossier, dossierExistant, dansDossier, listerDossiers, compterTags, filtrer } from './arbre.js';
-import { cite, remplacerLien, liensEntrants, amorceLien, proposerTitres } from './liens.js';
+import { cite, remplacerLien, liensEntrants } from './liens.js';
 import { afficherNavigation } from './navigation.js';
 import { brancherMeta, afficherMeta, majNomFichier } from './meta.js';
-import { creerSuggestions } from './suggestions.js';
+import { brancherPalette, ouvrirPalette } from './palette.js';
+import { enrichir, brancherCopie } from './rendu-avance.js';
 import { demander } from './dialogue.js';
 
 const DELAI_SAUVEGARDE = 1000;
@@ -195,6 +196,7 @@ function majApercu() {
     if (texte.trim()) {
       apercu.innerHTML = rendre(texte);       // rendre() passe toujours par DOMPurify
       apercu.classList.remove('apercu-vide');
+      enrichir(apercu);                       // code coloré et diagrammes mermaid
     } else {
       apercu.textContent = '// note vide';
       apercu.classList.add('apercu-vide');
@@ -232,7 +234,6 @@ function afficherNote(note) {
   $('note').hidden = !note;
   $('note-message').textContent = '';
   $('note-renommage').hidden = true;
-  suggLiens?.cacher();
   if (!note) {
     $('etat-mots').textContent = '';
     $('etat-liens').textContent = '';
@@ -459,34 +460,40 @@ async function demanderSuppression() {
   router();
 }
 
-// ---------- Suggestions de liens à la frappe de [[ ----------
+// ---------- Palette « lier une note » ----------
 
-let suggLiens = null;
-let amorce = null;
-
-function proposerLiens() {
+/**
+ * Ouvre la palette ; le lien choisi remplace le texte entre `debut` et `fin`.
+ * Sans choix, rien ne change et le curseur revient où il était.
+ */
+function lierNote(debut, fin, requete = '') {
   const zone = $('note-contenu');
-  amorce = zone.selectionStart === zone.selectionEnd ? amorceLien(zone.value, zone.selectionStart) : null;
-  if (!amorce) { suggLiens.cacher(); return; }
-  const titres = etat.notes.filter((n) => n.id !== etat.courante).map((n) => n.title);
-  const choix = proposerTitres(titres, amorce.requete).map((t) => ({ valeur: t, texte: '[[' + t + ']]' }));
-  if (amorce.requete.trim() && !parTitre(amorce.requete)) {
-    choix.push({ valeur: amorce.requete.trim(), texte: '+ lien vers une nouvelle note « ' + amorce.requete.trim() + ' »' });
-  }
-  suggLiens.afficher(choix);
+  let insere = false;
+  ouvrirPalette({
+    requete,
+    surChoix: (titre) => {
+      // Si des ]] suivent déjà (fermeture automatique), on les remplace aussi.
+      const fermeDeja = zone.value.slice(fin, fin + 2) === ']]';
+      zone.focus();
+      zone.setRangeText('[[' + titre + ']]', debut, fermeDeja ? fin + 2 : fin, 'end');
+      insere = true;
+      zone.dispatchEvent(new Event('input'));
+    },
+    surFermeture: () => {
+      zone.focus();
+      if (!insere) zone.selectionStart = zone.selectionEnd = fin;
+    },
+  });
 }
 
-function insererLien(option) {
+/** Bouton [[ ]] ou Ctrl+Maj+L : la sélection éventuelle sert de recherche et est remplacée. */
+function lierSelection() {
+  if (!etat.courante) return;
+  if (modeEffectif() === 'view') { etat.mode = etroit.matches ? 'edit' : 'split'; ecrireMode(etat.mode); appliquerMode(); }
   const zone = $('note-contenu');
-  if (!amorce) return;
-  const curseur = zone.selectionStart;
-  const fermeDeja = zone.value.slice(curseur).startsWith(']]');
-  zone.setRangeText(option.valeur + (fermeDeja ? '' : ']]'), amorce.debut, curseur, 'end');
-  if (fermeDeja) zone.selectionStart = zone.selectionEnd = zone.selectionStart + 2;
-  suggLiens.cacher();
-  amorce = null;
-  zone.dispatchEvent(new Event('input'));
-  zone.focus();
+  const { selectionStart: d, selectionEnd: f } = zone;
+  const choisi = zone.value.slice(d, f);
+  lierNote(d, f, choisi.includes('\n') ? '' : choisi.trim());
 }
 
 // ---------- Routage ----------
@@ -553,24 +560,21 @@ function brancher() {
     surTags: (tags) => { etat.enAttente.tags = tags; sauvegarder(); },
   });
 
-  // Contenu.
+  // Contenu. Taper [[ ouvre la palette « lier une note ».
   const zone = $('note-contenu');
-  suggLiens = creerSuggestions($('suggestions-liens'), zone, insererLien);
-  zone.addEventListener('input', () => {
+  brancherPalette({ notes: () => etat.notes, courante: noteCourante });
+  zone.addEventListener('input', (e) => {
     etat.enAttente.content = zone.value;
     majEditeur();
-    proposerLiens();
     planifierSauvegarde();
+    const c = zone.selectionStart;
+    const frappe = /^insert(Text|CompositionText|ReplacementText)$/.test(e.inputType || '');
+    if (frappe && zone.selectionEnd === c
+        && zone.value.slice(c - 2, c) === '[[' && zone.value[c - 3] !== '[') {
+      lierNote(c - 2, c);
+    }
   });
-  zone.addEventListener('keydown', (e) => {
-    if (!suggLiens.ouverte()) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); suggLiens.deplacer(1); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); suggLiens.deplacer(-1); }
-    else if (e.key === 'Enter' || e.key === 'Tab') { if (suggLiens.choisirActive()) e.preventDefault(); }
-    else if (e.key === 'Escape') { e.preventDefault(); suggLiens.cacher(); }
-  });
-  zone.addEventListener('click', proposerLiens);
-  zone.addEventListener('blur', () => suggLiens.cacher());
+  $('bouton-lier').addEventListener('click', lierSelection);
 
   // Titre.
   $('note-titre').addEventListener('input', () => {
@@ -597,6 +601,9 @@ function brancher() {
   });
 
   // Liens [[…]] de l'aperçu vers une note qui n'existe pas encore.
+  brancherCopie($('note-apercu'));
+  // Changer de thème redessine les diagrammes aux bonnes couleurs.
+  document.addEventListener('cairn-theme', () => { if (etat.courante) majApercu(); });
   $('note-apercu').addEventListener('click', (e) => {
     const a = e.target.closest('a.lien-absent');
     if (!a) return;
@@ -618,6 +625,7 @@ function brancher() {
     if ($('ecran-appli').hidden || !(e.ctrlKey || e.metaKey)) return;
     const k = e.key.toLowerCase();
     if (k === 's') { e.preventDefault(); sauvegarder(); }
+    if (k === 'l' && e.shiftKey) { e.preventDefault(); lierSelection(); }
     if (k === 'k') { e.preventDefault(); if (etroit.matches && etat.courante) location.hash = '#/'; recherche.focus(); recherche.select(); }
   });
   // Ne rien perdre en quittant ou en changeant d'onglet.

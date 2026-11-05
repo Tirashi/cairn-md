@@ -4,8 +4,9 @@ let compteur = 0;
 /**
  * ul : la liste ; champ : l'élément qui garde le focus (aria-activedescendant) ;
  * surChoix(option) : appelé au clic ou à Entrée. Une option = { valeur, texte, note? }.
+ * rendu(option) : facultatif, renvoie les nœuds à placer dans l'option (sinon `texte`).
  */
-export function creerSuggestions(ul, champ, surChoix) {
+export function creerSuggestions(ul, champ, surChoix, rendu = null) {
   let options = [];
   let active = -1;
   const prefixe = 'sugg-' + (++compteur) + '-';
@@ -17,9 +18,13 @@ export function creerSuggestions(ul, champ, surChoix) {
       li.id = prefixe + i;
       li.setAttribute('role', 'option');
       li.setAttribute('aria-selected', String(i === active));
-      const t = document.createElement('span');
-      t.textContent = o.texte;
-      li.append(t);
+      if (rendu) {
+        li.append(...rendu(o));
+      } else {
+        const t = document.createElement('span');
+        t.textContent = o.texte;
+        li.append(t);
+      }
       if (o.note) {
         const n = document.createElement('span');
         n.className = 'muet';

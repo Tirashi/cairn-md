@@ -35,26 +35,3 @@ export function liensEntrants(notes, note) {
 export function compterLiens(contenu) {
   return ((contenu || '').match(/\[\[[^\[\]\n]+\]\]/g) || []).length;
 }
-
-/**
- * Amorce de lien en cours de frappe : texte entre `[[` et le curseur,
- * sur la même ligne et sans `]]`. Renvoie { debut, requete } ou null.
- */
-export function amorceLien(texte, curseur) {
-  const avant = texte.slice(0, curseur);
-  const m = avant.match(/\[\[([^\[\]\n|]*)$/);
-  return m ? { debut: curseur - m[1].length, requete: m[1] } : null;
-}
-
-/** Titres proposés pour une requête : ceux qui commencent par elle, puis ceux qui la contiennent. */
-export function proposerTitres(titres, requete, max = 6) {
-  const q = plier(requete.trim());
-  const debut = [];
-  const milieu = [];
-  for (const t of titres) {
-    const p = plier(t);
-    if (!q || p.startsWith(q)) debut.push(t);
-    else if (p.includes(q)) milieu.push(t);
-  }
-  return [...debut, ...milieu].slice(0, max);
-}

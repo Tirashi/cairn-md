@@ -13,6 +13,11 @@
   --code-bg: #0c0d0f;
   --ok: #7fc48f;
   --erreur: #ff8a80;
+  --code-mot: #f0b45a;      /* mots-clés */
+  --code-fonction: #8fb8d6;
+  --code-chaine: #a5c98f;
+  --code-nombre: #e39b7b;
+  --code-commentaire: #6f747c;
   --rayon: 6px;
   --police: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
@@ -30,6 +35,11 @@
   --code-bg: #eef0f2;
   --ok: #2e7d45;
   --erreur: #b3261e;
+  --code-mot: #8a5a12;
+  --code-fonction: #2f5f86;
+  --code-chaine: #3f6b2c;
+  --code-nombre: #a14a28;
+  --code-commentaire: #6b7078;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -296,6 +306,9 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   font-size: 13.5px;
   line-height: 1.75;
 }
+/* Pas de ligatures (--> resterait une flèche) : on montre le texte tel qu'il est tapé. */
+.editeur-fond, .editeur-saisie, .apercu code, .apercu pre { font-variant-ligatures: none; }
+
 .editeur-fond, .editeur-saisie {
   margin: 0;
   padding: 14px 16px 40vh calc(var(--gouttiere) + 6px);
@@ -579,6 +592,115 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .liens-entrants a { display: block; padding: 6px 0; color: var(--text); text-decoration: none; overflow-wrap: anywhere; }
 .liens-entrants a:hover span:first-child { color: var(--accent); }
 
+/* ---------- Palette « lier une note » ---------- */
+
+.bouton-lier { font-weight: 700; color: var(--accent); }
+.palette {
+  width: min(640px, calc(100vw - 16px));
+  max-height: min(640px, calc(100dvh - 32px));
+  margin: 12vh auto auto;
+  padding: 0;
+  border: 1px solid var(--accent);
+  border-radius: var(--rayon);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+.palette::backdrop { background: rgba(0, 0, 0, 0.55); }
+.palette-contenu { display: flex; flex-direction: column; max-height: inherit; }
+.palette-recherche {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--border);
+}
+.palette-recherche .accent { font-weight: 800; }
+.palette-recherche input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+}
+.palette-recherche kbd { font-size: 11px; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+.palette-filtres { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+.palette-filtres button {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+}
+.palette-filtres button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-fond); }
+.palette-resultats { list-style: none; margin: 0; padding: 4px 0; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+.palette-resultats li { display: flex; flex-direction: column; gap: 2px; padding: 9px 14px; cursor: pointer; }
+.palette-resultats li[aria-selected="true"] { background: var(--accent-fond); box-shadow: inset 3px 0 0 var(--accent); }
+.palette-resultats li:hover { background: var(--accent-fond); }
+.pal-haut { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+.pal-titre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pal-date { flex: 0 0 auto; font-size: 11px; color: var(--muted); }
+.pal-bas { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pal-nouvelle { font-size: 13px; color: var(--muted); }
+.palette mark { background: transparent; color: var(--accent); font-weight: 800; }
+.palette-vide { margin: 0; padding: 16px 14px; }
+.palette-pied {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--faible);
+}
+
+/* ---------- Code coloré et mermaid (aperçu) ---------- */
+
+.apercu .bloc-code { margin: 0 0 12px; border: 1px solid var(--border); border-radius: var(--rayon); background: var(--code-bg); overflow: hidden; }
+.apercu .bloc-code figcaption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 6px 3px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+}
+.apercu .bloc-code pre { margin: 0; border: 0; border-radius: 0; background: transparent; }
+.bouton-copier {
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+}
+.bouton-copier:hover { color: var(--accent); border-color: var(--accent); }
+
+.hljs-keyword, .hljs-literal, .hljs-selector-tag, .hljs-built_in, .hljs-doctag, .hljs-section, .hljs-meta .hljs-keyword { color: var(--code-mot); }
+.hljs-title, .hljs-title.function_, .hljs-title.class_, .hljs-function .hljs-title, .hljs-type, .hljs-name, .hljs-selector-id, .hljs-selector-class { color: var(--code-fonction); }
+.hljs-string, .hljs-regexp, .hljs-template-tag, .hljs-addition, .hljs-symbol, .hljs-bullet { color: var(--code-chaine); }
+.hljs-number, .hljs-variable.constant_, .hljs-deletion { color: var(--code-nombre); }
+.hljs-comment, .hljs-quote, .hljs-meta { color: var(--code-commentaire); font-style: italic; }
+.hljs-attr, .hljs-attribute, .hljs-property, .hljs-params { color: var(--text); }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 700; }
+
+.apercu .bloc-mermaid { margin: 0 0 12px; padding: 16px; border: 1px solid var(--border); border-radius: var(--rayon); overflow-x: auto; }
+.apercu .bloc-mermaid > p { margin: 0; }
+.mermaid-svg { width: max-content; min-width: 100%; }
+.mermaid-svg svg { display: block; margin: 0 auto; }
+.apercu .bloc-mermaid-erreur { border-color: var(--erreur); color: var(--erreur); font-size: 12px; }
+
 /* ---------- Téléphone : un seul panneau à la fois ---------- */
 
 @media (max-width: 760px) {
@@ -625,4 +747,6 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   .liens-entrants a { padding: 10px 0; }
   .barre-etat { gap: 14px; }
   #etat-mots { display: none; }
+  .palette { margin-top: 8px; max-height: calc(100dvh - 16px); }
+  .palette-resultats li { padding: 11px 14px; }
 }

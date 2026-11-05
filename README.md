@@ -18,11 +18,12 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 - Enregistrement automatique une seconde après la dernière frappe (barre d'état : `○ modifié`, `● enregistré`) ; `Ctrl+S` force l'enregistrement.
 - `edit | split | view` : éditeur, les deux côte à côte (ordinateur), ou aperçu. Sur téléphone, un seul panneau à la fois et ← pour revenir à la liste.
 - `rm` supprime la note après confirmation.
+- **Code** : les blocs ```` ```js ```` (ou sans langage, deviné) sont colorés dans l'aperçu, avec un bouton *copier*. Les blocs ```` ```mermaid ```` deviennent des diagrammes aux couleurs de Cairn (le diagramme garde une taille lisible et défile s'il est trop large).
 - **Dossier** : le champ `~/…` sous le titre se tape comme un chemin (`travail/projets`) ; les dossiers existants sont proposés, Entrée valide, Échap annule. Les dossiers n'existent que par leurs notes.
 - **Tags** : `+ tag`, puis Entrée ou virgule ; `×` pour retirer.
 - **Filtrer** : clic sur un dossier (sous-dossiers compris) ou un tag dans la colonne de gauche (sur téléphone : fil d'Ariane et puces au-dessus de la liste). `mv` renomme le dossier choisi.
 - **Rechercher** : `Ctrl+K`, dans les titres et le contenu, sans tenir compte des accents ni des majuscules.
-- **Liens** : `[[Titre]]` ou `[[Titre|texte affiché]]` ; taper `[[` propose les notes existantes. Un lien vers une note qui n'existe pas (marqué `+`) propose de la créer. Les notes qui citent la note ouverte sont listées sous l'aperçu (liens entrants). Après avoir renommé une note, Cairn propose de mettre à jour les liens des autres notes.
+- **Liens** : `[[Titre]]` ou `[[Titre|texte affiché]]`. Taper `[[` (ou le bouton `[[ ]]`, ou `Ctrl+Maj+L`) ouvre une fenêtre de recherche : titres, dossiers et contenu, filtres *partout*, *même dossier* et *récentes* ; un texte sélectionné sert de recherche. Un lien vers une note qui n'existe pas (marqué `+`) propose de la créer. Les notes qui citent la note ouverte sont listées sous l'aperçu (liens entrants). Après avoir renommé une note, Cairn propose de mettre à jour les liens des autres notes.
 - Deux notes ne peuvent pas avoir le même titre (sans tenir compte des majuscules), pour que les liens `[[Titre]]` restent sans ambiguïté.
 
 ## Essais
@@ -34,4 +35,6 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 - [supabase-js](https://github.com/supabase/supabase-js) — Supabase, licence MIT, chargé depuis [jsDelivr](https://www.jsdelivr.com/package/npm/@supabase/supabase-js).
 - [marked](https://github.com/markedjs/marked) — Christopher Jeffrey et contributeurs, licence MIT, chargé depuis [jsDelivr](https://www.jsdelivr.com/package/npm/marked).
 - [DOMPurify](https://github.com/cure53/DOMPurify) — Cure53, licence MPL-2.0 ou Apache-2.0, chargé depuis [jsDelivr](https://www.jsdelivr.com/package/npm/dompurify).
+- [highlight.js](https://github.com/highlightjs/highlight.js) — Ivan Sagalaev et contributeurs, licence BSD-3-Clause, chargé à la demande depuis [jsDelivr](https://www.jsdelivr.com/package/npm/@highlightjs/cdn-assets).
+- [Mermaid](https://github.com/mermaid-js/mermaid) — Knut Sveidqvist et contributeurs, licence MIT, chargé à la demande depuis [jsDelivr](https://www.jsdelivr.com/package/npm/mermaid).
 - [JetBrains Mono](https://www.jetbrains.com/lp/mono/) — JetBrains, licence SIL Open Font License 1.1, chargée depuis [Google Fonts](https://fonts.google.com/specimen/JetBrains+Mono).

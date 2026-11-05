@@ -12,6 +12,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Bibliothèques en cache (marked, DOMPurify, highlight.js, mermaid)
+        uses: actions/cache@v4
+        with:
+          path: outils/.cache
+          key: bibliotheques-${{ hashFiles('js/*.js', 'outils/essai.js') }}
+          restore-keys: bibliotheques-
       - name: Installer Playwright
         run: |
           npm install --no-save --no-package-lock playwright@1.63.0

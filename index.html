@@ -123,6 +123,7 @@
               <button type="button" data-mode="split" aria-pressed="false" class="mode-large">split</button>
               <button type="button" data-mode="view" aria-pressed="false">view</button>
             </div>
+            <button type="button" class="bouton-discret bouton-icone bouton-lier" id="bouton-lier" aria-label="Lier une note (Ctrl+Maj+L)" title="Lier une note (Ctrl+Maj+L)">[[ ]]</button>
             <button type="button" class="bouton-discret bouton-icone" id="bouton-supprimer" aria-label="Supprimer la note">rm</button>
           </div>
 
@@ -161,8 +162,7 @@
             <div class="panneau-edition">
               <div class="editeur">
                 <div class="editeur-fond" id="editeur-fond" aria-hidden="true"></div>
-                <textarea id="note-contenu" class="editeur-saisie" aria-label="Contenu de la note (Markdown)" spellcheck="false" autocapitalize="sentences"
-                          aria-autocomplete="list" aria-controls="suggestions-liens"></textarea>
+                <textarea id="note-contenu" class="editeur-saisie" aria-label="Contenu de la note (Markdown). Taper [[ pour lier une note." spellcheck="false" autocapitalize="sentences"></textarea>
               </div>
             </div>
             <div class="panneau-apercu">
@@ -173,7 +173,6 @@
               </section>
             </div>
           </div>
-          <ul id="suggestions-liens" class="suggestions suggestions-liens" role="listbox" aria-label="Notes à lier" hidden></ul>
         </div>
       </main>
     </div>
@@ -186,6 +185,28 @@
       <span id="etat-utilisateur" class="muet etat-utilisateur"></span>
     </footer>
   </div>
+
+  <dialog id="palette-liens" class="palette" aria-label="Lier une note">
+    <div class="palette-contenu">
+      <label class="palette-recherche">
+        <span class="accent" aria-hidden="true">[[</span>
+        <input id="palette-champ" type="text" placeholder="chercher une note…" aria-label="Chercher une note à lier"
+               autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="palette-resultats">
+        <kbd>Échap</kbd>
+      </label>
+      <div id="palette-filtres" class="palette-filtres" role="group" aria-label="Filtre">
+        <button type="button" data-filtre="partout" aria-pressed="true">partout</button>
+        <button type="button" data-filtre="dossier" aria-pressed="false">même dossier</button>
+        <button type="button" data-filtre="recentes" aria-pressed="false">récentes</button>
+      </div>
+      <ul id="palette-resultats" class="palette-resultats" role="listbox" aria-label="Notes"></ul>
+      <p id="palette-vide" class="muet palette-vide" hidden>aucune note</p>
+      <div class="palette-pied">
+        <span>↑↓ choisir · Entrée lier</span>
+        <span id="palette-compte"></span>
+      </div>
+    </div>
+  </dialog>
 
   <dialog id="dialogue" class="dialogue" aria-labelledby="dialogue-titre">
     <form method="dialog" class="dialogue-contenu">

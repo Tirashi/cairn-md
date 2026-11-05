@@ -21,6 +21,7 @@ export function brancherTheme() {
     b.addEventListener('click', () => {
       const suivant = themeActuel() === 'dark' ? 'light' : 'dark';
       appliquer(suivant);
+      document.dispatchEvent(new CustomEvent('cairn-theme', { detail: suivant }));
       try { localStorage.setItem(CLE, suivant); } catch { /* stockage indisponible : le choix n'est pas retenu */ }
     });
   }

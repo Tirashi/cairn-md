@@ -28,9 +28,12 @@ function serveur() {
 // ---------- Bibliothèques du CDN, prises sur le registre npm (même version) ----------
 const CACHE = path.join(__dirname, '.cache');
 const BIBLIOTHEQUES = [
-  // [motif dans js/*.js, paquet npm, fichier ES du paquet]
+  // [motif dans js/*.js (version en 1er groupe), paquet npm, fichier ES du paquet ou null]
+  // null : tout le paquet est servi sous l'URL du CDN (modules découpés en morceaux, comme mermaid).
   [/cdn\.jsdelivr\.net\/npm\/marked@([\d.]+)\/\+esm/, 'marked', 'lib/marked.esm.js'],
   [/cdn\.jsdelivr\.net\/npm\/dompurify@([\d.]+)\/\+esm/, 'dompurify', 'dist/purify.es.mjs'],
+  [/cdn\.jsdelivr\.net\/npm\/@highlightjs\/cdn-assets@([\d.]+)\/es\/highlight\.min\.js/, '@highlightjs/cdn-assets', 'es/highlight.min.js'],
+  [/cdn\.jsdelivr\.net\/npm\/mermaid@([\d.]+)\/dist\/mermaid\.esm\.min\.mjs/, 'mermaid', null],
 ];
 
 function telecharger(url, dest) {
@@ -45,7 +48,10 @@ function telecharger(url, dest) {
   });
 }
 
-/** Renvoie [[url du CDN, contenu du fichier], …] pour chaque bibliothèque utilisée par js/. */
+/**
+ * Renvoie les routes à installer : { url, corps } (un fichier) ou { prefixe, dossier } (tout un paquet),
+ * pour chaque bibliothèque utilisée par js/, à la version écrite dans le code.
+ */
 async function preparerBibliotheques() {
   const sources = fs.readdirSync(path.join(RACINE, 'js')).map((f) => fs.readFileSync(path.join(RACINE, 'js', f), 'utf8')).join('\n');
   const routes = [];
@@ -53,14 +59,18 @@ async function preparerBibliotheques() {
     const m = sources.match(motif);
     if (!m) continue;
     const version = m[1];
-    const dossier = path.join(CACHE, paquet + '-' + version);
-    if (!fs.existsSync(path.join(dossier, fichier))) {
+    const nomCourt = paquet.split('/').pop();
+    const dossier = path.join(CACHE, nomCourt + '-' + version);
+    const temoin = path.join(dossier, 'package.json');
+    if (!fs.existsSync(temoin)) {
       fs.mkdirSync(dossier, { recursive: true });
       const tgz = path.join(dossier, 'paquet.tgz');
-      await telecharger(`https://registry.npmjs.org/${paquet}/-/${paquet}-${version}.tgz`, tgz);
+      await telecharger(`https://registry.npmjs.org/${paquet}/-/${nomCourt}-${version}.tgz`, tgz);
       execFileSync('tar', ['xzf', tgz, '-C', dossier, '--strip-components=1']);
+      fs.unlinkSync(tgz);
     }
-    routes.push([`https://${m[0]}`, fs.readFileSync(path.join(dossier, fichier), 'utf8')]);
+    if (fichier) routes.push({ url: `https://${m[0]}`, corps: fs.readFileSync(path.join(dossier, fichier), 'utf8') });
+    else routes.push({ prefixe: `https://cdn.jsdelivr.net/npm/${paquet}@${version}/`, dossier });
   }
   return routes;
 }
@@ -82,8 +92,17 @@ async function nouvellePage(navigateur, base, { configure, schema = 'dark' }) {
   await page.route('https://fonts.gstatic.com/**', (r) => r.abort());
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/**', (r) =>
     r.fulfill({ contentType: 'text/javascript', body: fs.readFileSync(path.join(__dirname, 'faux-supabase.js'), 'utf8') }));
-  for (const [url, corps] of routesBibliotheques) {
-    await page.route(url, (r) => r.fulfill({ contentType: 'text/javascript', body: corps }));
+  for (const route of routesBibliotheques) {
+    if (route.url) {
+      await page.route(route.url, (r) => r.fulfill({ contentType: 'text/javascript', body: route.corps }));
+    } else {
+      await page.route(route.prefixe + '**', (r) => {
+        const relatif = decodeURIComponent(r.request().url().slice(route.prefixe.length).split('?')[0]);
+        const chemin = path.join(route.dossier, relatif);
+        if (!chemin.startsWith(route.dossier) || !fs.existsSync(chemin)) return r.fulfill({ status: 404, body: '' });
+        r.fulfill({ contentType: 'text/javascript', body: fs.readFileSync(chemin) });
+      });
+    }
   }
   // La vraie config n'est jamais utilisée par l'essai : remplie (faux projet) ou vide.
   await page.route(base + '/js/config.js', (r) => r.fulfill({
@@ -419,17 +438,43 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       await page.waitForFunction(() => /lien mis à jour/.test(document.getElementById('etat-sauvegarde').textContent));
       verifier((await parTitre('Cairn — plan V1')).content.includes('[[Schéma de la base]]'), 'lien mis à jour dans l\'autre note');
 
-      // Suggestions à la frappe de [[.
+      // Palette « lier une note » : ouverte en tapant [[.
       await ouvrir('Cairn — plan V1');
       await page.click('.bascule [data-mode="edit"]');
       await page.focus('#note-contenu');
       await page.evaluate(() => { const z = document.getElementById('note-contenu'); z.selectionStart = z.selectionEnd = z.value.length; });
-      await page.keyboard.type('\n[[pai');
-      await page.waitForSelector('#suggestions-liens:not([hidden])');
-      verifier((await page.locator('#suggestions-liens li').first().textContent()) === '[[Pain au levain]]', 'suggestion [[Pain au levain]]');
+      await page.keyboard.type('\n[[');
+      await page.waitForSelector('#palette-liens[open]');
+      verifier(await page.evaluate(() => document.activeElement.id === 'palette-champ'), 'taper [[ ouvre la palette, curseur dans sa recherche');
+      verifier((await page.textContent('#palette-compte')) === '4 sur 4 notes', 'palette : 4 sur 4 notes (la note ouverte exclue)');
+      await page.keyboard.type('pai');
+      verifier((await page.locator('#palette-resultats .pal-titre').first().textContent()) === 'Pain au levain', 'palette : « pai » → Pain au levain');
+      verifier((await page.locator('#palette-resultats mark').first().textContent()) === 'Pai', 'palette : lettres trouvées surlignées');
       await page.keyboard.press('Enter');
-      verifier((await page.inputValue('#note-contenu')).endsWith('\n[[Pain au levain]]'), 'Entrée insère [[Pain au levain]]');
-      verifier(await page.locator('#suggestions-liens').isHidden(), 'suggestions refermées');
+      await page.waitForFunction(() => !document.getElementById('palette-liens').open);
+      verifier((await page.inputValue('#note-contenu')).endsWith('\n[[Pain au levain]]'), 'Entrée insère [[Pain au levain]] à la place de [[');
+      verifier(await page.evaluate(() => document.activeElement.id === 'note-contenu'), 'retour dans l\'éditeur après le choix');
+      await enregistre();
+
+      await page.click('#bouton-lier');
+      await page.waitForSelector('#palette-liens[open]');
+      await page.keyboard.type('table notes');
+      verifier((await page.locator('#palette-resultats .pal-bas').first().textContent()).includes('contenu : '), 'palette : recherche aussi dans le contenu (plusieurs mots)');
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => !document.getElementById('palette-liens').open);
+      verifier((await page.inputValue('#note-contenu')).endsWith('\n[[Pain au levain]]'), 'Échap : rien n\'est inséré');
+
+      await page.keyboard.press('Control+Shift+L');
+      await page.waitForSelector('#palette-liens[open]');
+      await page.click('#palette-filtres [data-filtre="dossier"]');
+      const memeDossier = await page.locator('#palette-resultats .pal-titre').allTextContents();
+      verifier(memeDossier.sort().join() === 'Idée absente,Schéma de la base', 'Ctrl+Maj+L, filtre « même dossier » (' + memeDossier.join(', ') + ')');
+      await page.click('#palette-filtres [data-filtre="partout"]');
+      await page.fill('#palette-champ', 'Zorglub');
+      verifier((await page.locator('#palette-resultats li').count()) === 1 && (await page.textContent('#palette-resultats li')).includes('nouvelle note « Zorglub »'), 'palette : proposer un lien vers une nouvelle note');
+      await page.keyboard.press('Enter');
+      await page.waitForFunction(() => !document.getElementById('palette-liens').open);
+      verifier((await page.inputValue('#note-contenu')).endsWith('[[Pain au levain]][[Zorglub]]'), 'lien vers une note à créer inséré');
       await enregistre();
 
       // Renommer un dossier.
@@ -468,6 +513,69 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
         await page.screenshot({ path: path.join(dossier, 'etape4-desktop.png') });
       }
 
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
+    console.log('Code coloré et mermaid');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: base });
+      await page.goto(base + '/');
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.click('#bouton-nouvelle');
+      await page.waitForSelector('#note:not([hidden])');
+      await page.click('.bascule [data-mode="split"]');
+      const md = [
+        '```js', 'async function sauver(id) {', '  // une seule à la fois', "  return client.from('notes').eq('id', id) + 5000;", '}', '```', '',
+        '```', 'SELECT nom, prix FROM produits WHERE prix > 10 ORDER BY nom;', '```', '',
+        '```mermaid', 'flowchart LR', '  A[frappe] --> B{supabase}', '  B -->|ok| C[enregistré]', '  B -->|erreur| D[réessai]', '```', '',
+        '```mermaid', 'ceci n est pas un diagramme', '```',
+      ].join('\n');
+      await page.fill('#note-contenu', md);
+      await page.waitForSelector('#note-apercu .hljs-keyword', { timeout: 15000 });
+      verifier(true, 'code coloré (highlight.js chargé à la demande)');
+      const langues = await page.locator('#note-apercu .bloc-langue').allTextContents();
+      verifier(langues[0] === 'js' && langues[1] === 'sql', 'langage affiché, deviné pour le bloc sans langage (' + langues.join(', ') + ')');
+      verifier((await page.locator('#note-apercu .hljs-string').count()) >= 2 && (await page.locator('#note-apercu .hljs-comment').count()) === 1 && (await page.locator('#note-apercu .hljs-number').count()) >= 1, 'chaînes, commentaire et nombres colorés');
+      const couleur = await page.evaluate(() => getComputedStyle(document.querySelector('#note-apercu .hljs-keyword')).color);
+      verifier(couleur === 'rgb(240, 180, 90)', 'mots-clés en ambre (' + couleur + ')');
+
+      await page.click('#note-apercu .bouton-copier >> nth=0');
+      await page.waitForFunction(() => document.querySelector('#note-apercu .bouton-copier').textContent === 'copié ✓');
+      const copie = await page.evaluate(() => navigator.clipboard.readText());
+      verifier(copie.startsWith('async function sauver(id) {') && copie.includes('+ 5000;'), 'bouton copier : le code brut est copié');
+
+      await page.waitForSelector('#note-apercu .mermaid-svg svg', { timeout: 30000 });
+      verifier(true, 'diagramme mermaid dessiné (chargé à la demande)');
+      const textes = await page.locator('#note-apercu .mermaid-svg svg').innerHTML();
+      const largeurSvg = await page.evaluate(() => document.querySelector('#note-apercu .mermaid-svg svg').getBoundingClientRect().width);
+      verifier(largeurSvg > 500, 'diagramme à sa taille réelle, pas rétréci (' + Math.round(largeurSvg) + ' px)');
+      verifier(textes.includes('frappe') && textes.includes('enregistré') && textes.includes('réessai'), 'étiquettes du diagramme présentes');
+      verifier((await page.locator('#note-apercu .mermaid-svg script, #note-apercu .mermaid-svg foreignObject').count()) === 0, 'SVG assaini (ni script ni foreignObject)');
+      await page.waitForSelector('#note-apercu .bloc-mermaid-erreur', { timeout: 15000 });
+      verifier((await page.textContent('#note-apercu .bloc-mermaid-erreur')).startsWith('mermaid : '), 'diagramme invalide : message d\'erreur à sa place');
+      verifier(await page.evaluate(() => !document.querySelector('body > [id^="dcairn-mermaid"], body > svg[id^="cairn-mermaid"]')), 'pas de reste de mermaid dans la page');
+
+      await page.click('#ecran-appli [data-action="theme"]');
+      await page.waitForFunction(() => getComputedStyle(document.querySelector('#note-apercu .hljs-keyword')).color === 'rgb(138, 90, 18)', null, { timeout: 15000 });
+      verifier(true, 'thème clair : couleurs du code adaptées');
+      await page.waitForSelector('#note-apercu .mermaid-svg svg', { timeout: 15000 });
+      verifier(true, 'thème clair : diagramme redessiné');
+      if (process.argv.includes('--captures')) {
+        const dossier = process.argv[process.argv.indexOf('--captures') + 1] || '.';
+        await page.click('#ecran-appli [data-action="theme"]');
+        await page.waitForSelector('#note-apercu .mermaid-svg svg', { timeout: 15000 });
+        await page.waitForTimeout(300);
+        await page.screenshot({ path: path.join(dossier, 'code-mermaid.png') });
+        await page.click('#bouton-lier');
+        await page.waitForSelector('#palette-liens[open]');
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.screenshot({ path: path.join(dossier, 'palette-mobile.png') });
+        await page.keyboard.press('Escape');
+      }
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
   } finally {

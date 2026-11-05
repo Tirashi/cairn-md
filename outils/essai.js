@@ -37,12 +37,13 @@ async function nouvellePage(navigateur, base, { configure, schema = 'dark' }) {
   await page.route('https://fonts.gstatic.com/**', (r) => r.abort());
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/**', (r) =>
     r.fulfill({ contentType: 'text/javascript', body: fs.readFileSync(path.join(__dirname, 'faux-supabase.js'), 'utf8') }));
-  if (configure) {
-    await page.route(base + '/js/config.js', (r) => r.fulfill({
-      contentType: 'text/javascript',
-      body: "export const SUPABASE_URL = 'https://faux.supabase.co'; export const SUPABASE_ANON_KEY = 'faux';",
-    }));
-  }
+  // La vraie config n'est jamais utilisée par l'essai : remplie (faux projet) ou vide.
+  await page.route(base + '/js/config.js', (r) => r.fulfill({
+    contentType: 'text/javascript',
+    body: configure
+      ? "export const SUPABASE_URL = 'https://faux.supabase.co'; export const SUPABASE_ANON_KEY = 'faux';"
+      : "export const SUPABASE_URL = ''; export const SUPABASE_ANON_KEY = '';",
+  }));
   return { page, erreurs };
 }
 

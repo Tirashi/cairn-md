@@ -7,6 +7,8 @@ const https = require('https');
 const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+// Pour que les routes de l'essai servent aussi les requêtes du service worker.
+process.env.PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS = '1';
 const { chromium } = require('playwright');
 
 const RACINE = path.resolve(__dirname, '..');
@@ -85,20 +87,22 @@ function verifier(condition, libelle) {
   if (!condition) echecs++;
 }
 
-async function nouvellePage(navigateur, base, { configure, schema = 'dark' }) {
-  const contexte = await navigateur.newContext({ colorScheme: schema });
+async function nouvellePage(navigateur, base, { configure, schema = 'dark', sw = false }) {
+  // Le service worker intercepterait les requêtes avant les routes de l'essai : bloqué ici, testé à part.
+  const contexte = await navigateur.newContext({ colorScheme: schema, serviceWorkers: sw ? 'allow' : 'block' });
   const page = await contexte.newPage();
+  const r = contexte;   // routes au niveau du contexte : elles servent aussi le service worker
   const erreurs = [];
   page.on('pageerror', (e) => erreurs.push(e.message));
-  await page.route('https://fonts.googleapis.com/**', (r) => r.abort());
-  await page.route('https://fonts.gstatic.com/**', (r) => r.abort());
-  await page.route('https://cdn.jsdelivr.net/npm/@supabase/**', (r) =>
+  await r.route('https://fonts.googleapis.com/**', (r) => r.abort());
+  await r.route('https://fonts.gstatic.com/**', (r) => r.abort());
+  await r.route('https://cdn.jsdelivr.net/npm/@supabase/**', (r) =>
     r.fulfill({ contentType: 'text/javascript', body: fs.readFileSync(path.join(__dirname, 'faux-supabase.js'), 'utf8') }));
   for (const route of routesBibliotheques) {
     if (route.url) {
-      await page.route(route.url, (r) => r.fulfill({ contentType: 'text/javascript', body: route.corps }));
+      await r.route(route.url, (r) => r.fulfill({ contentType: 'text/javascript', body: route.corps }));
     } else {
-      await page.route(route.prefixe + '**', (r) => {
+      await r.route(route.prefixe + '**', (r) => {
         const relatif = decodeURIComponent(r.request().url().slice(route.prefixe.length).split('?')[0]);
         const chemin = path.join(route.dossier, relatif);
         if (!chemin.startsWith(route.dossier) || !fs.existsSync(chemin)) return r.fulfill({ status: 404, body: '' });
@@ -107,7 +111,7 @@ async function nouvellePage(navigateur, base, { configure, schema = 'dark' }) {
     }
   }
   // La vraie config n'est jamais utilisée par l'essai : remplie (faux projet) ou vide.
-  await page.route(base + '/js/config.js', (r) => r.fulfill({
+  await r.route(base + '/js/config.js', (r) => r.fulfill({
     contentType: 'text/javascript',
     body: configure
       ? "export const SUPABASE_URL = 'https://faux.supabase.co'; export const SUPABASE_ANON_KEY = 'faux';"
@@ -273,13 +277,17 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       const noms = await page.locator('.ln-nom').allTextContents();
       verifier(noms[0] === 'deuxieme.md' && noms[1] === 'cairn-plan-v1.md', 'liste triée par modification (' + noms.join(', ') + ')');
 
+      // Serveur injoignable : la note est gardée sur l'appareil, puis envoyée au retour du réseau.
       await page.evaluate(() => localStorage.setItem('faux-supabase-panne', '1'));
       await page.fill('#note-contenu', 'écrit pendant la panne');
-      await page.waitForFunction(() => document.getElementById('etat-sauvegarde').textContent.includes('non enregistré'));
-      verifier((await page.textContent('#note-message')).includes('injoignable'), 'panne réseau : signalée');
-      await page.evaluate(() => localStorage.removeItem('faux-supabase-panne'));
-      await page.waitForFunction(() => /● enregistré \d/.test(document.getElementById('etat-sauvegarde').textContent), null, { timeout: 8000 });
-      verifier(true, 'retour du réseau : enregistré automatiquement');
+      await page.waitForFunction(() => document.getElementById('etat-sauvegarde').textContent.includes("enregistré sur l'appareil"));
+      verifier(true, 'panne réseau : « enregistré sur l\'appareil »');
+      await page.waitForFunction(() => /hors ligne · 1 en attente/.test(document.getElementById('etat-reseau').textContent));
+      verifier((await page.locator('.ln-attente').count()) === 1, 'panne réseau : barre d\'état « hors ligne · 1 en attente » et • sur la note');
+      await page.evaluate(() => { localStorage.removeItem('faux-supabase-panne'); window.dispatchEvent(new Event('online')); });
+      await page.waitForFunction(() => /1 note synchronisée/.test(document.getElementById('etat-reseau').textContent), null, { timeout: 8000 });
+      const envoyee = await page.evaluate(() => JSON.parse(localStorage.getItem('faux-supabase-notes')).find((n) => n.title === 'Deuxième').content);
+      verifier(envoyee === 'écrit pendant la panne' && (await page.locator('.ln-attente').count()) === 0, 'retour du réseau : note envoyée, « 1 note synchronisée »');
 
       await page.click('#bouton-supprimer');
       await page.click('#dialogue button[value="annuler"]');
@@ -726,6 +734,178 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
         await page.screenshot({ path: path.join(dossier, 'import-detail-mobile.png') });
         await page.keyboard.press('Escape');
       }
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
+    console.log('Hors ligne et synchronisation');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      const contexte = page.context();
+      const serveur = () => page.evaluate(() => JSON.parse(localStorage.getItem('faux-supabase-notes')));
+      const surServeur = async (t) => (await serveur()).find((n) => n.title === t);
+      const reseau = () => page.textContent('#etat-reseau');
+      const couper = async () => { await page.evaluate(() => localStorage.setItem('faux-supabase-panne', '1')); await contexte.setOffline(true); };
+      const retablir = async () => { await contexte.setOffline(false); await page.evaluate(() => { localStorage.removeItem('faux-supabase-panne'); window.dispatchEvent(new Event('online')); }); };
+      const ouvrir = async (titre) => {
+        const id = await page.evaluate((t) => [...document.querySelectorAll('.liste-notes a')].find((a) => a.querySelector('.ln-nom').title === t).dataset.id, titre);
+        await page.evaluate((i) => { location.hash = '#/note/' + i; }, id);
+        await page.waitForFunction((t) => document.getElementById('note-titre').value === t, titre);
+      };
+
+      await page.goto(base + '/');
+      await page.evaluate(() => {
+        const moi = '00000000-0000-0000-0000-000000000001';
+        const n = (i, title, content) => ({ id: '0000000' + i + '-0000-4000-8000-00000000000' + i, user_id: moi, title, folder: '', tags: [], content,
+          created_at: '2026-11-0' + i + 'T10:00:00.000Z', updated_at: '2026-11-0' + i + 'T10:00:00.000Z' });
+        localStorage.setItem('faux-supabase-notes', JSON.stringify([n(1, 'Courses', 'pain'), n(2, 'Plan', 'version 1')]));
+      });
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForFunction(() => document.querySelectorAll('.ln-nom').length === 2);
+      verifier(await page.locator('#etat-reseau').isHidden(), 'en ligne, rien en attente : indicateur caché');
+
+      await couper();
+      await page.waitForFunction(() => /hors ligne/.test(document.getElementById('etat-reseau').textContent));
+      verifier(true, 'coupure : « ○ hors ligne » dans la barre d\'état');
+
+      // Hors ligne : créer, modifier.
+      await page.click('#bouton-nouvelle');
+      await page.waitForSelector('#note:not([hidden])');
+      await page.fill('#note-titre', 'Note du train');
+      await page.press('#note-titre', 'Enter');
+      await page.fill('#note-contenu', 'écrite sans réseau');
+      await page.waitForFunction(() => /enregistré sur l'appareil/.test(document.getElementById('etat-sauvegarde').textContent));
+      await ouvrir('Courses');
+      await page.fill('#note-contenu', 'pain, lait');
+      await page.waitForFunction(() => /2 en attente/.test(document.getElementById('etat-reseau').textContent));
+      verifier((await page.locator('.ln-attente').count()) === 2, 'hors ligne : 2 notes en attente, marquées •');
+      verifier(!(await surServeur('Note du train')) && (await surServeur('Courses')).content === 'pain', 'rien n\'est parti vers le serveur');
+
+      // Conflit préparé : « Plan » modifiée sur l'appareil, et ailleurs sur le serveur.
+      await ouvrir('Plan');
+      await page.fill('#note-contenu', 'version 2 (téléphone)');
+      await page.waitForFunction(() => /3 en attente/.test(document.getElementById('etat-reseau').textContent));
+      await page.evaluate(() => {
+        const notes = JSON.parse(localStorage.getItem('faux-supabase-notes'));
+        const plan = notes.find((n) => n.title === 'Plan');
+        plan.content = 'version 2 (ordinateur)';
+        plan.updated_at = new Date(Date.now() + 1000).toISOString();
+        localStorage.setItem('faux-supabase-notes', JSON.stringify(notes));
+      });
+
+      // Recharger avec le serveur toujours injoignable : les notes viennent de la copie locale.
+      // (Recharger la page elle-même sans réseau demande le service worker : testé plus bas.)
+      await page.evaluate(() => { location.hash = '#/'; });
+      await contexte.setOffline(false);
+      await page.reload();
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.waitForFunction(() => document.querySelectorAll('.ln-nom').length === 3);
+      verifier((await page.locator('.ln-attente').count()) === 3, 'rechargé, serveur injoignable : 3 notes (dont la nouvelle), toujours en attente');
+
+      // Retour du réseau.
+      await retablir();
+      await page.waitForSelector('#dialogue-sync[open]', { timeout: 10000 });
+      verifier((await page.textContent('#sync-nom')) === 'plan.md a changé ailleurs', 'conflit : la fenêtre s\'ouvre d\'elle-même');
+      const propres = await page.locator('#sync-versions .ligne-propre').allTextContents();
+      verifier(propres.some((t) => t.includes('téléphone')) && propres.some((t) => t.includes('ordinateur')), 'conflit : les deux versions comparées');
+      verifier((await surServeur('Courses')).content === 'pain, lait' && (await surServeur('Note du train'))?.content === 'écrite sans réseau', 'synchronisé : modification et création envoyées');
+      const idLocal = await page.evaluate(() => [...document.querySelectorAll('.liste-notes a')].find((a) => a.querySelector('.ln-nom').title === 'Note du train').dataset.id);
+      verifier((await surServeur('Note du train')).id === idLocal, 'la note créée hors ligne garde son identifiant');
+      await page.click('#sync-choix button:has-text("les deux")');
+      await page.waitForFunction(() => !document.getElementById('dialogue-sync').open);
+      verifier((await surServeur('Plan')).content === 'version 2 (ordinateur)' && (await surServeur('Plan (appareil)'))?.content === 'version 2 (téléphone)', 'conflit « les deux » : version du serveur gardée, celle de l\'appareil en copie');
+      await page.waitForFunction(() => document.querySelectorAll('.ln-nom').length === 4 && !document.querySelector('.ln-attente'));
+      verifier(true, 'liste à jour, plus rien en attente');
+      const attente = await page.evaluate(() => new Promise((ok) => {
+        const r = indexedDB.open('cairn');
+        r.onsuccess = () => { const q = r.result.transaction('attente').objectStore('attente').count(); q.onsuccess = () => ok(q.result); };
+      }));
+      verifier(attente === 0, 'file d\'attente locale vide');
+
+      // Déconnexion avec une modification hors ligne : avertissement.
+      await couper();
+      await ouvrir('Courses');
+      await page.fill('#note-contenu', 'pain, lait, œufs');
+      await page.waitForFunction(() => /1 en attente/.test(document.getElementById('etat-reseau').textContent));
+      await page.evaluate(() => document.getElementById('bouton-deconnexion').click());
+      await page.waitForSelector('#dialogue[open]');
+      verifier((await page.textContent('#dialogue-texte')).includes('pas encore été envoyée'), 'déconnexion : avertissement des modifications en attente');
+      await page.click('#dialogue button[value="annuler"]');
+      verifier(await page.locator('#ecran-appli').isVisible(), 'déconnexion annulée : on reste connecté');
+      await retablir();
+      await page.waitForFunction(() => !document.querySelector('.ln-attente'), null, { timeout: 10000 });
+      verifier((await surServeur('Courses')).content === 'pain, lait, œufs', 'retour du réseau : envoyée');
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
+    console.log('Application installable');
+    {
+      // Toute nouvelle page de l'application doit être dans la liste du service worker.
+      const sw = fs.readFileSync(path.join(RACINE, 'sw.js'), 'utf8');
+      const absents = fs.readdirSync(path.join(RACINE, 'js')).filter((f) => !sw.includes("'js/" + f + "'"));
+      verifier(absents.length === 0, 'sw.js : tous les fichiers de js/ sont dans la coquille' + (absents.length ? ' (manquent : ' + absents.join(', ') + ')' : ''));
+      const manifeste = JSON.parse(fs.readFileSync(path.join(RACINE, 'manifest.webmanifest'), 'utf8'));
+      const icones = manifeste.icons.filter((i) => i.type === 'image/png');
+      verifier(manifeste.display === 'standalone' && icones.some((i) => i.sizes === '192x192') && icones.some((i) => i.sizes === '512x512')
+        && icones.every((i) => fs.existsSync(path.join(RACINE, i.src))), 'manifeste : plein écran, icônes 192 et 512 présentes');
+
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true, sw: true });
+      await page.goto(base + '/');
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.click('#bouton-nouvelle');
+      await page.waitForSelector('#note:not([hidden])');
+      await page.fill('#note-titre', 'Note en cache');
+      await page.waitForFunction(() => /● enregistré \d/.test(document.getElementById('etat-sauvegarde').textContent));
+      const etatSw = await page.evaluate(async () => {
+        const reg = await navigator.serviceWorker.ready;
+        const cles = await caches.keys();
+        const app = await caches.open(cles.find((k) => k.endsWith('-app')));
+        const urls = (await app.keys()).map((r) => new URL(r.url).pathname);
+        return { actif: Boolean(reg.active), urls };
+      });
+      verifier(etatSw.actif && etatSw.urls.includes('/index.html') && etatSw.urls.includes('/js/ui.js') && etatSw.urls.includes('/css/style.css'), 'service worker actif, coquille en cache');
+      await page.reload();          // la page est maintenant contrôlée : les bibliothèques du CDN passent par le cache
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+      await page.context().setOffline(true);
+      await page.evaluate(() => localStorage.setItem('faux-supabase-panne', '1'));
+      await page.reload();
+      await page.waitForSelector('#ecran-appli:not([hidden])', { timeout: 15000 });
+      await page.waitForFunction(() => [...document.querySelectorAll('.ln-nom')].some((n) => n.title === 'Note en cache'));
+      verifier(true, 'sans réseau : l\'application s\'ouvre et montre les notes');
+      verifier(/hors ligne/.test(await page.textContent('#etat-reseau')), 'sans réseau : « hors ligne » affiché');
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
+    console.log('Proposition d\'installation (iPhone)');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.addInitScript(() => {
+        Object.defineProperty(navigator, 'userAgent', { get: () => 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1' });
+      });
+      await page.goto(base + '/');
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForSelector('#carte-installation:not([hidden])', { timeout: 8000 });
+      verifier((await page.textContent('#carte-installation-texte')).includes('Partager') && (await page.textContent('#carte-installer')) === 'compris', 'iPhone : carte avec la consigne « Partager › Sur l\'écran d\'accueil »');
+      if (process.argv.includes('--captures')) {
+        await page.screenshot({ path: path.join(process.argv[process.argv.indexOf('--captures') + 1] || '.', 'installation-iphone.png') });
+      }
+      await page.click('#bouton-menu');
+      verifier(await page.locator('#menu-installer').isVisible(), 'iPhone : « installer Cairn » dans le menu ⋯');
+      await page.keyboard.press('Escape');
+      await page.click('#carte-plus-tard');
+      verifier(await page.locator('#carte-installation').isHidden(), '« plus tard » referme la carte');
+      await page.reload();
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.waitForTimeout(3500);
+      verifier(await page.locator('#carte-installation').isHidden(), '« plus tard » : la carte ne revient pas au rechargement');
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
   } finally {

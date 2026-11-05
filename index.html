@@ -19,6 +19,12 @@
     })();
   </script>
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Cairn">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap">
@@ -86,6 +92,7 @@
       <div class="menu-zone">
         <button type="button" class="bouton-discret" id="bouton-menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-principal" aria-label="Plus d'actions : export, import">⋯</button>
         <div id="menu-principal" class="menu" role="menu" aria-label="Actions" hidden>
+          <button type="button" role="menuitem" data-menu="installer" id="menu-installer" class="accent" hidden>⤓ installer Cairn</button>
           <button type="button" role="menuitem" data-menu="export">$ export <span class="muet">.zip</span></button>
           <button type="button" role="menuitem" data-menu="import">$ import <span class="muet">.zip ou .md</span></button>
           <button type="button" role="menuitem" data-menu="import-dossier">$ import <span class="muet">dossier</span></button>
@@ -189,8 +196,18 @@
       </main>
     </div>
 
+    <aside id="carte-installation" class="carte-installation" aria-label="Installer Cairn" hidden>
+      <p class="carte-installation-titre">⤓ Installer Cairn sur cet appareil ?</p>
+      <p id="carte-installation-texte" class="muet"></p>
+      <div class="dialogue-boutons">
+        <button type="button" id="carte-plus-tard" class="bouton-discret">plus tard</button>
+        <button type="button" id="carte-installer" class="bouton-principal">installer</button>
+      </div>
+    </aside>
+
     <footer class="barre-etat">
       <span id="etat-sauvegarde"><span class="ok">●</span> connecté</span>
+      <button type="button" id="etat-reseau" class="etat-reseau" hidden></button>
       <span id="etat-liens"></span>
       <span id="etat-mots"></span>
       <span class="espace"></span>
@@ -240,6 +257,18 @@
       <div class="dialogue-boutons">
         <button type="button" id="import-fermer" class="bouton-principal" hidden>fermer</button>
       </div>
+    </div>
+  </dialog>
+
+  <dialog id="dialogue-sync" class="dialogue dialogue-import" aria-labelledby="sync-nom">
+    <div class="dialogue-contenu">
+      <p><span class="erreur">$ cairn sync</span> · <span id="sync-titre"></span></p>
+      <p id="sync-nom" class="conflit-nom"></p>
+      <p class="muet">Modifiée sur cet appareil hors ligne, et entre-temps ailleurs. Rien n'est écrasé sans votre choix.</p>
+      <div id="sync-versions" class="versions"></div>
+      <p id="sync-message" class="message" role="alert"></p>
+      <div id="sync-choix" class="detail-choix"></div>
+      <button type="button" id="sync-plus-tard" class="bouton-lien">régler plus tard</button>
     </div>
   </dialog>
 

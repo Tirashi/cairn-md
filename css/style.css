@@ -772,6 +772,40 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .detail-choix { display: flex; flex-direction: column; gap: 8px; }
 .detail-choix button { min-height: 44px; }
 
+/* ---------- Hors ligne et installation ---------- */
+
+.etat-reseau {
+  min-height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.etat-reseau:disabled { cursor: default; opacity: 1; }
+.etat-reseau.etat-conflit { color: var(--erreur); text-decoration: underline; text-underline-offset: 3px; }
+.ln-attente { color: var(--accent); }
+
+.carte-installation {
+  position: fixed;
+  z-index: 15;
+  right: 16px;
+  bottom: 44px;
+  width: min(380px, calc(100vw - 24px));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--accent);
+  border-radius: var(--rayon);
+  background: var(--surface);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+}
+.carte-installation p { margin: 0; line-height: 1.5; }
+.carte-installation-titre { font-size: 13px; font-weight: 800; }
+
 /* ---------- Téléphone : un seul panneau à la fois ---------- */
 
 @media (max-width: 760px) {
@@ -823,4 +857,5 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   .barre-haut [data-action="theme"], .barre-haut #bouton-deconnexion { display: none; }
   .menu-mobile { display: block; }
   .choix-conflit button { min-height: 44px; }
+  .carte-installation { right: 12px; left: 12px; width: auto; }
 }

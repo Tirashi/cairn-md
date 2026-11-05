@@ -19,10 +19,37 @@ function versUtilisateur(session) {
   return session && session.user ? { id: session.user.id, email: session.user.email } : null;
 }
 
+/**
+ * Hors ligne, un jeton expiré ne peut pas être renouvelé : getSession() renvoie alors « pas de
+ * session ». On garde l'utilisateur de la dernière session enregistrée par supabase-js pour pouvoir
+ * travailler sur la copie locale ; le jeton sera renouvelé au retour du réseau.
+ */
+function sessionGardee() {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const cle = localStorage.key(i);
+      if (!/^sb-.*-auth-token$/.test(cle)) continue;
+      const s = JSON.parse(localStorage.getItem(cle));
+      const user = s && (s.user || (s.currentSession && s.currentSession.user));
+      if (user && user.id) return { id: user.id, email: user.email };
+    }
+  } catch { /* stockage illisible */ }
+  return null;
+}
+
 export async function utilisateurActuel() {
-  const { data, error } = await client.auth.getSession();
+  let data = null;
+  let error = null;
+  try {
+    ({ data, error } = await client.auth.getSession());
+  } catch (e) {
+    error = e;
+  }
+  const utilisateur = !error && data ? versUtilisateur(data.session) : null;
+  if (utilisateur) return utilisateur;
+  if (navigator.onLine === false) return sessionGardee();
   if (error) throw error;
-  return versUtilisateur(data.session);
+  return null;
 }
 
 /** Connexion par email et mot de passe. Renvoie { utilisateur } ou { erreur } (code court). */

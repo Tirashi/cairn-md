@@ -2,7 +2,8 @@
 import { configure, utilisateurActuel, surChangementSession } from './supabase.js';
 import { brancherConnexion, brancherDeconnexion, reinitialiserConnexion } from './auth.js';
 import { brancherTheme } from './theme.js';
-import { demarrerAppli, arreterAppli, toutEnregistrer } from './ui.js';
+import { demarrerAppli, arreterAppli, avantDeconnexion } from './ui.js';
+import { enregistrerServiceWorker } from './installation.js';
 
 const ECRANS = ['chargement', 'config', 'connexion', 'appli'];
 
@@ -20,9 +21,11 @@ function appliquerSession(utilisateur) {
     // onAuthStateChange se déclenche aussi au renouvellement du jeton : ne pas tout recharger.
     if (connecte !== utilisateur.id) {
       connecte = utilisateur.id;
-      demarrerAppli();
+      demarrerAppli(utilisateur);
     }
   } else {
+    // Hors ligne, un jeton expiré fait croire à une déconnexion : on reste sur la copie locale.
+    if (connecte && navigator.onLine === false) return;
     connecte = null;
     arreterAppli();
     reinitialiserConnexion();
@@ -34,12 +37,13 @@ function appliquerSession(utilisateur) {
 
 async function demarrer() {
   brancherTheme();
+  enregistrerServiceWorker();
   if (!configure) {
     afficher('config');
     return;
   }
   brancherConnexion();
-  brancherDeconnexion(toutEnregistrer);
+  brancherDeconnexion(avantDeconnexion);
 
   let utilisateur = null;
   try {

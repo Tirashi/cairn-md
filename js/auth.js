@@ -48,10 +48,12 @@ export function brancherConnexion() {
   });
 }
 
-/** `avant` : fonction asynchrone appelée avant de se déconnecter (enregistrer la note ouverte). */
+/** `avant` : fonction asynchrone appelée avant de se déconnecter ; si elle renvoie false, on reste connecté. */
 export function brancherDeconnexion(avant) {
   document.getElementById('bouton-deconnexion').addEventListener('click', async () => {
-    try { if (avant) await avant(); } catch { /* on se déconnecte quand même */ }
+    try {
+      if (avant && (await avant()) === false) return;    // déconnexion annulée
+    } catch { /* on se déconnecte quand même */ }
     try {
       await deconnexion();
     } catch {

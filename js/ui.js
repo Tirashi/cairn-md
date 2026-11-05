@@ -1,6 +1,8 @@
 // Interface de l'appli : liste, filtres, éditeur, aperçu, liens, sauvegarde automatique.
 // Routage par hash : #/ (liste) et #/note/<id>.
-import { listerNotes, creerNote, modifierNote, supprimerNote } from './notes.js';
+import { listerNotes, creerNote, modifierNote, supprimerNote, ouvrirCopie, fermerCopie, modificationsEnAttente } from './notes.js';
+import { regler, brancherSync } from './sync-dialogue.js';
+import { brancherInstallation, proposerInstallation } from './installation.js';
 import { rendre, colorer, extrait, compterMots, definirResolveur } from './markdown.js';
 import { normaliserDossier, dossierExistant, dansDossier, listerDossiers, compterTags, filtrer } from './arbre.js';
 import { cite, remplacerLien, liensEntrants } from './liens.js';
@@ -28,6 +30,8 @@ const etat = {
   sauvegarde: null,   // promesse de la sauvegarde en cours
   mode: lireMode(),
   branche: false,
+  reseau: { horsLigne: false, enAttente: new Set(), conflits: [] },
+  conflitsMontres: new Set(),   // conflits déjà proposés (la fenêtre ne s'ouvre qu'une fois d'elle-même)
 };
 
 // ---------- Outils ----------
@@ -108,6 +112,13 @@ function afficherListe() {
     nom.className = 'ln-nom';
     nom.textContent = slug(n.title) + '.md';
     nom.title = n.title;
+    if (etat.reseau.enAttente.has(n.id)) {
+      const point = document.createElement('span');
+      point.className = 'ln-attente';
+      point.textContent = ' •';
+      point.title = 'pas encore envoyée au serveur';
+      nom.append(point);
+    }
     const date = document.createElement('span');
     date.className = 'ln-date';
     date.textContent = dateCourte(n.updated_at);
@@ -308,7 +319,9 @@ async function sauvegarder() {
     if (Object.keys(etat.enAttente).length === 0) {
       etatSauvegarde(titreRefuse
         ? '<span class="erreur">!</span> titre refusé'
-        : '<span class="ok">●</span> enregistré ' + fmtHeure.format(new Date(r.note.updated_at)));
+        : r.local
+          ? '<span class="accent">●</span> enregistré sur l\'appareil'
+          : '<span class="ok">●</span> enregistré ' + fmtHeure.format(new Date(r.note.updated_at)));
     }
   })();
 
@@ -607,6 +620,12 @@ function brancher() {
   // Menu ⋯ : export, import (et, sur téléphone, thème et déconnexion).
   brancherMenu();
   brancherImport();
+  brancherSync();
+  brancherInstallation();
+  document.addEventListener('cairn-sync', surSynchro);
+  $('etat-reseau').addEventListener('click', () => {
+    if (etat.reseau.conflits.length) sauvegarder().then(() => regler(etat.reseau.conflits, recharger));
+  });
 
   // Recherche dans les titres et le contenu.
   const recherche = $('recherche');
@@ -705,9 +724,87 @@ function brancher() {
   window.addEventListener('pagehide', () => { sauvegarder(); });
 }
 
+// ---------- Hors ligne et synchronisation ----------
+
+let minuteurSynchronisees = null;
+
+function afficherReseau(extra = {}) {
+  const b = $('etat-reseau');
+  const { horsLigne, enAttente, conflits } = etat.reseau;
+  b.classList.remove('etat-conflit');
+  b.disabled = true;
+  if (conflits.length) {
+    b.innerHTML = '<span class="erreur">!</span> ' + pluriel(conflits.length, 'conflit') + ' à régler';
+    b.classList.add('etat-conflit');
+    b.disabled = false;
+  } else if (horsLigne) {
+    b.innerHTML = '<span class="accent">○</span> hors ligne' + (enAttente.size ? ' · ' + enAttente.size + ' en attente' : '');
+  } else if (enAttente.size) {
+    b.innerHTML = '<span class="accent">○</span> ' + enAttente.size + ' en attente';
+  } else if (extra.synchronisees) {
+    b.innerHTML = '<span class="ok">●</span> ' + pluriel(extra.synchronisees, 'note') + ' synchronisée' + (extra.synchronisees > 1 ? 's' : '');
+    clearTimeout(minuteurSynchronisees);
+    minuteurSynchronisees = setTimeout(() => { if (!etat.reseau.horsLigne && !etat.reseau.enAttente.size && !etat.reseau.conflits.length) b.hidden = true; }, 6000);
+    b.hidden = false;
+    return;
+  } else {
+    b.hidden = true;
+    return;
+  }
+  b.hidden = false;
+}
+
+/** Recharge les notes (après une synchronisation ou un conflit réglé) sans toucher à la saisie en cours. */
+async function recharger() {
+  const r = await listerNotes().catch(() => ({ erreur: 'reseau' }));
+  if (r.erreur) return;
+  etat.notes = r.notes;
+  trier();
+  rafraichir();
+  const note = noteCourante();
+  if (etat.courante && !note) { location.hash = '#/'; return; }
+  // La note ouverte n'est remplacée que si rien n'est en cours de frappe.
+  if (note && !Object.keys(etat.enAttente).length && document.activeElement !== $('note-contenu') && document.activeElement !== $('note-titre')) {
+    afficherNote(note);
+  }
+}
+
+function surSynchro(e) {
+  const d = e.detail;
+  const avant = etat.reseau.enAttente;
+  etat.reseau = { horsLigne: d.horsLigne, enAttente: new Set(d.enAttente), conflits: d.conflits };
+  afficherReseau(d);
+  if (avant.size !== etat.reseau.enAttente.size || [...avant].some((id) => !etat.reseau.enAttente.has(id))) afficherListe();
+  if (d.synchronisees) recharger();
+  // Nouveau conflit : la fenêtre s'ouvre d'elle-même une fois ; ensuite, via la barre d'état.
+  const nouveaux = d.conflits.filter((c) => !etat.conflitsMontres.has(c.id));
+  if (nouveaux.length && !$('dialogue-sync').open && !$('ecran-appli').hidden) {
+    for (const c of d.conflits) etat.conflitsMontres.add(c.id);
+    sauvegarder().then(() => regler(d.conflits, recharger));
+  }
+}
+
+/** Avant de se déconnecter : enregistrer, prévenir si des modifications n'ont pas pu partir. */
+export async function avantDeconnexion() {
+  await sauvegarder();
+  const n = modificationsEnAttente();
+  if (n) {
+    const ok = await demander({
+      commande: '$ logout', nom: '',
+      texte: pluriel(n, 'note') + ' modifiée' + (n > 1 ? 's' : '') + ' hors ligne n\'' + (n > 1 ? 'ont' : 'a') + ' pas encore été envoyée' + (n > 1 ? 's' : '')
+        + ' au serveur. En vous déconnectant, ces modifications seront perdues.',
+      ok: 'se déconnecter quand même', danger: true,
+    });
+    if (!ok) return false;
+  }
+  await fermerCopie();
+  return true;
+}
+
 /** Appelée à chaque connexion. */
-export async function demarrerAppli() {
+export async function demarrerAppli(utilisateur) {
   brancher();
+  await ouvrirCopie(utilisateur.id);
   etat.courante = null;
   etat.enAttente = {};
   etat.filtre = { dossier: '', tag: null, recherche: '' };
@@ -726,10 +823,8 @@ export async function demarrerAppli() {
   trier();
   rafraichir();
   await router();
+  setTimeout(proposerInstallation, 3000);
 }
-
-/** Envoie ce qui reste à enregistrer (avant une déconnexion). */
-export const toutEnregistrer = () => sauvegarder();
 
 /** Appelée à la déconnexion : on oublie tout ce qui est en mémoire. */
 export function arreterAppli() {
@@ -740,4 +835,8 @@ export function arreterAppli() {
   $('liste-notes').replaceChildren();
   afficherNote(null);
   for (const id of ['arbre', 'nuage-tags', 'ariane', 'sous-dossiers', 'tags-mobile']) $(id).replaceChildren();
+  etat.reseau = { horsLigne: false, enAttente: new Set(), conflits: [] };
+  etat.conflitsMontres.clear();
+  $('etat-reseau').hidden = true;
+  $('carte-installation').hidden = true;
 }

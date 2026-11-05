@@ -8,7 +8,10 @@
     "C-liste.dc.html": {"h": 844, "title": "C · Cairn empilé — liste", "w": 390, "x": 2200, "y": 0},
     "C-note.dc.html": {"h": 844, "title": "C · Cairn empilé — note", "w": 390, "x": 2670, "y": 0},
     "Main.dc.html": {"h": 844, "title": "A · Pierre — liste", "w": 390, "x": 0, "y": 0},
-    "B-desktop.dc.html": {"h": 900, "title": "B · Terminal — desktop", "w": 1440, "x": 1100, "y": 1300, "expand": "fill"}
+    "B-desktop.dc.html": {"h": 900, "title": "B · Terminal — desktop", "w": 1440, "x": 1100, "y": 1300, "expand": "fill"},
+    "D-chemin.dc.html": {"h": 844, "title": "Dossier A · chemin éditable", "w": 390, "x": 1100, "y": 2550},
+    "D-frontmatter.dc.html": {"h": 844, "title": "Dossier B · frontmatter", "w": 390, "x": 1570, "y": 2550},
+    "D-infos.dc.html": {"h": 844, "title": "Dossier C · panneau infos", "w": 390, "x": 2040, "y": 2550}
   },
   "createdOnFiles": {"at": "2026-11-05T14:00:00Z", "v": 1},
   "designSystems": [],
@@ -17,9 +20,10 @@
     "tA": {"kind": "title1", "maxW": 860, "text": "A · Pierre (sobre)", "w": 240, "x": 0, "y": -300},
     "tB": {"kind": "title1", "maxW": 860, "text": "B · Terminal (geek)", "w": 240, "x": 1100, "y": -300},
     "tC": {"kind": "title1", "maxW": 860, "text": "C · Cairn empilé (ludique)", "w": 240, "x": 2200, "y": -300},
-    "tD": {"kind": "title1", "maxW": 1440, "text": "B · Terminal — desktop (retenue)", "x": 1100, "y": 1000}
+    "tD": {"kind": "title1", "maxW": 1440, "text": "B · Terminal — desktop (retenue)", "x": 1100, "y": 1000},
+    "tE": {"kind": "title1", "maxW": 1330, "text": "Étape 4 · changer le dossier et les tags d'une note", "x": 1100, "y": 2250}
   },
-  "order": ["Main.dc.html", "A-note.dc.html", "B-liste.dc.html", "B-note.dc.html", "C-liste.dc.html", "C-note.dc.html", "B-desktop.dc.html"],
+  "order": ["Main.dc.html", "A-note.dc.html", "B-liste.dc.html", "B-note.dc.html", "C-liste.dc.html", "C-note.dc.html", "B-desktop.dc.html", "D-chemin.dc.html", "D-frontmatter.dc.html", "D-infos.dc.html"],
   "pages": [],
   "title": "Cairn — maquette"
 }

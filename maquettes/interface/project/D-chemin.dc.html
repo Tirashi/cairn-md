@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Dossier A — chemin éditable</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+
+  <header style="display: flex; align-items: center; gap: 6px; padding: 6px 8px 6px 4px; border-bottom: 1px solid #2a2d33;">
+    <a href="#" aria-label="Retour à la liste" style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;">←</a>
+    <span style="flex-grow: 1; font-size: 15px; font-weight: 700; overflow: hidden; white-space: nowrap;">Cairn — plan V1</span>
+    <div style="display: flex; border: 1px solid #2a2d33; border-radius: 6px; overflow: hidden;">
+      <button type="button" aria-pressed="true" style="height: 40px; padding: 0 12px; border: 0; background: #f0b45a; color: #121212; font: inherit; font-size: 12px; font-weight: 800;">edit</button>
+      <button type="button" aria-pressed="false" style="height: 40px; padding: 0 12px; border: 0; background: transparent; color: #9aa0a8; font: inherit; font-size: 12px;">view</button>
+    </div>
+  </header>
+
+  <div style="padding: 10px 16px 8px; border-bottom: 1px solid #2a2d33; display: flex; flex-direction: column; gap: 8px;">
+    <label style="display: flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 1px solid #f0b45a; border-radius: 6px; background: #1b1d21; font-size: 14px;">
+      <span style="color: #9aa0a8;">~/</span>
+      <input type="text" value="travail/pro" aria-label="Dossier" style="flex-grow: 1; min-width: 0; border: 0; background: transparent; color: #e6e6e6; font: inherit; outline: none;">
+      <span style="color: #9aa0a8;">/cairn-plan-v1.md</span>
+    </label>
+    <div role="listbox" aria-label="Dossiers existants" style="border: 1px solid #2a2d33; border-radius: 6px; background: #1b1d21; font-size: 13px; overflow: hidden;">
+      <div role="option" aria-selected="true" style="display: flex; justify-content: space-between; padding: 0 12px; min-height: 44px; align-items: center; background: rgba(240,180,90,0.12);"><span><span style="color: #f0b45a;">travail/pro</span>jets/</span><span style="color: #9aa0a8;">6</span></div>
+      <div role="option" aria-selected="false" style="display: flex; justify-content: space-between; padding: 0 12px; min-height: 44px; align-items: center; color: #9aa0a8;"><span>+ nouveau dossier « travail/pro/ »</span></div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px;">
+      <span style="display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 4px 0 8px; border: 1px solid #2a2d33; border-radius: 4px; color: #f0b45a;">#dev<button type="button" aria-label="Retirer le tag dev" style="width: 28px; height: 28px; border: 0; background: transparent; color: #9aa0a8; font: inherit;">×</button></span>
+      <span style="display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 4px 0 8px; border: 1px solid #2a2d33; border-radius: 4px; color: #f0b45a;">#idée<button type="button" aria-label="Retirer le tag idée" style="width: 28px; height: 28px; border: 0; background: transparent; color: #9aa0a8; font: inherit;">×</button></span>
+      <button type="button" style="height: 32px; padding: 0 8px; border: 1px dashed #2a2d33; border-radius: 4px; background: transparent; color: #9aa0a8; font: inherit; font-size: 13px;">+ tag</button>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-grow: 1; font-size: 13.5px; line-height: 1.75; opacity: 0.45;">
+    <div aria-hidden="true" style="width: 32px; padding: 14px 6px 0 0; box-sizing: border-box; text-align: right; color: #6f747c; font-size: 12px; line-height: 2;"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div></div>
+    <div style="padding: 14px 16px 0 6px; white-space: pre-wrap;"><span style="color: #f0b45a;"># Cairn — plan V1</span>
+
+Front statique sur GitHub Pages, Supabase pour l'auth. Schéma dans <span style="color: #f0b45a; background: rgba(240,180,90,0.12);">[[Modèle de données]]</span>.</div>
+  </div>
+
+  <footer style="display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 40px; border-top: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;">
+    <span><span style="color: #f0b45a;">○</span> modifié</span>
+    <span>Entrée : valider · Échap : annuler</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

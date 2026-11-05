@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Dossier C — panneau infos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+
+  <header style="display: flex; align-items: center; gap: 6px; padding: 6px 8px 6px 4px; border-bottom: 1px solid #2a2d33; opacity: 0.4;">
+    <span style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; font-size: 18px;">←</span>
+    <span style="flex-grow: 1; font-size: 13px; color: #9aa0a8;">travail/projets/<span style="color: #e6e6e6; font-weight: 700;">Cairn — plan V1</span></span>
+    <span style="width: 40px; height: 40px; border: 1px solid #2a2d33; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #f0b45a; font-weight: 800;">i</span>
+  </header>
+  <div style="padding: 14px 16px; font-size: 13.5px; line-height: 1.75; white-space: pre-wrap; opacity: 0.25;"><span style="color: #f0b45a;"># Cairn — plan V1</span>
+
+Front statique sur GitHub Pages, Supabase pour l'auth.</div>
+
+  <section aria-label="Infos de la note" style="position: absolute; left: 0; right: 0; bottom: 0; background: #1b1d21; border-top: 1px solid #f0b45a; border-radius: 12px 12px 0 0; padding: 8px 16px 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 -16px 40px rgba(0,0,0,0.6);">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <h2 style="margin: 0; font-size: 13px; font-weight: 800;">$ stat <span style="color: #f0b45a;">cairn-plan-v1.md</span></h2>
+      <button type="button" aria-label="Fermer" style="width: 44px; height: 44px; border: 0; background: transparent; color: #9aa0a8; font: inherit; font-size: 18px;">×</button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 11px; letter-spacing: 0.1em; color: #6f747c;">DOSSIER</span>
+      <div role="radiogroup" aria-label="Dossier" style="border: 1px solid #2a2d33; border-radius: 6px; font-size: 13px; overflow: hidden;">
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; color: #9aa0a8;"><input type="radio" name="d" style="accent-color: #f0b45a;">~/</label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; color: #9aa0a8;"><input type="radio" name="d" style="accent-color: #f0b45a;">├─ travail/</label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; background: rgba(240,180,90,0.12); color: #f0b45a; font-weight: 700;"><input type="radio" name="d" checked style="accent-color: #f0b45a;">│  ├─ projets/</label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; color: #9aa0a8;"><input type="radio" name="d" style="accent-color: #f0b45a;">│  └─ reunions/</label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; color: #9aa0a8;"><input type="radio" name="d" style="accent-color: #f0b45a;">└─ perso/</label>
+        <button type="button" style="width: 100%; min-height: 40px; padding: 0 12px; border: 0; border-top: 1px solid #2a2d33; background: transparent; color: #9aa0a8; font: inherit; font-size: 13px; text-align: left;">+ nouveau dossier…</button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 11px; letter-spacing: 0.1em; color: #6f747c;">TAGS</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px; border: 1px solid #2a2d33; border-radius: 6px; font-size: 13px;">
+        <span style="display: flex; align-items: center; height: 32px; padding: 0 4px 0 8px; border-radius: 4px; background: rgba(240,180,90,0.12); color: #f0b45a;">#dev<button type="button" aria-label="Retirer dev" style="width: 28px; height: 28px; border: 0; background: transparent; color: #9aa0a8; font: inherit;">×</button></span>
+        <span style="display: flex; align-items: center; height: 32px; padding: 0 4px 0 8px; border-radius: 4px; background: rgba(240,180,90,0.12); color: #f0b45a;">#idée<button type="button" aria-label="Retirer idée" style="width: 28px; height: 28px; border: 0; background: transparent; color: #9aa0a8; font: inherit;">×</button></span>
+        <input type="text" placeholder="ajouter…" aria-label="Ajouter un tag" style="flex: 1 1 80px; min-width: 0; height: 32px; border: 0; background: transparent; color: #e6e6e6; font: inherit; font-size: 13px; outline: none;">
+      </div>
+    </div>
+
+    <dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12px; color: #9aa0a8;">
+      <dt>créée</dt><dd style="margin: 0; color: #e6e6e6;">2 nov. 2026, 18:04</dd>
+      <dt>modifiée</dt><dd style="margin: 0; color: #e6e6e6;">aujourd'hui, 22:30</dd>
+      <dt>liens</dt><dd style="margin: 0; color: #e6e6e6;">3 sortants · 2 entrants</dd>
+    </dl>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

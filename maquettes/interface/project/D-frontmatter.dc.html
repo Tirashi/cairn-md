@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Dossier B — frontmatter</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+
+  <header style="display: flex; align-items: center; gap: 6px; padding: 6px 8px 6px 4px; border-bottom: 1px solid #2a2d33;">
+    <a href="#" aria-label="Retour à la liste" style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;">←</a>
+    <span style="flex-grow: 1; font-size: 13px; color: #9aa0a8; overflow: hidden; white-space: nowrap;">travail/projets/<span style="color: #e6e6e6; font-weight: 700;">Cairn — plan V1</span></span>
+    <div style="display: flex; border: 1px solid #2a2d33; border-radius: 6px; overflow: hidden;">
+      <button type="button" aria-pressed="true" style="height: 40px; padding: 0 12px; border: 0; background: #f0b45a; color: #121212; font: inherit; font-size: 12px; font-weight: 800;">edit</button>
+      <button type="button" aria-pressed="false" style="height: 40px; padding: 0 12px; border: 0; background: transparent; color: #9aa0a8; font: inherit; font-size: 12px;">view</button>
+    </div>
+  </header>
+
+  <div style="display: flex; font-size: 13.5px; line-height: 1.75;">
+    <div aria-hidden="true" style="width: 32px; padding: 14px 6px 0 0; box-sizing: border-box; text-align: right; color: #6f747c; font-size: 12px; line-height: 2;">
+      <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+    </div>
+    <div style="padding: 14px 16px 0 6px; flex-grow: 1; white-space: pre-wrap;"><span style="color: #9aa0a8;">---</span>
+<span style="color: #9aa0a8;">folder:</span> <span style="color: #f0b45a;">travail/projets</span>
+<span style="color: #9aa0a8;">tags: [</span><span style="color: #f0b45a;">dev</span><span style="color: #9aa0a8;">, </span><span style="color: #f0b45a;">i</span><span style="display: inline-block; width: 2px; height: 17px; background: #f0b45a; vertical-align: -3px;"></span><span style="color: #9aa0a8;">]</span>
+<span style="color: #9aa0a8;">---</span>
+<span style="color: #f0b45a;"># Cairn — plan V1</span>
+
+Front statique sur GitHub Pages…</div>
+  </div>
+
+  <div role="listbox" aria-label="Tags existants" style="margin: 6px 16px 0 54px; border: 1px solid #f0b45a; border-radius: 6px; background: #1b1d21; font-size: 13px; overflow: hidden;">
+    <div role="option" aria-selected="true" style="padding: 0 12px; min-height: 40px; display: flex; align-items: center; background: rgba(240,180,90,0.12);">idée <span style="color: #9aa0a8; margin-left: auto;">12</span></div>
+    <div role="option" aria-selected="false" style="padding: 0 12px; min-height: 40px; display: flex; align-items: center; color: #9aa0a8;">+ nouveau tag « i »</div>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <div style="margin: 0 16px 12px; padding: 12px; border: 1px dashed #2a2d33; border-radius: 6px; font-size: 12px; line-height: 1.6; color: #9aa0a8;">
+    Les lignes entre <span style="color: #e6e6e6;">---</span> ne sont pas affichées dans l'aperçu : Cairn les lit pour ranger la note (colonnes <span style="color: #e6e6e6;">folder</span> et <span style="color: #e6e6e6;">tags</span>). Même format que l'export.
+  </div>
+
+  <footer style="display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 40px; border-top: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;">
+    <span><span style="color: #f0b45a;">○</span> modifié</span>
+    <span style="flex-grow: 1;">← 2 liens entrants</span>
+    <span>L3:C13</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

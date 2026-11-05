@@ -376,7 +376,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   font-size: 11px;
   color: var(--muted);
 }
-.etat-utilisateur { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.barre-etat > span { white-space: nowrap; }
+.etat-utilisateur { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 /* ---------- Dialogue ---------- */
 
@@ -403,6 +404,181 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 }
 .bouton-danger:hover { background: var(--erreur); color: var(--bg); }
 
+/* ---------- Navigation : arbre, tags, filtres ---------- */
+
+.arbre, .nuage-tags, .sous-dossiers, .tags-mobile, .puces, .suggestions, .liens-entrants ul { list-style: none; margin: 0; padding: 0; }
+.arbre { margin-bottom: 4px; }
+.arbre li { display: flex; align-items: center; }
+.ligne-nav {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 30px;
+  padding: 0 6px;
+  margin: 0 -6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  text-align: left;
+  white-space: pre;
+}
+.ligne-nav:hover { background: var(--surface); }
+.ligne-nav[aria-current="true"] { background: var(--surface); box-shadow: inset 2px 0 0 var(--accent); }
+.ligne-nav[aria-current="true"] .nav-nom { color: var(--accent); font-weight: 700; }
+.nav-prefixe { color: var(--faible); }
+.nav-nom { overflow: hidden; text-overflow: ellipsis; }
+.nav-compte { margin-left: 8px; color: var(--muted); font-size: 12px; }
+.bouton-mv {
+  flex: 0 0 auto;
+  min-height: 26px;
+  margin-left: 6px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+}
+.bouton-mv:hover { color: var(--accent); border-color: var(--accent); }
+
+.nuage-tags { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.puce-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.puce-tag:hover { color: var(--text); }
+.puce-tag[aria-current="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-fond); }
+.puce-tag .nav-compte { margin-left: 0; font-size: 11px; }
+
+.entete-liste { align-items: center; flex-wrap: wrap; }
+.filtre-actif { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.bouton-lien { border: 0; background: transparent; color: var(--accent); font-size: 12px; padding: 0; min-height: 24px; }
+
+.nav-mobile { display: none; }
+.ln-meta { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Dossier et tags de la note ---------- */
+
+.meta-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.champ-dossier { position: relative; flex: 1 1 320px; min-width: 0; }
+.invite-dossier { height: 36px; background: transparent; font-size: 13px; gap: 2px; }
+.invite-dossier input { font-size: 13px; }
+.nom-fichier { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.tags-note { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; flex: 1 1 240px; min-height: 36px; }
+.puces { display: contents; }
+.puce {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 0 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--accent);
+  font-size: 12px;
+}
+.puce button { min-width: 28px; height: 28px; border: 0; background: transparent; color: var(--muted); font-size: 14px; }
+.puce button:hover { color: var(--erreur); }
+.champ-tag-zone { position: relative; display: inline-flex; }
+.bouton-tag {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+}
+.bouton-tag:hover { color: var(--accent); border-color: var(--accent); }
+.saisie-tag {
+  width: 140px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.suggestions {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  max-height: 264px;
+  overflow-y: auto;
+  border: 1px solid var(--accent);
+  border-radius: var(--rayon);
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+}
+.suggestions-tags { right: auto; min-width: 200px; }
+.suggestions li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+.suggestions li:hover, .suggestions li[aria-selected="true"] { background: var(--accent-fond); color: var(--accent); }
+
+/* Suggestions [[ : bandeau en bas de la note, au-dessus de la barre d'état */
+.suggestions-liens { position: static; margin: 0 16px 10px; max-height: 200px; flex: 0 0 auto; }
+
+/* ---------- Bandeau « mettre à jour les liens » ---------- */
+
+.bandeau {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--accent-fond);
+  font-size: 13px;
+}
+.bandeau > span:first-child { flex: 1 1 240px; overflow-wrap: anywhere; }
+.bandeau-boutons { display: flex; gap: 8px; }
+
+/* ---------- Liens dans l'aperçu ---------- */
+
+.apercu a.lien-note { border-bottom: 1px dashed var(--accent); }
+.apercu a.lien-absent { color: var(--muted); border-bottom: 1px dashed var(--muted); }
+.apercu a.lien-absent::after { content: ' +'; color: var(--accent); }
+
+.panneau-apercu { display: flex; flex-direction: column; }
+.panneau-apercu .apercu { flex: 1 0 auto; }
+.liens-entrants { border-top: 1px solid var(--border); padding: 12px 24px 16px; font-size: 13px; }
+.liens-entrants ul { display: flex; flex-direction: column; gap: 2px; }
+.liens-entrants a { display: block; padding: 6px 0; color: var(--text); text-decoration: none; overflow-wrap: anywhere; }
+.liens-entrants a:hover span:first-child { color: var(--accent); }
+
 /* ---------- Téléphone : un seul panneau à la fois ---------- */
 
 @media (max-width: 760px) {
@@ -424,4 +600,29 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   .bouton-icone { min-height: 44px; }
   .editeur { font-size: 14px; --gouttiere: 32px; }
   .apercu { padding: 16px; font-size: 15px; }
+
+  .nav-mobile { display: block; padding: 8px 16px 4px; border-bottom: 1px solid var(--border); }
+  .ariane { display: flex; flex-wrap: wrap; align-items: center; gap: 0; margin-bottom: 4px; }
+  .miette {
+    min-height: 40px;
+    padding: 0 2px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .miette[aria-current="true"] { color: var(--text); font-weight: 700; }
+  .ariane .bouton-mv { min-height: 32px; margin-left: 10px; }
+  .sous-dossiers .ligne-nav { min-height: 44px; margin: 0; font-size: 14px; }
+  .tags-mobile { display: flex; gap: 6px; overflow-x: auto; padding: 6px 0 8px; }
+  .tags-mobile .puce-tag { min-height: 36px; }
+  .meta-note { padding: 8px 12px; }
+  .invite-dossier { height: 44px; }
+  .puce { height: 36px; }
+  .puce button { min-width: 36px; height: 36px; }
+  .bouton-tag, .saisie-tag { height: 36px; }
+  .liens-entrants { padding: 12px 16px 16px; }
+  .liens-entrants a { padding: 10px 0; }
+  .barre-etat { gap: 14px; }
+  #etat-mots { display: none; }
 }

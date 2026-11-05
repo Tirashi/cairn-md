@@ -1,7 +1,13 @@
-// Interface de l'appli : liste, éditeur, aperçu, sauvegarde automatique.
+// Interface de l'appli : liste, filtres, éditeur, aperçu, liens, sauvegarde automatique.
 // Routage par hash : #/ (liste) et #/note/<id>.
 import { listerNotes, creerNote, modifierNote, supprimerNote } from './notes.js';
-import { rendre, colorer, extrait, compterMots } from './markdown.js';
+import { rendre, colorer, extrait, compterMots, definirResolveur } from './markdown.js';
+import { normaliserDossier, dossierExistant, dansDossier, listerDossiers, compterTags, filtrer } from './arbre.js';
+import { cite, remplacerLien, liensEntrants, amorceLien, proposerTitres } from './liens.js';
+import { afficherNavigation } from './navigation.js';
+import { brancherMeta, afficherMeta, majNomFichier } from './meta.js';
+import { creerSuggestions } from './suggestions.js';
+import { demander } from './dialogue.js';
 
 const DELAI_SAUVEGARDE = 1000;
 const CLE_MODE = 'cairn-mode';
@@ -10,8 +16,10 @@ const etroit = window.matchMedia('(max-width: 760px)');
 const $ = (id) => document.getElementById(id);
 
 const etat = {
-  notes: [],          // triées par updated_at décroissant
+  notes: [],          // toutes les notes, triées par updated_at décroissant
   courante: null,     // id de la note ouverte
+  titreOuverture: '', // titre de la note à son ouverture (pour proposer de mettre à jour les liens)
+  filtre: { dossier: '', tag: null, recherche: '' },
   enAttente: {},      // champs modifiés pas encore envoyés
   minuteur: null,
   sauvegarde: null,   // promesse de la sauvegarde en cours
@@ -60,8 +68,14 @@ function trier() {
   etat.notes.sort((a, b) => (a.updated_at < b.updated_at ? 1 : a.updated_at > b.updated_at ? -1 : 0));
 }
 
-function noteCourante() {
-  return etat.notes.find((n) => n.id === etat.courante) || null;
+const noteCourante = () => etat.notes.find((n) => n.id === etat.courante) || null;
+const parTitre = (titre) => etat.notes.find((n) => n.title.toLowerCase() === titre.trim().toLowerCase()) || null;
+const pluriel = (n, mot) => n + ' ' + mot + (n > 1 ? 's' : '');
+
+function remplacerNote(note) {
+  const i = etat.notes.findIndex((n) => n.id === note.id);
+  if (i >= 0) etat.notes[i] = note; else etat.notes.unshift(note);
+  trier();
 }
 
 function etatSauvegarde(html) {
@@ -76,12 +90,17 @@ const MESSAGES = {
   'inconnue': 'Erreur inattendue du serveur.',
 };
 
-// ---------- Liste ----------
+function afficherErreur(code) {
+  $('note-message').textContent = MESSAGES[code] || MESSAGES.inconnue;
+}
+
+// ---------- Liste et navigation ----------
 
 function afficherListe() {
+  const visibles = filtrer(etat.notes, etat.filtre);
   const ul = $('liste-notes');
   ul.replaceChildren();
-  for (const n of etat.notes) {
+  for (const n of visibles) {
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = '#/note/' + n.id;
@@ -102,16 +121,46 @@ function afficherListe() {
     const ext = document.createElement('span');
     ext.className = 'ln-extrait';
     ext.textContent = extrait(n.content) || '(vide)';
-
     a.append(haut, ext);
+
+    // Dossier (s'il diffère du dossier affiché) et tags.
+    const dossier = normaliserDossier(n.folder);
+    const infos = [];
+    if (dossier && dossier !== etat.filtre.dossier) infos.push(dossier + '/');
+    for (const t of n.tags || []) infos.push('#' + t);
+    if (infos.length) {
+      const meta = document.createElement('span');
+      meta.className = 'ln-meta';
+      meta.textContent = infos.join(' ');
+      a.append(meta);
+    }
     li.append(a);
     ul.append(li);
   }
-  const vide = etat.notes.length === 0;
-  $('liste-message').hidden = !vide;
-  if (vide) $('liste-message').textContent = 'aucune note — « + nouvelle » pour poser la première pierre';
-  $('compte-liste').textContent = etat.notes.length + (etat.notes.length > 1 ? ' notes' : ' note');
-  $('compte-notes').textContent = etat.notes.length;
+
+  const message = $('liste-message');
+  if (etat.notes.length === 0) {
+    message.hidden = false;
+    message.textContent = 'aucune note — « + nouvelle » pour poser la première pierre';
+  } else if (visibles.length === 0) {
+    message.hidden = false;
+    message.textContent = 'aucune note ne correspond';
+  } else {
+    message.hidden = true;
+  }
+  $('compte-liste').textContent = pluriel(visibles.length, 'note');
+}
+
+function rafraichir() {
+  afficherNavigation({ notes: etat.notes, filtre: etat.filtre, surFiltre: changerFiltre, surRenommer: renommerDossier });
+  afficherListe();
+}
+
+function changerFiltre(changement) {
+  Object.assign(etat.filtre, changement);
+  rafraichir();
+  // Sur téléphone, choisir un dossier ou un tag ramène à la liste.
+  if (etroit.matches && etat.courante && ('dossier' in changement || 'tag' in changement)) location.hash = '#/';
 }
 
 // ---------- Note ouverte ----------
@@ -132,7 +181,7 @@ function majEditeur() {
   const texte = $('note-contenu').value;
   $('editeur-fond').innerHTML = colorer(texte);
   if (modeEffectif() !== 'edit') majApercu();
-  $('etat-mots').textContent = compterMots(texte) + ' mots';
+  $('etat-mots').textContent = pluriel(compterMots(texte), 'mot');
 }
 
 let apercuDemande = false;
@@ -153,19 +202,51 @@ function majApercu() {
   });
 }
 
+function afficherLiensEntrants() {
+  const note = noteCourante();
+  const entrants = liensEntrants(etat.notes, note);
+  const ul = $('liens-entrants-liste');
+  ul.replaceChildren();
+  for (const { note: n, contexte } of entrants) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#/note/' + n.id;
+    const nom = document.createElement('span');
+    nom.textContent = slug(n.title) + '.md';
+    const ctx = document.createElement('span');
+    ctx.className = 'muet';
+    ctx.textContent = ' « ' + (contexte.length > 90 ? contexte.slice(0, 89) + '…' : contexte) + ' »';
+    a.append(nom, ctx);
+    li.append(a);
+    ul.append(li);
+  }
+  $('liens-entrants').hidden = entrants.length === 0;
+  $('liens-entrants-titre').textContent = '← LIENS ENTRANTS (' + entrants.length + ')';
+  $('etat-liens').textContent = !note ? ''
+    : entrants.length ? '← ' + pluriel(entrants.length, 'lien') + ' entrant' + (entrants.length > 1 ? 's' : '')
+      : '← aucun lien entrant';
+}
+
 function afficherNote(note) {
   $('note-vide').hidden = Boolean(note);
   $('note').hidden = !note;
   $('note-message').textContent = '';
+  $('note-renommage').hidden = true;
+  suggLiens?.cacher();
   if (!note) {
     $('etat-mots').textContent = '';
+    $('etat-liens').textContent = '';
     return;
   }
+  etat.titreOuverture = note.title;
   $('note-titre').value = note.title;
+  $('note-titre').removeAttribute('aria-invalid');
   $('note-contenu').value = note.content;
+  afficherMeta(note, slug(note.title) + '.md');
   appliquerMode();
   majEditeur();
   majApercu();
+  afficherLiensEntrants();
   etatSauvegarde('<span class="ok">●</span> enregistré');
 }
 
@@ -215,13 +296,19 @@ async function sauvegarder() {
       return;
     }
 
-    const i = etat.notes.findIndex((n) => n.id === id);
-    if (i >= 0) etat.notes[i] = r.note;
-    trier();
-    afficherListe();
+    remplacerNote(r.note);
+    rafraichir();
     if (!titreRefuse) {
       $('note-titre').removeAttribute('aria-invalid');
       $('note-message').textContent = '';
+    }
+    if (etat.courante === id) {
+      if ('title' in champs && !titreRefuse) {
+        majNomFichier(slug(r.note.title) + '.md');
+        proposerRenommageLiens();
+        afficherLiensEntrants();
+      }
+      if ('content' in champs) majApercu();        // les liens [[…]] peuvent avoir changé de cible
     }
     if (Object.keys(etat.enAttente).length === 0) {
       etatSauvegarde(titreRefuse
@@ -233,8 +320,74 @@ async function sauvegarder() {
   try { await etat.sauvegarde; } finally { etat.sauvegarde = null; }
 }
 
-function afficherErreur(code) {
-  $('note-message').textContent = MESSAGES[code] || MESSAGES.inconnue;
+// ---------- Renommages ----------
+
+/** Après un changement de titre : proposer de mettre à jour les [[ancien titre]] des autres notes. */
+function proposerRenommageLiens() {
+  const note = noteCourante();
+  const ancien = etat.titreOuverture;
+  if (!note || !ancien || ancien.toLowerCase() === note.title.toLowerCase()) {
+    $('note-renommage').hidden = true;
+    return;
+  }
+  const citantes = etat.notes.filter((n) => n.id !== note.id && cite(n.content, ancien));
+  if (!citantes.length) {
+    etat.titreOuverture = note.title;
+    $('note-renommage').hidden = true;
+    return;
+  }
+  $('renommage-texte').textContent = pluriel(citantes.length, 'note') + ' cite' + (citantes.length > 1 ? 'nt' : '')
+    + ' [[' + ancien + ']]. Mettre à jour vers [[' + note.title + ']] ?';
+  $('note-renommage').hidden = false;
+}
+
+async function mettreAJourLiens() {
+  const note = noteCourante();
+  if (!note) return;
+  const ancien = etat.titreOuverture;
+  const nouveau = note.title;
+  $('note-renommage').hidden = true;
+  const citantes = etat.notes.filter((n) => n.id !== note.id && cite(n.content, ancien));
+  let echecs = 0;
+  for (const n of citantes) {
+    const r = await modifierNote(n.id, { content: remplacerLien(n.content, ancien, nouveau) }).catch(() => ({ erreur: 'reseau' }));
+    if (r.erreur) echecs++; else remplacerNote(r.note);
+  }
+  etat.titreOuverture = nouveau;
+  rafraichir();
+  afficherLiensEntrants();
+  $('note-message').textContent = echecs
+    ? pluriel(echecs, 'note') + ' n\'ont pas pu être mises à jour.'
+    : '';
+  etatSauvegarde('<span class="ok">●</span> ' + pluriel(citantes.length - echecs, 'lien') + ' mis à jour');
+}
+
+async function renommerDossier(ancien) {
+  const saisi = await demander({
+    commande: '$ mv', nom: ancien + '/',
+    texte: 'Nouveau chemin du dossier. Ses sous-dossiers suivent.',
+    champ: 'nouveau chemin', valeur: ancien, ok: 'renommer',
+  });
+  if (saisi === null) return;
+  const nouveau = dossierExistant(saisi, etat.notes);
+  if (!nouveau || nouveau === ancien) return;
+
+  await sauvegarder();
+  const concernees = etat.notes.filter((n) => dansDossier(normaliserDossier(n.folder), ancien));
+  let echecs = 0;
+  etatSauvegarde('<span class="accent">…</span> déplacement');
+  for (const n of concernees) {
+    const dossier = nouveau + normaliserDossier(n.folder).slice(ancien.length);
+    const r = await modifierNote(n.id, { folder: dossier }).catch(() => ({ erreur: 'reseau' }));
+    if (r.erreur) echecs++; else remplacerNote(r.note);
+  }
+  etat.filtre.dossier = nouveau;
+  rafraichir();
+  const note = noteCourante();
+  if (note) afficherMeta(note, slug(note.title) + '.md');
+  etatSauvegarde(echecs
+    ? '<span class="erreur">!</span> ' + pluriel(echecs, 'note') + ' non déplacée' + (echecs > 1 ? 's' : '')
+    : '<span class="ok">●</span> ' + pluriel(concernees.length, 'note') + ' déplacée' + (concernees.length > 1 ? 's' : ''));
 }
 
 // ---------- Actions ----------
@@ -247,29 +400,53 @@ function titreLibre() {
   return 'sans titre ' + i;
 }
 
-async function nouvelleNote() {
+async function ouvrirNouvelle(champs, { focusTitre }) {
   await sauvegarder();
-  const r = await creerNote({ title: titreLibre(), content: '' }).catch(() => ({ erreur: 'reseau' }));
+  const r = await creerNote({ content: '', ...champs }).catch(() => ({ erreur: 'reseau' }));
   if (r.erreur) {
     alert(MESSAGES[r.erreur] || MESSAGES.inconnue);
     return;
   }
-  etat.notes.unshift(r.note);
+  remplacerNote(r.note);
   if (etat.mode === 'view') { etat.mode = 'edit'; ecrireMode('edit'); }
   location.hash = '#/note/' + r.note.id;
-  // La route ouvre la note ; on place ensuite le curseur dans le titre.
-  requestAnimationFrame(() => { $('note-titre').focus(); $('note-titre').select(); });
+  requestAnimationFrame(() => {
+    const champ = focusTitre ? $('note-titre') : $('note-contenu');
+    champ.focus();
+    if (focusTitre) champ.select();
+  });
+}
+
+function nouvelleNote() {
+  // La note naît dans le dossier et avec le tag affichés.
+  return ouvrirNouvelle({
+    title: titreLibre(),
+    folder: etat.filtre.dossier,
+    tags: etat.filtre.tag ? [etat.filtre.tag] : [],
+  }, { focusTitre: true });
+}
+
+async function creerDepuisLien(titre) {
+  const existante = parTitre(titre);
+  if (existante) { location.hash = '#/note/' + existante.id; return; }
+  const ok = await demander({
+    commande: '$ touch', nom: slug(titre) + '.md',
+    texte: '« ' + titre + ' » n\'existe pas encore. Créer la note ?', ok: 'créer',
+  });
+  if (!ok) return;
+  const courante = noteCourante();
+  await ouvrirNouvelle({ title: titre, folder: courante ? courante.folder : etat.filtre.dossier }, { focusTitre: false });
 }
 
 async function demanderSuppression() {
   const note = noteCourante();
   if (!note) return;
-  const dlg = $('dialogue-suppression');
-  $('dialogue-nom').textContent = slug(note.title) + '.md';
-  dlg.returnValue = '';
-  dlg.showModal();
-  await new Promise((ok) => dlg.addEventListener('close', ok, { once: true }));
-  if (dlg.returnValue !== 'supprimer') return;
+  const ok = await demander({
+    commande: '$ rm', nom: slug(note.title) + '.md',
+    texte: 'Supprimer définitivement cette note ? Penser à exporter avant en cas de doute.',
+    ok: 'supprimer', danger: true,
+  });
+  if (!ok) return;
 
   clearTimeout(etat.minuteur);
   etat.enAttente = {};
@@ -282,6 +459,36 @@ async function demanderSuppression() {
   router();
 }
 
+// ---------- Suggestions de liens à la frappe de [[ ----------
+
+let suggLiens = null;
+let amorce = null;
+
+function proposerLiens() {
+  const zone = $('note-contenu');
+  amorce = zone.selectionStart === zone.selectionEnd ? amorceLien(zone.value, zone.selectionStart) : null;
+  if (!amorce) { suggLiens.cacher(); return; }
+  const titres = etat.notes.filter((n) => n.id !== etat.courante).map((n) => n.title);
+  const choix = proposerTitres(titres, amorce.requete).map((t) => ({ valeur: t, texte: '[[' + t + ']]' }));
+  if (amorce.requete.trim() && !parTitre(amorce.requete)) {
+    choix.push({ valeur: amorce.requete.trim(), texte: '+ lien vers une nouvelle note « ' + amorce.requete.trim() + ' »' });
+  }
+  suggLiens.afficher(choix);
+}
+
+function insererLien(option) {
+  const zone = $('note-contenu');
+  if (!amorce) return;
+  const curseur = zone.selectionStart;
+  const fermeDeja = zone.value.slice(curseur).startsWith(']]');
+  zone.setRangeText(option.valeur + (fermeDeja ? '' : ']]'), amorce.debut, curseur, 'end');
+  if (fermeDeja) zone.selectionStart = zone.selectionEnd = zone.selectionStart + 2;
+  suggLiens.cacher();
+  amorce = null;
+  zone.dispatchEvent(new Event('input'));
+  zone.focus();
+}
+
 // ---------- Routage ----------
 
 async function router() {
@@ -291,8 +498,7 @@ async function router() {
   if (id !== etat.courante) {
     await sauvegarder();
     etat.courante = id;
-    const note = noteCourante();
-    if (id && !note) {
+    if (id && !noteCourante()) {
       history.replaceState(null, '', '#/');
       etat.courante = null;
     }
@@ -308,16 +514,65 @@ function brancher() {
   if (etat.branche) return;
   etat.branche = true;
 
+  definirResolveur((titre) => parTitre(titre)?.id || null);
+
   window.addEventListener('hashchange', router);
   $('bouton-nouvelle').addEventListener('click', nouvelleNote);
   $('bouton-supprimer').addEventListener('click', demanderSuppression);
-
-  $('note-contenu').addEventListener('input', () => {
-    etat.enAttente.content = $('note-contenu').value;
-    majEditeur();
-    planifierSauvegarde();
+  $('renommage-oui').addEventListener('click', mettreAJourLiens);
+  $('renommage-non').addEventListener('click', () => {
+    etat.titreOuverture = noteCourante()?.title || '';
+    $('note-renommage').hidden = true;
+  });
+  $('bouton-effacer-filtres').addEventListener('click', () => {
+    $('recherche').value = '';
+    changerFiltre({ dossier: '', tag: null, recherche: '' });
   });
 
+  // Recherche dans les titres et le contenu.
+  const recherche = $('recherche');
+  recherche.addEventListener('input', () => {
+    etat.filtre.recherche = recherche.value;
+    rafraichir();
+    if (etroit.matches && etat.courante) location.hash = '#/';
+  });
+  recherche.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { recherche.value = ''; etat.filtre.recherche = ''; rafraichir(); recherche.blur(); }
+    if (e.key === 'Enter') {
+      const premier = document.querySelector('#liste-notes a');
+      if (premier) { e.preventDefault(); location.hash = premier.getAttribute('href'); }
+    }
+  });
+
+  // Dossier et tags de la note.
+  brancherMeta({
+    dossiers: () => listerDossiers(etat.notes),
+    tags: () => compterTags(etat.notes).map((t) => t.tag),
+    resoudreDossier: (chemin) => dossierExistant(chemin, etat.notes),
+    surDossier: (folder) => { etat.enAttente.folder = folder; sauvegarder(); },
+    surTags: (tags) => { etat.enAttente.tags = tags; sauvegarder(); },
+  });
+
+  // Contenu.
+  const zone = $('note-contenu');
+  suggLiens = creerSuggestions($('suggestions-liens'), zone, insererLien);
+  zone.addEventListener('input', () => {
+    etat.enAttente.content = zone.value;
+    majEditeur();
+    proposerLiens();
+    planifierSauvegarde();
+  });
+  zone.addEventListener('keydown', (e) => {
+    if (!suggLiens.ouverte()) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); suggLiens.deplacer(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); suggLiens.deplacer(-1); }
+    else if (e.key === 'Enter' || e.key === 'Tab') { if (suggLiens.choisirActive()) e.preventDefault(); }
+    else if (e.key === 'Escape') { e.preventDefault(); suggLiens.cacher(); }
+  });
+  zone.addEventListener('click', proposerLiens);
+  zone.addEventListener('blur', () => suggLiens.cacher());
+
+  // Titre.
   $('note-titre').addEventListener('input', () => {
     const t = $('note-titre').value.trim();
     $('note-titre').removeAttribute('aria-invalid');
@@ -341,6 +596,14 @@ function brancher() {
     if (e.key === 'Enter') { e.preventDefault(); $('note-contenu').focus(); }
   });
 
+  // Liens [[…]] de l'aperçu vers une note qui n'existe pas encore.
+  $('note-apercu').addEventListener('click', (e) => {
+    const a = e.target.closest('a.lien-absent');
+    if (!a) return;
+    e.preventDefault();
+    creerDepuisLien(a.dataset.titre || a.textContent);
+  });
+
   for (const b of document.querySelectorAll('.bascule button')) {
     b.addEventListener('click', () => {
       etat.mode = b.dataset.mode;
@@ -352,10 +615,10 @@ function brancher() {
   etroit.addEventListener('change', appliquerMode);
 
   document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && !$('ecran-appli').hidden) {
-      e.preventDefault();
-      sauvegarder();
-    }
+    if ($('ecran-appli').hidden || !(e.ctrlKey || e.metaKey)) return;
+    const k = e.key.toLowerCase();
+    if (k === 's') { e.preventDefault(); sauvegarder(); }
+    if (k === 'k') { e.preventDefault(); if (etroit.matches && etat.courante) location.hash = '#/'; recherche.focus(); recherche.select(); }
   });
   // Ne rien perdre en quittant ou en changeant d'onglet.
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sauvegarder(); });
@@ -367,6 +630,8 @@ export async function demarrerAppli() {
   brancher();
   etat.courante = null;
   etat.enAttente = {};
+  etat.filtre = { dossier: '', tag: null, recherche: '' };
+  $('recherche').value = '';
   $('liste-message').hidden = false;
   $('liste-message').innerHTML = 'chargement<span class="curseur">_</span>';
   $('liste-notes').replaceChildren();
@@ -379,6 +644,7 @@ export async function demarrerAppli() {
   }
   etat.notes = r.notes;
   trier();
+  rafraichir();
   await router();
 }
 
@@ -393,4 +659,5 @@ export function arreterAppli() {
   etat.enAttente = {};
   $('liste-notes').replaceChildren();
   afficherNote(null);
+  for (const id of ['arbre', 'nuage-tags', 'ariane', 'sous-dossiers', 'tags-mobile']) $(id).replaceChildren();
 }

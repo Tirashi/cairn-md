@@ -261,10 +261,10 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       verifier(true, 'retour du réseau : enregistré automatiquement');
 
       await page.click('#bouton-supprimer');
-      await page.click('#dialogue-suppression button[value="annuler"]');
+      await page.click('#dialogue button[value="annuler"]');
       verifier((await page.locator('.ln-nom').count()) === 2, 'suppression annulée : note gardée');
       await page.click('#bouton-supprimer');
-      await page.click('#dialogue-suppression button[value="supprimer"]');
+      await page.click('#dialogue button[value="ok"]');
       await page.waitForFunction(() => document.querySelectorAll('.ln-nom').length === 1);
       verifier(new URL(page.url()).hash === '#/', 'suppression : retour à la liste');
 
@@ -291,6 +291,182 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       await page.click('#bouton-deconnexion');
       await page.waitForSelector('#ecran-connexion:not([hidden])');
       verifier((await page.locator('.ln-nom').count()) === 0, 'déconnexion : notes effacées de l\'écran');
+
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
+    console.log('Dossiers, tags, recherche et liens');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      const enregistre = () => page.waitForFunction(() => /● (enregistré \d|\d+ (lien|note))/.test(document.getElementById('etat-sauvegarde').textContent));
+      const stockees = () => page.evaluate(() => JSON.parse(localStorage.getItem('faux-supabase-notes')));
+      const parTitre = async (t) => (await stockees()).find((n) => n.title === t);
+      const noms = () => page.locator('.ln-nom').allTextContents();
+      const ouvrir = async (titre) => {
+        const id = (await parTitre(titre)).id;
+        await page.evaluate((i) => { location.hash = '#/note/' + i; }, id);
+        await page.waitForFunction((t) => document.getElementById('note-titre').value === t, titre);
+      };
+
+      await page.goto(base + '/');
+      await page.evaluate(() => {
+        const moi = '00000000-0000-0000-0000-000000000001';
+        const n = (i, title, folder, tags, content) => ({ id: '0000000' + i + '-0000-4000-8000-00000000000' + i, user_id: moi, title, folder, tags, content,
+          created_at: '2026-11-0' + i + 'T10:00:00.000Z', updated_at: '2026-11-0' + i + 'T10:00:00.000Z' });
+        localStorage.setItem('faux-supabase-notes', JSON.stringify([
+          n(1, 'Cairn — plan V1', 'Travail/Projets', ['dev', 'idée'], '# Cairn\n\nVoir [[Modèle de données]] et [[Idée absente]].\n\n`[[pas un lien]]`'),
+          n(2, 'Modèle de données', 'Travail/Projets', ['dev', 'supabase'], 'Une table notes.'),
+          n(3, 'Réunion du 4 novembre', 'Travail/Réunions', [], 'Point sur [[cairn — plan v1|le plan]].'),
+          n(4, 'Pain au levain', 'Perso', ['recette'], 'Farine, eau, sel.'),
+        ]));
+      });
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.waitForFunction(() => document.querySelectorAll('.ln-nom').length === 4);
+
+      const arbre = (await page.locator('#arbre').innerText()).replace(/\s+/g, ' ');
+      verifier(/~\/ ?4/.test(arbre) && arbre.includes('Perso/') && arbre.includes('Travail/') && arbre.includes('Projets/') && arbre.includes('Réunions/'), 'arbre des dossiers (' + arbre + ')');
+      verifier(arbre.includes('├─') && arbre.includes('└─'), 'arbre : préfixes ├─ └─');
+
+      await page.click('#arbre button:has-text("Travail/")');
+      verifier((await noms()).length === 3, 'filtre dossier Travail/ : 3 notes (sous-dossiers compris)');
+      verifier((await page.textContent('#filtre-actif')) === '~/Travail/', 'en-tête : ~/Travail/');
+      await page.click('#nuage-tags button:has-text("#dev")');
+      verifier((await noms()).length === 2, 'filtre dossier + tag #dev : 2 notes');
+      await page.click('#nuage-tags button:has-text("#dev")');
+      verifier((await noms()).length === 3, 'second clic sur #dev : filtre retiré');
+      await page.click('#bouton-effacer-filtres');
+      verifier((await noms()).length === 4 && (await page.locator('#bouton-effacer-filtres').isHidden()), '× filtres : tout réaffiché');
+
+      await page.fill('#recherche', 'LEVAIN');
+      verifier((await noms()).join() === 'pain-au-levain.md', 'recherche dans le titre (casse ignorée)');
+      await page.fill('#recherche', 'reunion');
+      verifier((await noms()).join() === 'reunion-du-4-novembre.md', 'recherche sans accents');
+      await page.fill('#recherche', 'farine');
+      verifier((await noms()).join() === 'pain-au-levain.md', 'recherche dans le contenu');
+      await page.press('#recherche', 'Escape');
+      verifier((await noms()).length === 4, 'Échap vide la recherche');
+      await page.keyboard.press('Control+k');
+      verifier(await page.evaluate(() => document.activeElement.id === 'recherche'), 'Ctrl+K : curseur dans la recherche');
+      await page.keyboard.press('Escape');
+
+      await ouvrir('Cairn — plan V1');
+      await page.click('.bascule [data-mode="split"]');
+      await page.waitForSelector('#note-apercu a.lien-note');
+      const idModele = (await parTitre('Modèle de données')).id;
+      verifier((await page.getAttribute('#note-apercu a.lien-note:not(.lien-absent)', 'href')) === '#/note/' + idModele, '[[Modèle de données]] : lien vers la note');
+      verifier((await page.locator('#note-apercu a.lien-absent').count()) === 1, '[[Idée absente]] : lien « à créer »');
+      verifier((await page.locator('#note-apercu code a').count()) === 0, 'pas de lien dans le code en ligne');
+      verifier((await page.textContent('#liens-entrants')).includes('reunion-du-4-novembre.md'), 'liens entrants : la réunion (alias [[…|le plan]], casse ignorée)');
+      verifier((await page.textContent('#etat-liens')) === '← 1 lien entrant', 'barre d\'état : ← 1 lien entrant');
+      verifier((await page.inputValue('#note-dossier')) === 'Travail/Projets' && (await page.locator('#note-tags .puce').count()) === 2, 'dossier et tags de la note affichés');
+
+      await page.click('#note-apercu a.lien-note:not(.lien-absent)');
+      await page.waitForFunction(() => document.getElementById('note-titre').value === 'Modèle de données');
+      verifier(true, 'clic sur un lien : la note liée s\'ouvre');
+
+      await ouvrir('Cairn — plan V1');
+      await page.click('#note-apercu a.lien-absent');
+      await page.waitForSelector('#dialogue[open]');
+      verifier((await page.textContent('#dialogue-nom')) === 'idee-absente.md', 'lien absent : proposition de créer idee-absente.md');
+      await page.click('#dialogue button[value="ok"]');
+      await page.waitForFunction(() => document.getElementById('note-titre').value === 'Idée absente');
+      verifier((await page.inputValue('#note-dossier')) === 'Travail/Projets', 'note créée dans le dossier de la note d\'origine');
+      await ouvrir('Cairn — plan V1');
+      await page.waitForFunction(() => document.querySelectorAll('#note-apercu a.lien-note').length === 2);
+      verifier((await page.locator('#note-apercu a.lien-absent').count()) === 0, 'le lien n\'est plus « à créer »');
+
+      // Dossier : saisie libre, casse d'un dossier existant reprise.
+      await ouvrir('Pain au levain');
+      await page.click('#note-dossier');
+      await page.fill('#note-dossier', 'travail/pro');
+      verifier((await page.locator('#suggestions-dossiers li').first().textContent()) === 'Travail/Projets/', 'suggestion de dossier existant');
+      verifier((await page.locator('#suggestions-dossiers li').last().textContent()).includes('nouveau dossier'), 'proposition « nouveau dossier »');
+      await page.fill('#note-dossier', 'travail/projets');
+      await page.press('#note-dossier', 'Enter');
+      await enregistre();
+      verifier((await parTitre('Pain au levain')).folder === 'Travail/Projets', 'dossier enregistré avec la casse existante (Travail/Projets)');
+      await page.click('#note-dossier');
+      await page.fill('#note-dossier', ' Cuisine / Pains/ ');
+      await page.press('#note-dossier', 'Enter');
+      await enregistre();
+      verifier((await parTitre('Pain au levain')).folder === 'Cuisine/Pains', 'nouveau dossier, chemin nettoyé (Cuisine/Pains)');
+      await page.click('#note-dossier');
+      await page.fill('#note-dossier', 'Perso');
+      await page.press('#note-dossier', 'Escape');
+      verifier((await page.inputValue('#note-dossier')) === 'Cuisine/Pains', 'Échap annule le changement de dossier');
+
+      // Tags.
+      await page.click('#bouton-ajout-tag');
+      await page.fill('#note-tag', '#Pain');
+      await page.press('#note-tag', 'Enter');
+      await page.type('#note-tag', 'fait maison,');
+      await page.press('#note-tag', 'Escape');
+      await enregistre();
+      verifier(JSON.stringify((await parTitre('Pain au levain')).tags) === '["recette","pain","fait-maison"]', 'tags ajoutés et nettoyés (#Pain → pain, « fait maison » → fait-maison)');
+      await page.click('#note-tags button[aria-label="Retirer le tag recette"]');
+      await enregistre();
+      verifier(JSON.stringify((await parTitre('Pain au levain')).tags) === '["pain","fait-maison"]', 'tag retiré');
+
+      // Renommer une note : proposer de mettre à jour les liens.
+      await ouvrir('Modèle de données');
+      await page.fill('#note-titre', 'Schéma de la base');
+      await page.waitForSelector('#note-renommage:not([hidden])');
+      verifier((await page.textContent('#renommage-texte')).includes('1 note cite [[Modèle de données]]'), 'renommage : « 1 note cite [[Modèle de données]] »');
+      await page.click('#renommage-oui');
+      await page.waitForFunction(() => /lien mis à jour/.test(document.getElementById('etat-sauvegarde').textContent));
+      verifier((await parTitre('Cairn — plan V1')).content.includes('[[Schéma de la base]]'), 'lien mis à jour dans l\'autre note');
+
+      // Suggestions à la frappe de [[.
+      await ouvrir('Cairn — plan V1');
+      await page.click('.bascule [data-mode="edit"]');
+      await page.focus('#note-contenu');
+      await page.evaluate(() => { const z = document.getElementById('note-contenu'); z.selectionStart = z.selectionEnd = z.value.length; });
+      await page.keyboard.type('\n[[pai');
+      await page.waitForSelector('#suggestions-liens:not([hidden])');
+      verifier((await page.locator('#suggestions-liens li').first().textContent()) === '[[Pain au levain]]', 'suggestion [[Pain au levain]]');
+      await page.keyboard.press('Enter');
+      verifier((await page.inputValue('#note-contenu')).endsWith('\n[[Pain au levain]]'), 'Entrée insère [[Pain au levain]]');
+      verifier(await page.locator('#suggestions-liens').isHidden(), 'suggestions refermées');
+      await enregistre();
+
+      // Renommer un dossier.
+      await page.click('#arbre button:has-text("Travail/")');
+      await page.click('#arbre .bouton-mv');
+      await page.waitForSelector('#dialogue[open]');
+      await page.fill('#dialogue-champ', 'Boulot');
+      await page.press('#dialogue-champ', 'Enter');
+      await page.waitForFunction(() => /déplacée/.test(document.getElementById('etat-sauvegarde').textContent));
+      const dossiers = (await stockees()).map((n) => n.folder).sort();
+      verifier(JSON.stringify(dossiers) === '["Boulot/Projets","Boulot/Projets","Boulot/Projets","Boulot/Réunions","Cuisine/Pains"]', 'dossier renommé, sous-dossiers compris (' + dossiers.join(', ') + ')');
+      verifier((await page.textContent('#filtre-actif')) === '~/Boulot/' && !(await page.textContent('#arbre')).includes('Travail'), 'arbre et filtre suivent le renommage');
+
+      // Téléphone.
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.evaluate(() => { location.hash = '#/'; });
+      await page.waitForFunction(() => document.getElementById('ecran-appli').dataset.vue === 'liste');
+      verifier(await page.locator('.nav-mobile').isVisible(), 'téléphone : fil d\'Ariane visible');
+      verifier((await page.locator('#ariane .miette').allTextContents()).join('') === '~/Boulot/', 'téléphone : ~/ › Boulot/');
+      verifier((await page.locator('#sous-dossiers button').count()) === 2, 'téléphone : sous-dossiers Projets/ et Réunions/');
+      await page.click('#ariane .miette >> nth=0');
+      verifier((await noms()).length === 5, 'téléphone : ~/ revient à la racine');
+      await page.click('.liste-notes a >> nth=0');
+      await page.waitForSelector('#note:not([hidden])');
+      const largeur = await page.evaluate(() => document.documentElement.scrollWidth);
+      verifier(largeur <= 390, 'téléphone : note sans défilement horizontal (' + largeur + ' px)');
+      if (process.argv.includes('--captures')) {
+        const dossier = process.argv[process.argv.indexOf('--captures') + 1] || '.';
+        await page.screenshot({ path: path.join(dossier, 'etape4-mobile-note.png') });
+        await page.evaluate(() => { location.hash = '#/'; });
+        await page.click('#ariane .miette >> nth=0');
+        await page.screenshot({ path: path.join(dossier, 'etape4-mobile-liste.png') });
+        await page.setViewportSize({ width: 1440, height: 900 });
+        await ouvrir('Cairn — plan V1');
+        await page.click('.bascule [data-mode="split"]');
+        await page.screenshot({ path: path.join(dossier, 'etape4-desktop.png') });
+      }
 
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }

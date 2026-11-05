@@ -18,11 +18,16 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 - Enregistrement automatique une seconde après la dernière frappe (barre d'état : `○ modifié`, `● enregistré`) ; `Ctrl+S` force l'enregistrement.
 - `edit | split | view` : éditeur, les deux côte à côte (ordinateur), ou aperçu. Sur téléphone, un seul panneau à la fois et ← pour revenir à la liste.
 - `rm` supprime la note après confirmation.
+- **Dossier** : le champ `~/…` sous le titre se tape comme un chemin (`travail/projets`) ; les dossiers existants sont proposés, Entrée valide, Échap annule. Les dossiers n'existent que par leurs notes.
+- **Tags** : `+ tag`, puis Entrée ou virgule ; `×` pour retirer.
+- **Filtrer** : clic sur un dossier (sous-dossiers compris) ou un tag dans la colonne de gauche (sur téléphone : fil d'Ariane et puces au-dessus de la liste). `mv` renomme le dossier choisi.
+- **Rechercher** : `Ctrl+K`, dans les titres et le contenu, sans tenir compte des accents ni des majuscules.
+- **Liens** : `[[Titre]]` ou `[[Titre|texte affiché]]` ; taper `[[` propose les notes existantes. Un lien vers une note qui n'existe pas (marqué `+`) propose de la créer. Les notes qui citent la note ouverte sont listées sous l'aperçu (liens entrants). Après avoir renommé une note, Cairn propose de mettre à jour les liens des autres notes.
 - Deux notes ne peuvent pas avoir le même titre (sans tenir compte des majuscules), pour que les liens `[[Titre]]` restent sans ambiguïté.
 
 ## Essais
 
-`node outils/essai.js` (nécessite Playwright) : sert le dépôt en local, remplace `supabase-js` par un faux backend en mémoire ([`outils/faux-supabase.js`](outils/faux-supabase.js), compte `essai@cairn.local` / `secret`) et vérifie la connexion, le thème, les notes (création, édition, sauvegarde automatique, titres en double, panne réseau, suppression), l'aperçu Markdown assaini et l'affichage sur téléphone. `marked` et `DOMPurify` sont pris sur le registre npm (même version que le CDN) et gardés dans `outils/.cache/`. Lancé aussi par la CI à chaque push.
+`node outils/essai.js` (nécessite Playwright) : sert le dépôt en local, remplace `supabase-js` par un faux backend en mémoire ([`outils/faux-supabase.js`](outils/faux-supabase.js), compte `essai@cairn.local` / `secret`) et vérifie la connexion, le thème, les notes (création, édition, sauvegarde automatique, titres en double, panne réseau, suppression), l'aperçu Markdown assaini, les dossiers, tags, recherche, liens et renommages, et l'affichage sur téléphone. `marked` et `DOMPurify` sont pris sur le registre npm (même version que le CDN) et gardés dans `outils/.cache/`. Lancé aussi par la CI à chaque push.
 
 ## Crédits
 

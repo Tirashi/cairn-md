@@ -4,6 +4,31 @@ import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3.4.17/+esm';
 
 marked.setOptions({ gfm: true, breaks: false });
 
+// ---------- Liens [[Titre]] et [[Titre|texte]] ----------
+// Le résolveur (fourni par ui.js) renvoie l'id de la note portant ce titre, ou null.
+let resoudre = () => null;
+export function definirResolveur(f) { resoudre = f; }
+
+const echapperHtml = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+marked.use({
+  extensions: [{
+    name: 'lienNote',
+    level: 'inline',
+    start: (src) => { const i = src.indexOf('[['); return i < 0 ? undefined : i; },
+    tokenizer(src) {
+      const m = /^\[\[([^\[\]\n|]+?)(?:\|([^\[\]\n]+?))?\]\]/.exec(src);
+      if (!m) return undefined;
+      return { type: 'lienNote', raw: m[0], titre: m[1].trim(), texte: (m[2] || m[1]).trim() };
+    },
+    renderer({ titre, texte }) {
+      const id = resoudre(titre);
+      if (id) return `<a href="#/note/${encodeURIComponent(id)}" class="lien-note">${echapperHtml(texte)}</a>`;
+      return `<a href="#/note/" class="lien-note lien-absent" data-titre="${echapperHtml(titre)}" title="Note inexistante : cliquer pour la créer">${echapperHtml(texte)}</a>`;
+    },
+  }],
+});
+
 // Les liens externes s'ouvrent dans un nouvel onglet, sans accès à la page d'origine.
 DOMPurify.addHook('afterSanitizeAttributes', (noeud) => {
   if (noeud.tagName === 'A' && /^https?:/i.test(noeud.getAttribute('href') || '')) {
@@ -26,10 +51,12 @@ function echapper(texte) {
 }
 
 function colorerEnLigne(html) {
-  return html
-    .replace(/(`[^`]+`)/g, '<span class="md-code">$1</span>')
-    .replace(/(\[\[[^\]\n]+\]\])/g, '<span class="md-lien-note">$1</span>')
-    .replace(/(\*\*[^*\n]+\*\*)/g, '<span class="md-gras">$1</span>');
+  // Le code en ligne est laissé tel quel : pas de lien ni de gras à l'intérieur.
+  return html.split(/(`[^`]+`)/).map((morceau, i) => (i % 2
+    ? '<span class="md-code">' + morceau + '</span>'
+    : morceau
+      .replace(/(\[\[[^\]\n]+\]\])/g, '<span class="md-lien-note">$1</span>')
+      .replace(/(\*\*[^*\n]+\*\*)/g, '<span class="md-gras">$1</span>'))).join('');
 }
 
 /** Renvoie le HTML des lignes colorées (une <div> par ligne logique). */
@@ -59,12 +86,13 @@ export function colorer(texte) {
   }).join('');
 }
 
-/** Premier extrait lisible du contenu, pour la liste. */
+/** Premier extrait lisible du contenu, pour la liste (liens [[…]] réduits à leur texte). */
 export function extrait(markdown, longueur = 90) {
   for (const ligne of (markdown || '').split('\n')) {
     if (/^#{1,6}\s/.test(ligne)) continue;          // les titres répètent souvent le nom de la note
     const t = ligne.replace(/^\s*(#{1,6}|>|[-*+]|\d+[.)]|```.*)\s*/, '').trim();
-    if (t) return t.length > longueur ? t.slice(0, longueur - 1) + '…' : t;
+    const lisible = t.replace(/\[\[([^\]|\n]+)(?:\|([^\]\n]+))?\]\]/g, (_, a, b) => b || a);
+    if (lisible) return lisible.length > longueur ? lisible.slice(0, longueur - 1) + '…' : lisible;
   }
   return '';
 }

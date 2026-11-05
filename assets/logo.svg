@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Cairn">
+  <!-- Tablette du bas -->
+  <g transform="rotate(-2 64 97)">
+    <rect x="14" y="84" width="100" height="27" rx="9" fill="#5b5f66"/>
+    <!-- gravure [[ ]] -->
+    <g fill="none" stroke="#2a2d33" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M51 90 h-5 v14 h5"/>
+      <path d="M59 90 h-5 v14 h5"/>
+      <path d="M69 90 h5 v14 h-5"/>
+      <path d="M77 90 h5 v14 h-5"/>
+    </g>
+  </g>
+  <!-- Tablette du milieu -->
+  <rect x="28" y="55" width="72" height="24" rx="9" fill="#7a7f88" transform="rotate(3 64 67)"/>
+  <!-- Tablette du haut (accent) -->
+  <rect x="42" y="27" width="44" height="22" rx="9" fill="#f0b45a" transform="rotate(-4 64 38)"/>
+</svg>

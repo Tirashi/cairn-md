@@ -29,7 +29,7 @@
 - Messages de commit en français, écrits dans un fichier puis `git commit -F`.
 - Tests : `node outils/essai.js` avant chaque push (Playwright, sans réseau : faux `supabase-js` dans `outils/faux-supabase.js`, compte `essai@cairn.local` / `secret` ; `--captures <dossier>` pour des captures). La CI (`.github/workflows/essais.yml`) le relance à chaque push : regarder son résultat **avant de mettre à jour `main`**. Chaque nouvelle fonctionnalité ajoute ses vérifications à l'essai (et au faux backend si besoin).
 - Le CDN (jsDelivr) et Supabase **ne sont pas joignables** depuis l'environnement de Claude : les versions se vérifient sur `registry.npmjs.org`.
-- **Sécurité** : ne jamais demander, stocker ni committer la clé `service_role`, le mot de passe de la base ou du compte, ni aucune note. Seules l'URL publique `https://laboemcpllcfozovwcsj.supabase.co` et la clé publiable `sb_publishable_phhTawzmnPxi-HRQH-C_3g_7hyUTt5_` (publique, la sécurité repose sur la RLS) sont dans le code, dans `js/config.js` ; jamais de clé `sb_secret_…`. Vérifier la RLS avec un second compte de test avant de publier.
+- **Sécurité** : ne jamais demander, stocker ni committer la clé `service_role`, le mot de passe de la base ou du compte, ni aucune note. Seules l'URL publique `https://laboemcpllcfozovwcsj.supabase.co` et la clé publiable `sb_publishable_phhTawzmnPxi-HRQH-C_3g_7hyUTt5_` (publique, la sécurité repose sur la RLS) sont dans le code, dans `js/config.js` ; jamais de clé `sb_secret_…`. Vérifier la RLS avec un second compte de test avant de publier (fait le 05/11 ; à refaire si le schéma ou les règles changent).
 - Supabase n'étant pas joignable d'ici, tester avec le faux backend, puis demander un essai réel à l'utilisateur.
 - **Crédits** : toute ressource venue d'ailleurs (bibliothèques, graphismes, polices, données) est citée **dès qu'on l'ajoute** : nom, créateur, licence, lien vers l'endroit où on l'a prise.
 - **Économie de tokens** : on peut rester dans la même conversation d'un chantier à l'autre en **compactant le contexte** (`/compact`) ; demandes précises ; peu de captures ; pas de sous-agents ; lire les fichiers par morceaux plutôt qu'en entier. Choix du modèle :
@@ -52,8 +52,8 @@
 ## En cours / à vérifier
 Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).
 - **Démarrage** (05/11) : `CLAUDE.md`, plan V1 (`specs/plan-v1.md`) et logos (`assets/`) en place. **Maquette** ([artefact](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ)) : direction B choisie, desktop validé.
-- **Étape 2** (05/11) : connexion validée sur le vrai site (https://tirashi.github.io/cairn-md/). **Reste** : vérifier la RLS avec un second compte.
+- **Étape 2** (05/11) : connexion validée sur le vrai site (https://tirashi.github.io/cairn-md/) ; **RLS vérifiée** par l'utilisateur avec un second compte (05/11).
 - **Étape 3** (05/11) : CRUD, éditeur coloré, aperçu assaini, sauvegarde auto, suppression, mobile ; validée sur le vrai site.
 - **Étape 4** (05/11) : dossiers, tags, filtres, recherche, liens `[[…]]`, liens entrants, suggestions `[[`, renommage de note (mise à jour des liens) et de dossier ; testée avec le faux backend, **essai réel à faire**. Ensuite : étape 5 (responsive, en grande partie fait) puis 6 (export / import).
 - **Liens et code** (05/11) : palette « lier une note » (direction A), code coloré, mermaid ; testés avec le faux backend, **essai réel à faire**.
-- **Étape 6** (05/11) : export zip, import zip / .md / dossier avec récapitulatif, conflits et sauvegarde avant import ; testée avec le faux backend, **essai réel à faire**. Ensuite : plus tard (PWA, historique, MCP) et vérification de la RLS.
+- **Étape 6** (05/11) : export zip, import zip / .md / dossier avec récapitulatif, conflits et sauvegarde avant import ; testée avec le faux backend, **essai réel à faire**. Ensuite : le « plus tard » du plan (PWA, historique, MCP).

@@ -121,6 +121,27 @@
       "w": 390,
       "x": 2040,
       "y": 5050
+    },
+    "H-discret.dc.html": {
+      "h": 844,
+      "title": "Hors ligne A · discret (barre d'état)",
+      "w": 390,
+      "x": 1100,
+      "y": 6300
+    },
+    "H-bandeau.dc.html": {
+      "h": 844,
+      "title": "Hors ligne B · bandeau",
+      "w": 390,
+      "x": 1570,
+      "y": 6300
+    },
+    "H-file.dc.html": {
+      "h": 844,
+      "title": "Hors ligne C · file d'attente + conflit",
+      "w": 390,
+      "x": 2040,
+      "y": 6300
     }
   },
   "createdOnFiles": {
@@ -190,6 +211,13 @@
       "text": "Étape 6 · export et import (vérifier avant d'importer)",
       "x": 1100,
       "y": 4750
+    },
+    "tI": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "PWA · installer Cairn et écrire hors ligne",
+      "x": 1100,
+      "y": 6000
     }
   },
   "order": [
@@ -209,7 +237,10 @@
     "P-code.dc.html",
     "I-dialogue.dc.html",
     "I-statut.dc.html",
-    "I-conflit.dc.html"
+    "I-conflit.dc.html",
+    "H-discret.dc.html",
+    "H-bandeau.dc.html",
+    "H-file.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

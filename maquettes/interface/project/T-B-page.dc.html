@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Tâches B · une page à part (menu ⋯)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #2a2d33;">
+    <span style="font-size: 16px; font-weight: 800;"><span style="color:#f0b45a">▲</span> cairn<span style="color:#f0b45a">_</span></span>
+    <span style="flex-grow: 1;"></span><span style="height: 40px; min-width: 40px; padding: 0 10px; box-sizing: border-box; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; border:1px solid #2a2d33;">◷</span><span style="height: 40px; min-width: 40px; padding: 0 10px; box-sizing: border-box; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; background:#f0b45a; color:#121212; font-weight:800; border:0;">+ nouvelle</span><span style="height: 40px; min-width: 40px; padding: 0 10px; box-sizing: border-box; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; border:1px solid #f0b45a; color:#f0b45a;">⋯</span>
+  </header>
+  <div style="position: relative;">
+    <div style="position: absolute; right: 12px; top: -4px; width: 230px; background: #1b1d21; border: 1px solid #2a2d33; border-radius: 6px; font-size: 13px; z-index: 2; box-shadow: 0 8px 24px rgba(0,0,0,.5);">
+      <div style="padding: 12px 14px; color:#f0b45a; background: rgba(240,180,90,0.10);">☐ tâches ouvertes <span style="color: #9aa0a8;">6</span></div>
+      <div style="padding: 12px 14px;">$ export <span style="color: #9aa0a8;">.zip</span></div>
+      <div style="padding: 12px 14px;">$ import <span style="color: #9aa0a8;">.zip ou .md</span></div>
+      <div style="padding: 12px 14px; color: #9aa0a8;">…</div>
+    </div>
+  </div>
+  <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 4px; border-bottom: 1px solid #2a2d33; margin-top: 190px;">
+    <span style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; font-size: 18px;">←</span>
+    <span style="flex-grow: 1; font-size: 14px; font-weight: 800;">☐ tâches ouvertes</span>
+    <span style="font-size: 12px; color: #9aa0a8;">6</span>
+  </div>
+  <div style="padding: 0 16px;">
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px;"></span><span>appeler le garage</span><span style="margin-left: auto; font-size: 11px; color: #4a4e55; white-space: nowrap;">2026-11-06</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px;"></span><span>finir la maquette des tâches</span><span style="margin-left: auto; font-size: 11px; color: #4a4e55; white-space: nowrap;">2026-11-06</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px;"></span><span>lait</span><span style="margin-left: auto; font-size: 11px; color: #4a4e55; white-space: nowrap;">courses</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px;"></span><span>pain</span><span style="margin-left: auto; font-size: 11px; color: #4a4e55; white-space: nowrap;">courses</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px;"></span><span>relire la section portabilité</span><span style="margin-left: auto; font-size: 11px; color: #4a4e55; white-space: nowrap;">cairn-plan-v1</span></div>
+  </div>
+  <div style="flex-grow: 1;"></div>
+  <div style="margin: 0 14px 12px; padding: 10px 12px; border: 1px dashed #2a2d33; border-radius: 6px; font-size: 11px; color: #9aa0a8; line-height: 1.6;">Une page à part, ouverte depuis le menu <span style='color:#e6e6e6'>⋯</span> (en haut : le menu ouvert ; en dessous : la page). Une seule liste, les plus récentes d'abord, avec le nom de la note à droite.<br>Cocher la case coche dans la note ; toucher le texte ouvre la note.</div>
+  <footer style="display: flex; align-items: center; padding: 0 16px; height: 44px; border-top: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;">6 tâches ouvertes</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -205,6 +205,20 @@
       "w": 390,
       "x": 3830,
       "y": 8800
+    },
+    "T-A-filtre.dc.html": {
+      "h": 844,
+      "title": "Tâches A · un filtre de plus",
+      "w": 390,
+      "x": 1100,
+      "y": 10050
+    },
+    "T-B-page.dc.html": {
+      "h": 844,
+      "title": "Tâches B · une page à part (menu ⋯)",
+      "w": 390,
+      "x": 1570,
+      "y": 10050
     }
   },
   "createdOnFiles": {
@@ -295,6 +309,13 @@
       "text": "Note du jour et cases à cocher",
       "x": 1100,
       "y": 8500
+    },
+    "tT": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Vue « tâches ouvertes »",
+      "x": 1100,
+      "y": 9750
     }
   },
   "order": [
@@ -326,7 +347,9 @@
     "J-B-journal.dc.html",
     "J-B-todo.dc.html",
     "J-C-accueil.dc.html",
-    "J-note.dc.html"
+    "J-note.dc.html",
+    "T-A-filtre.dc.html",
+    "T-B-page.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

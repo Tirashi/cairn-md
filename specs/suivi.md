@@ -64,7 +64,8 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Fait sans maquette (un seul bouton) : « ◷ aujourd'hui » à côté de « + nouvelle » (sur téléphone : ◷ seul). Titre `AAAA-MM-JJ` (date locale), dossier `journal/` (casse d'un dossier existant reprise), modèle `## À faire / - [ ] / ## Notes`, curseur sur la première case. Si la note existe, elle est rouverte.
 - Demande ajoutée : Entrée dans une liste (`-`, `*`, `+`, `- [ ]`, `1.`) continue la puce ; Entrée sur un élément vide la termine ; pas dans un bloc de code. `js/listes.js` (pure), branché sur `beforeinput` (marche aussi avec les claviers de téléphone), `execCommand` pour garder Ctrl+Z.
 - Cases à cocher (demandées en essayant : « la case ne se coche pas ») : faites sans maquette, rien de nouveau à l'écran. `js/taches.js` retrouve la n-ième tâche (règle de marked : `[ ]` suivi d'un espace puis de texte ; blocs de code ignorés) ; les cases ne sont rendues cliquables que si leur nombre correspond. Clic → `[ ]` ↔ `[x]` dans le Markdown, enregistré aussitôt ; tâche faite barrée.
-- ⏳ Testé avec le faux backend, **essai réel à faire**.
+- Premier essai réel raté : la publication GitHub Pages avait échoué deux fois (incident GitHub), le site servait l'ancienne version ; relancée, elle est passée à la troisième.
+- ✅ Cases à cocher validées sur le vrai site (06/11). ⏳ Note du jour et listes : essai réel à confirmer.
 
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.

@@ -7,10 +7,10 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - ✅ Fenêtre « lier une note » avec recherche, pour les centaines de notes (direction A) → [suivi](specs/suivi.md#liens-et-code-0511).
 - ✅ Code coloré et diagrammes mermaid dans l'aperçu → [suivi](specs/suivi.md#liens-et-code-0511).
 - ✅ Défilement lié éditeur ↔ aperçu en split → [suivi](specs/suivi.md#défilement-lié-0611).
+- ✅ Historique des versions (direction A, une version par séance, tri dans le temps) → [suivi](specs/suivi.md#historique-des-versions-0611).
 - ✅ PWA : installable, hors ligne, synchronisation et conflits (premier point du « plus tard » du plan) → [suivi](specs/suivi.md#pwa-et-hors-ligne-0511).
 
 ## À travailler (« plus tard » du plan)
-- **Historique des versions** : table `note_versions`, retrouver ou restaurer une ancienne version d'une note. Questions : à chaque sauvegarde ou par intervalle ? combien de versions garder ? comparaison visuelle (le détail C de l'import pourrait servir) ?
 - **Accès MCP** : petit serveur local pour que Claude Code lise et modifie les notes directement, sans passer par l'export / import. Doit respecter le point d'accès unique aux données et ne jamais utiliser la clé `service_role`.
 - **Table `note_links`** alimentée par trigger : liens calculés côté base. Utile seulement avec des milliers de notes ; en attendant, calcul dans le navigateur.
 

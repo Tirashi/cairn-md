@@ -65,6 +65,7 @@ code, kbd { font-family: inherit; }
 code { background: var(--code-bg); padding: 0 4px; border-radius: 3px; }
 
 .accent { color: var(--accent); }
+.faible { color: var(--faible); }
 .muet { color: var(--muted); }
 .ok { color: var(--ok); }
 .erreur { color: var(--erreur); }
@@ -772,6 +773,27 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .detail-choix { display: flex; flex-direction: column; gap: 8px; }
 .detail-choix button { min-height: 44px; }
 
+/* ---------- Historique des versions ---------- */
+
+.bouton-historique:hover { color: var(--accent); border-color: var(--accent); }
+.historique-liste { list-style: none; margin: 0 -20px; padding: 0 0 6px; max-height: 34vh; overflow-y: auto; border-bottom: 1px solid var(--border); }
+.historique-groupe { padding: 10px 20px 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.historique-version {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 20px 0 18px;
+  border: 0; border-left: 2px solid transparent; background: transparent; color: var(--text); font: inherit; text-align: left;
+}
+button.historique-version { cursor: pointer; }
+button.historique-version:hover { background: var(--surface); }
+.historique-version[aria-pressed="true"] { background: var(--accent-fond); border-left-color: var(--accent); }
+.historique-heure { flex: 0 0 auto; min-width: 92px; font-size: 13px; font-weight: 700; }
+.historique-version .muet { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.historique-ecart { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; }
+.historique-ecart:empty { display: none; }
+.historique-diff { max-height: 30vh; border: 1px solid var(--border); border-radius: var(--rayon); color: var(--muted); }
+.diff-ajout { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.diff-retrait { color: var(--erreur); background: color-mix(in srgb, var(--erreur) 12%, transparent); text-decoration: line-through; }
+.historique-apercu { max-height: 30vh; overflow-y: auto; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--rayon); }
+
 /* ---------- Hors ligne et installation ---------- */
 
 .etat-reseau {
@@ -856,6 +878,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   .palette-resultats li { padding: 11px 14px; }
   .barre-haut [data-action="theme"], .barre-haut #bouton-deconnexion { display: none; }
   .menu-mobile { display: block; }
+  /* Sur téléphone, l'historique passe dans le menu ⋯ pour laisser de la place au titre. */
+  #bouton-historique, #ecran-appli:not([data-vue="note"]) .menu-note { display: none; }
   .choix-conflit button { min-height: 44px; }
   .carte-installation { right: 12px; left: 12px; width: auto; }
 }

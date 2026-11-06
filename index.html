@@ -96,6 +96,7 @@
           <button type="button" role="menuitem" data-menu="export">$ export <span class="muet">.zip</span></button>
           <button type="button" role="menuitem" data-menu="import">$ import <span class="muet">.zip ou .md</span></button>
           <button type="button" role="menuitem" data-menu="import-dossier">$ import <span class="muet">dossier</span></button>
+          <button type="button" role="menuitem" data-menu="historique" class="menu-mobile menu-note">$ log <span class="muet">historique de la note</span></button>
           <button type="button" role="menuitem" data-menu="theme" class="menu-mobile">thème clair / sombre</button>
           <button type="button" role="menuitem" data-menu="logout" class="menu-mobile">logout</button>
         </div>
@@ -143,6 +144,7 @@
               <button type="button" data-mode="view" aria-pressed="false">view</button>
             </div>
             <button type="button" class="bouton-discret bouton-icone bouton-lier" id="bouton-lier" aria-label="Lier une note (Ctrl+Maj+L)" title="Lier une note (Ctrl+Maj+L)">[[ ]]</button>
+            <button type="button" class="bouton-discret bouton-icone bouton-historique" id="bouton-historique" aria-label="Historique des versions" title="Historique des versions">log</button>
             <button type="button" class="bouton-discret bouton-icone" id="bouton-supprimer" aria-label="Supprimer la note">rm</button>
           </div>
 
@@ -269,6 +271,22 @@
       <p id="sync-message" class="message" role="alert"></p>
       <div id="sync-choix" class="detail-choix"></div>
       <button type="button" id="sync-plus-tard" class="bouton-lien">régler plus tard</button>
+    </div>
+  </dialog>
+
+  <dialog id="dialogue-historique" class="dialogue dialogue-import" aria-labelledby="historique-titre">
+    <div class="dialogue-contenu">
+      <p id="historique-titre"><span class="accent">$ cairn log</span> <span id="historique-nom"></span> <span id="historique-compte" class="muet"></span></p>
+      <ul id="historique-liste" class="historique-liste" aria-label="Versions"></ul>
+      <p id="historique-ecart" class="historique-ecart muet"></p>
+      <pre id="historique-diff" class="version-texte historique-diff"></pre>
+      <article id="historique-apercu" class="apercu historique-apercu" aria-label="Aperçu de la version" hidden></article>
+      <p id="historique-message" class="message" role="alert"></p>
+      <div class="dialogue-boutons">
+        <button type="button" id="historique-fermer" class="bouton-discret">fermer</button>
+        <button type="button" id="historique-voir" class="bouton-discret">voir</button>
+        <button type="button" id="historique-restaurer" class="bouton-principal">restaurer</button>
+      </div>
     </div>
   </dialog>
 

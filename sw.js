@@ -27,6 +27,7 @@ const COQUILLE = [
   'js/main.js',
   'js/markdown.js',
   'js/defilement.js',
+  'js/historique.js',
   'js/meta.js',
   'js/navigation.js',
   'js/notes.js',

@@ -43,5 +43,12 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - `js/defilement.js` : en split seulement, chaque bloc de l'aperçu est accroché à la ligne où il commence (`debutsDesBlocs`, lexer de `marked`), position interpolée entre deux blocs ; dans les deux sens. Si l'aperçu ne correspond pas bloc à bloc (HTML brut), défilement proportionnel. Points recalculés à chaque défilement (diagrammes et images qui changent de taille).
 - ⏳ Testé avec le faux backend, **essai réel à faire**.
 
+## Historique des versions (06/11)
+- Question de départ : le poids. Réponse : une version par séance d'écriture (au plus une toutes les 10 min), tri qui s'éclaircit avec le temps, 50 max par note ; quelques dizaines de Mo au pire après des années.
+- Maquette : V-panneau, V-frise, V-log ; **A « liste + différences »** choisie.
+- Base : `supabase/versions.sql` (table `note_versions`, RLS, trigger `garder_version` after update, `trier_versions`). Les versions sont créées par la base, donc aussi pour les notes envoyées après un passage hors ligne.
+- Interface : bouton `log` (téléphone : menu `⋯`), fenêtre `$ cairn log` : versions groupées (aujourd'hui, hier, cette semaine, ce mois-ci, cette année, plus anciennes), `+a −b` par version, différences avec l'actuelle (contexte de 2 lignes), `voir` (rendu assaini), `restaurer` (contenu, dossier, tags ; l'état actuel est d'abord gardé). Messages : hors ligne, table absente, note en attente d'envoi.
+- ⏳ Testé avec le faux backend. **À faire** : exécuter `supabase/versions.sql`, revérifier la RLS avec le second compte, essai réel.
+
 ## Prochains chantiers possibles
-Voir [`IDEES.md`](../IDEES.md) : historique des versions, accès MCP, table `note_links`.
+Voir [`IDEES.md`](../IDEES.md) : accès MCP, table `note_links`.

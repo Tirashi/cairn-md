@@ -43,6 +43,24 @@ create policy "own notes" on notes
   for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 ```
 
+**Historique des versions** (ajouté le 06/11, [`supabase/versions.sql`](../supabase/versions.sql)) :
+
+```sql
+create table note_versions (
+  id          uuid primary key default gen_random_uuid(),
+  note_id     uuid not null references notes(id) on delete cascade,
+  user_id     uuid not null default auth.uid() references auth.users(id),
+  title       text not null,
+  content     text not null default '',
+  folder      text not null default '',
+  tags        text[] not null default '{}',
+  created_at  timestamptz not null default now()
+);
+-- RLS « own versions » (ses versions, d'une note à soi) ; trigger after update on notes
+-- (garder_version) : ancien état gardé si le titre ou le contenu change, au plus une version
+-- toutes les 10 min ; trier_versions : tout 24 h, 1/jour 30 j, 1/semaine 1 an, 1/mois, 50 max.
+```
+
 Les liens `[[Titre]]` sont calculés dans le front en V1 (rendu + backlinks par recherche dans `content`). Une table `note_links` pourra être ajoutée plus tard.
 
 ## Structure du dépôt
@@ -144,7 +162,7 @@ Usage avec Claude : ouvrir le dossier exporté dans Claude Code, trier / reformu
 
 ### 7. Plus tard (hors V1)
 - PWA : `manifest.json` + service worker, cache IndexedDB, synchro au retour du réseau.
-- Historique des versions (`note_versions`).
+- ✅ Historique des versions (`note_versions`), fait le 06/11.
 - Serveur MCP local pour que Claude Code accède directement aux notes.
 - Table `note_links` alimentée par trigger.
 

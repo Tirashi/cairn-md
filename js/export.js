@@ -217,6 +217,32 @@ export function comparer(texteA, texteB) {
   };
 }
 
+/**
+ * Différences ligne par ligne de `avant` vers `apres` : [{ type: ' ' | '-' | '+', texte }],
+ * plus le nombre de lignes ajoutées et retirées.
+ */
+export function differences(avant, apres) {
+  const a = avant.split('\n');
+  const b = apres.split('\n');
+  if (a.length * b.length > 360000) {
+    return { lignes: [...a.map((texte) => ({ type: '-', texte })), ...b.map((texte) => ({ type: '+', texte }))], plus: b.length, moins: a.length };
+  }
+  const L = Array.from({ length: a.length + 1 }, () => new Uint16Array(b.length + 1));
+  for (let i = a.length - 1; i >= 0; i--) {
+    for (let j = b.length - 1; j >= 0; j--) {
+      L[i][j] = a[i] === b[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+    }
+  }
+  const lignes = [];
+  let plus = 0, moins = 0, i = 0, j = 0;
+  while (i < a.length || j < b.length) {
+    if (i < a.length && j < b.length && a[i] === b[j]) { lignes.push({ type: ' ', texte: a[i++] }); j++; }
+    else if (j < b.length && (i === a.length || L[i][j + 1] >= L[i + 1][j])) { lignes.push({ type: '+', texte: b[j++] }); plus++; }
+    else { lignes.push({ type: '-', texte: a[i++] }); moins++; }
+  }
+  return { lignes, plus, moins };
+}
+
 // ---------- Application ----------
 
 /** « X (import) », puis « X (import) 2 », « X (import) 3 »… jusqu'à un titre libre. */

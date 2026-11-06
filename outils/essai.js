@@ -624,6 +624,111 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
 
+    console.log('Historique des versions');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      const ID = '0000000a-0000-4000-8000-00000000000a';
+      const versions = () => page.evaluate((id) => JSON.parse(localStorage.getItem('faux-supabase-versions') || '[]').filter((v) => v.note_id === id), ID);
+      const enregistre = () => page.waitForFunction(() => /● enregistré \d/.test(document.getElementById('etat-sauvegarde').textContent));
+      await page.goto(base + '/');
+      await page.evaluate((id) => {
+        const moi = '00000000-0000-0000-0000-000000000001';
+        const il = (h) => new Date(Date.now() - h * 3600000).toISOString();
+        localStorage.setItem('faux-supabase-notes', JSON.stringify([{ id, user_id: moi, title: 'Journal', folder: '', tags: [],
+          content: 'un\ndeux bis\ntrois\nquatre', created_at: il(1000), updated_at: il(1) }]));
+        localStorage.setItem('faux-supabase-versions', JSON.stringify([
+          { id: 'v1', note_id: id, user_id: moi, title: 'Journal', folder: '', tags: [], content: 'un\ndeux\ntrois', created_at: il(0.5) },
+          { id: 'v0', note_id: id, user_id: moi, title: 'Brouillon', folder: '', tags: [], content: 'un', created_at: il(24 * 40) },
+        ]));
+      }, ID);
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.waitForFunction(() => document.querySelector('.ln-nom') && document.querySelector('.ln-nom').textContent.includes('journal'));
+      await page.evaluate((id) => { location.hash = '#/note/' + id; }, ID);
+      await page.waitForFunction(() => document.getElementById('note-titre').value === 'Journal');
+
+      await page.click('#bouton-historique');
+      await page.waitForSelector('#dialogue-historique[open] button.historique-version');
+      const liste = await page.evaluate(() => ({
+        groupes: [...document.querySelectorAll('.historique-groupe')].map((g) => g.textContent),
+        compte: document.getElementById('historique-compte').textContent,
+        choisie: document.querySelector('button.historique-version[aria-pressed="true"]')?.textContent,
+        details: [...document.querySelectorAll('button.historique-version')].map((b) => b.textContent),
+      }));
+      verifier(liste.compte === '· 2 versions' && liste.groupes[0] === "aujourd'hui" && liste.groupes[1] === 'cette année · 1 par semaine',
+        'versions groupées par période (' + liste.groupes.join(', ') + ')');
+      verifier(/\+2 −0/.test(liste.details[0]) && /plus ancienne gardée/.test(liste.details[1]) && /« Brouillon »/.test(liste.details[1]),
+        'chaque version : lignes ajoutées et retirées, ancien titre signalé ' + JSON.stringify(liste.details));
+      const diff = await page.evaluate(() => ({
+        ajouts: [...document.querySelectorAll('#historique-diff .diff-ajout')].map((e) => e.textContent),
+        retraits: [...document.querySelectorAll('#historique-diff .diff-retrait')].map((e) => e.textContent),
+        ecart: document.getElementById('historique-ecart').textContent,
+        bouton: document.getElementById('historique-restaurer').textContent,
+      }));
+      verifier(diff.retraits.join('|') === '- deux' && diff.ajouts.join('|') === '+ deux bis|+ quatre' && /→ actuelle\+2 −1/.test(diff.ecart) && /^restaurer \d\d:\d\d$/.test(diff.bouton),
+        'différences entre la version choisie et l\'actuelle (' + JSON.stringify(diff) + ')');
+      await page.click('#historique-voir');
+      const apercu = await page.evaluate(() => ({ visible: !document.getElementById('historique-apercu').hidden, texte: document.getElementById('historique-apercu').textContent, bouton: document.getElementById('historique-voir').textContent }));
+      verifier(apercu.visible && apercu.texte.includes('deux') && !apercu.texte.includes('quatre') && apercu.bouton === 'différences', '« voir » affiche la version rendue');
+      await page.click('#historique-voir');
+      // Sur téléphone : bouton « log » caché, l'historique est dans le menu ⋯ quand une note est ouverte.
+      await page.click('#historique-fermer');
+      await page.setViewportSize({ width: 390, height: 844 });
+      verifier(!(await page.isVisible('#bouton-historique')), 'téléphone : bouton log caché (place pour le titre)');
+      await page.click('#bouton-menu');
+      await page.click('#menu-principal [data-menu="historique"]');
+      await page.waitForSelector('#dialogue-historique[open] button.historique-version');
+      verifier(true, 'téléphone : historique ouvert depuis le menu ⋯');
+      await page.setViewportSize({ width: 1280, height: 800 });
+      if (process.argv.includes('--captures')) {
+        const dossier = process.argv[process.argv.indexOf('--captures') + 1] || '.';
+        await page.screenshot({ path: path.join(dossier, 'historique-desktop.png') });
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.screenshot({ path: path.join(dossier, 'historique-mobile.png') });
+        await page.setViewportSize({ width: 1280, height: 800 });
+      }
+
+      await page.click('#historique-restaurer');
+      await page.waitForFunction(() => !document.getElementById('dialogue-historique').open);
+      const apres = await versions();
+      verifier((await page.inputValue('#note-contenu')) === 'un\ndeux\ntrois' && (await page.inputValue('#note-titre')) === 'Journal',
+        'restaurer remet le contenu (le titre reste)');
+      verifier(apres.length === 3 && apres.some((v) => v.content === 'un\ndeux bis\ntrois\nquatre'), 'l\'état d\'avant la restauration est gardé comme version');
+
+      // Le « trigger » : une version de l'ancien état à chaque changement, au plus une toutes les 10 min.
+      await page.evaluate(() => localStorage.setItem('faux-supabase-delai-version', '0'));
+      await page.click('#note-contenu');
+      await page.keyboard.press('Control+End');
+      await page.keyboard.type('\ncinq');
+      await enregistre();
+      verifier((await versions()).length === 4, 'modification : l\'ancien état devient une version');
+      await page.evaluate(() => localStorage.removeItem('faux-supabase-delai-version'));
+      await page.keyboard.type('\nsix');
+      await enregistre();
+      verifier((await versions()).length === 4, 'moins de 10 minutes après : pas de nouvelle version');
+
+      await page.evaluate(() => localStorage.setItem('faux-supabase-panne', '1'));
+      await page.click('#bouton-historique');
+      await page.waitForFunction(() => /besoin du réseau/.test(document.getElementById('historique-message').textContent));
+      verifier(await page.locator('#historique-restaurer').isDisabled(), 'hors ligne : message, rien à restaurer');
+      await page.evaluate(() => { localStorage.removeItem('faux-supabase-panne'); localStorage.setItem('faux-supabase-sans-versions', '1'); });
+      await page.click('#historique-fermer');
+      await page.click('#bouton-historique');
+      await page.waitForFunction(() => /versions\.sql/.test(document.getElementById('historique-message').textContent));
+      verifier(true, 'table absente : message qui renvoie à supabase/versions.sql');
+      await page.evaluate(() => localStorage.removeItem('faux-supabase-sans-versions'));
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => !document.getElementById('dialogue-historique').open);
+
+      await page.click('#bouton-supprimer');
+      await page.click('#dialogue-ok');
+      await page.waitForFunction(() => location.hash === '#/');
+      verifier((await versions()).length === 0, 'supprimer la note supprime son historique');
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
     console.log('Export et import');
     {
       const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });

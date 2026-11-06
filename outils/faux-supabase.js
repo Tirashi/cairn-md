@@ -2,10 +2,15 @@
 // Un seul compte : essai@cairn.local / secret. Session et notes gardées dans localStorage.
 // Imite ce que Cairn utilise : auth.* et from('notes') avec select/insert/update/delete,
 // eq, order, single ; index unique (user_id, lower(title)) ; RLS (seulement ses notes).
+// from('note_versions') imite supabase/versions.sql : version de l'ancien état à chaque
+// changement de titre ou de contenu, au plus une toutes les 10 min (localStorage
+// ['faux-supabase-delai-version'] en ms pour l'essai), 50 au plus, supprimées avec la note.
+// localStorage['faux-supabase-sans-versions'] = '1' simule une base sans la table.
 // localStorage['faux-supabase-panne'] = '1' simule un serveur injoignable.
 const CLE = 'faux-supabase-session';
 const CLE_NOTES = 'faux-supabase-notes';
 const CLE_PANNE = 'faux-supabase-panne';
+const CLE_VERSIONS = 'faux-supabase-versions';
 const COMPTE = { email: 'essai@cairn.local', motDePasse: 'secret', id: '00000000-0000-0000-0000-000000000001' };
 
 const lireJSON = (cle, defaut) => { try { return JSON.parse(localStorage.getItem(cle)) ?? defaut; } catch { return defaut; } };
@@ -25,6 +30,22 @@ function uuid() {
     : '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) => (c ^ (Math.random() * 16) >> (c / 4)).toString(16));
 }
 
+/** Le trigger de supabase/versions.sql : garde l'ancien état de la note `l` avant `champs`. */
+function garderVersion(l, champs) {
+  const change = ('content' in champs && champs.content !== l.content) || ('title' in champs && champs.title !== l.title);
+  if (!change) return;
+  const delai = Number(localStorage.getItem('faux-supabase-delai-version') ?? 600000);
+  let versions = lireJSON(CLE_VERSIONS, []);
+  const siennes = versions.filter((v) => v.note_id === l.id).sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  const derniere = siennes[0];
+  if (derniere && (Date.now() - Date.parse(derniere.created_at) < delai
+    || (derniere.content === l.content && derniere.title === l.title))) return;
+  versions.push({ id: uuid(), note_id: l.id, user_id: l.user_id, title: l.title, content: l.content, folder: l.folder, tags: l.tags, created_at: maintenant() });
+  const tropVieilles = new Set(siennes.slice(49).map((v) => v.id));
+  versions = versions.filter((v) => !tropVieilles.has(v.id));
+  localStorage.setItem(CLE_VERSIONS, JSON.stringify(versions));
+}
+
 class Requete {
   constructor(table) { this.table = table; this.op = 'select'; this.filtres = []; this.tri = null; this.unique = false; }
   select() { if (this.op === 'select') this.op = 'select'; this.retour = true; return this; }
@@ -41,6 +62,7 @@ class Requete {
     if (enPanne()) return { data: null, error: { message: 'TypeError: Failed to fetch' } };
     const session = lireSession();
     const moi = session && session.user.id;
+    if (this.table === 'note_versions') return this.versions(moi);
     let lignes = lireJSON(CLE_NOTES, []);
     const miennes = (l) => l.user_id === moi && this.filtres.every(([c, v]) => l[c] === v);
     const doublon = (titre, sauf) => lignes.some((l) => l.user_id === moi && l.id !== sauf && l.title.toLowerCase() === titre.toLowerCase());
@@ -59,15 +81,45 @@ class Requete {
     } else if (this.op === 'update') {
       for (const l of lignes.filter(miennes)) {
         if ('title' in this.valeur && doublon(this.valeur.title, l.id)) return { data: null, error: erreurDoublon };
+        garderVersion(l, this.valeur);
         Object.assign(l, this.valeur, { updated_at: maintenant() });
         resultat.push(l);
       }
     } else if (this.op === 'delete') {
       resultat = lignes.filter(miennes);
       lignes = lignes.filter((l) => !miennes(l));
+      const ids = new Set(resultat.map((l) => l.id));
+      localStorage.setItem(CLE_VERSIONS, JSON.stringify(lireJSON(CLE_VERSIONS, []).filter((v) => !ids.has(v.note_id))));
     }
     localStorage.setItem(CLE_NOTES, JSON.stringify(lignes));
 
+    return this.finir(resultat);
+  }
+
+  /** Table note_versions : lecture, ajout (ses notes seulement), suppression. */
+  versions(moi) {
+    if (localStorage.getItem('faux-supabase-sans-versions') === '1') {
+      return { data: null, error: { code: 'PGRST205', message: "Could not find the table 'public.note_versions' in the schema cache" } };
+    }
+    let versions = lireJSON(CLE_VERSIONS, []);
+    const miennes = (v) => v.user_id === moi && this.filtres.every(([c, val]) => v[c] === val);
+    let resultat = [];
+    if (this.op === 'select') resultat = versions.filter(miennes);
+    else if (this.op === 'insert') {
+      const note = lireJSON(CLE_NOTES, []).find((n) => n.id === this.valeur.note_id && n.user_id === moi);
+      if (!moi || !note) return { data: null, error: { code: '42501', message: 'new row violates row-level security policy' } };
+      const v = { id: uuid(), user_id: moi, content: '', folder: '', tags: [], created_at: maintenant(), ...this.valeur };
+      versions.push(v);
+      resultat = [v];
+    } else if (this.op === 'delete') {
+      resultat = versions.filter(miennes);
+      versions = versions.filter((v) => !miennes(v));
+    }
+    localStorage.setItem(CLE_VERSIONS, JSON.stringify(versions));
+    return this.finir(resultat);
+  }
+
+  finir(resultat) {
     if (this.tri) {
       const [c, asc] = this.tri;
       resultat = [...resultat].sort((a, b) => (a[c] < b[c] ? -1 : a[c] > b[c] ? 1 : 0) * (asc ? 1 : -1));

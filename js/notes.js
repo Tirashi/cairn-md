@@ -16,6 +16,7 @@ function codeErreur(error) {
   if (!error) return null;
   if (error.code === '23505') return 'titre-pris';          // index unique (user_id, lower(title))
   if (error.code === 'PGRST116') return 'introuvable';      // .single() sans ligne
+  if (error.code === '42P01' || error.code === 'PGRST205') return 'table-absente';   // supabase/versions.sql pas exécuté
   const msg = (error.message || '').toLowerCase();
   if (msg.includes('fetch') || msg.includes('network') || msg.includes('load failed')) return 'reseau';
   return 'inconnue';
@@ -335,3 +336,29 @@ window.addEventListener('offline', () => passerHorsLigne());
 setInterval(() => {
   if (etat.copie && etat.attente.size > etat.conflits.size && enLigne()) synchroniser();
 }, 30000);
+
+// ---------- Historique des versions (table note_versions, remplie par la base) ----------
+
+const COLONNES_VERSION = 'id, title, content, folder, tags, created_at';
+
+/** Versions gardées d'une note, les plus récentes d'abord (réseau nécessaire). */
+export async function listerVersions(id) {
+  const r = await essayer(() => client.from('note_versions').select(COLONNES_VERSION)
+    .eq('note_id', id).order('created_at', { ascending: false }));
+  if (!r) return reseauKo();
+  return r.error ? { erreur: codeErreur(r.error) } : { versions: r.data };
+}
+
+/**
+ * Remet le contenu, le dossier et les tags d'une version (le titre reste : le changer
+ * toucherait aux liens). L'état actuel est d'abord gardé comme version : rien n'est perdu.
+ */
+export async function restaurerVersion(note, version) {
+  if (etat.attente.has(note.id)) return { erreur: 'en-attente' };
+  const r = await essayer(() => client.from('note_versions').insert({
+    note_id: note.id, title: note.title, content: note.content, folder: note.folder, tags: note.tags,
+  }));
+  if (!r) return reseauKo();
+  if (r.error) return { erreur: codeErreur(r.error) };
+  return modifierNote(note.id, { content: version.content, folder: version.folder, tags: version.tags });
+}

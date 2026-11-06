@@ -11,6 +11,7 @@ import { brancherMeta, afficherMeta, majNomFichier } from './meta.js';
 import { brancherPalette, ouvrirPalette } from './palette.js';
 import { enrichir, brancherCopie } from './rendu-avance.js';
 import { brancherDefilement } from './defilement.js';
+import { ouvrirHistorique, brancherHistorique } from './historique.js';
 import { demander } from './dialogue.js';
 import { slug } from './export.js';
 import { brancherImport, lancerImport, lancerExport } from './import-dialogue.js';
@@ -447,12 +448,24 @@ async function creerDepuisLien(titre) {
   await ouvrirNouvelle({ title: titre, folder: courante ? courante.folder : etat.filtre.dossier }, { focusTitre: false });
 }
 
+/** Ouvre l'historique de la note (après avoir enregistré la frappe en cours). */
+async function ouvrirLog() {
+  await sauvegarder();
+  const note = noteCourante();
+  if (!note) return;
+  ouvrirHistorique(note, (restauree) => {
+    remplacerNote(restauree);
+    rafraichir();
+    if (etat.courante === restauree.id) afficherNote(restauree);
+  });
+}
+
 async function demanderSuppression() {
   const note = noteCourante();
   if (!note) return;
   const ok = await demander({
     commande: '$ rm', nom: slug(note.title) + '.md',
-    texte: 'Supprimer définitivement cette note ? Penser à exporter avant en cas de doute.',
+    texte: 'Supprimer définitivement cette note et son historique ? Penser à exporter avant en cas de doute.',
     ok: 'supprimer', danger: true,
   });
   if (!ok) return;
@@ -564,6 +577,7 @@ function brancherMenu() {
     fermerMenu();
     const action = item.dataset.menu;
     if (action === 'export') exporter();
+    if (action === 'historique') ouvrirLog();
     if (action === 'import') $('import-fichier').click();
     if (action === 'import-dossier') $('import-dossier').click();
     if (action === 'theme') document.querySelector('.barre-haut [data-action="theme"]').click();
@@ -608,6 +622,8 @@ function brancher() {
   window.addEventListener('hashchange', router);
   $('bouton-nouvelle').addEventListener('click', nouvelleNote);
   $('bouton-supprimer').addEventListener('click', demanderSuppression);
+  $('bouton-historique').addEventListener('click', ouvrirLog);
+  brancherHistorique();
   $('renommage-oui').addEventListener('click', mettreAJourLiens);
   $('renommage-non').addEventListener('click', () => {
     etat.titreOuverture = noteCourante()?.title || '';

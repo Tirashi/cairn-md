@@ -87,9 +87,9 @@ function verifier(condition, libelle) {
   if (!condition) echecs++;
 }
 
-async function nouvellePage(navigateur, base, { configure, schema = 'dark', sw = false }) {
+async function nouvellePage(navigateur, base, { configure, schema = 'dark', sw = false, options = {} }) {
   // Le service worker intercepterait les requêtes avant les routes de l'essai : bloqué ici, testé à part.
-  const contexte = await navigateur.newContext({ colorScheme: schema, serviceWorkers: sw ? 'allow' : 'block' });
+  const contexte = await navigateur.newContext({ colorScheme: schema, serviceWorkers: sw ? 'allow' : 'block', ...options });
   const page = await contexte.newPage();
   const r = contexte;   // routes au niveau du contexte : elles servent aussi le service worker
   const erreurs = [];
@@ -805,6 +805,27 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       await page.setViewportSize({ width: 390, height: 844 });
       const largeur = await page.evaluate(() => document.getElementById('bouton-jour').getBoundingClientRect().width);
       verifier(largeur >= 44 && largeur < 70, 'téléphone : bouton ◷ compact (' + Math.round(largeur) + ' px)');
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
+    console.log('Cases à cocher sur téléphone (tactile)');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true, options: { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true } });
+      await page.goto(base + '/');
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.tap('#bouton-jour');
+      await page.waitForFunction(() => document.activeElement === document.getElementById('note-contenu'));
+      await page.keyboard.type('appeler le garage');
+      await page.keyboard.press('Enter');
+      await page.keyboard.type('pain');
+      await page.tap('.bascule [data-mode="view"]');
+      await page.waitForSelector('#note-apercu input[data-tache="1"]');
+      await page.tap('#note-apercu input[data-tache="0"]');
+      await page.waitForFunction(() => document.getElementById('note-contenu').value.includes('- [x] appeler le garage\n- [ ] pain'));
+      verifier(true, 'téléphone, mode view : toucher la case la coche');
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
 

@@ -773,6 +773,13 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .detail-choix { display: flex; flex-direction: column; gap: 8px; }
 .detail-choix button { min-height: 44px; }
 
+/* ---------- Cases à cocher de l'aperçu ---------- */
+
+.apercu li:has(> input[type="checkbox"]) { list-style: none; margin-left: -20px; }
+.apercu input[type="checkbox"] { width: 16px; height: 16px; margin: 0 8px 0 0; vertical-align: -3px; accent-color: var(--ok); }
+.apercu input[data-tache] { cursor: pointer; }
+.apercu li:has(> input[type="checkbox"]:checked) { color: var(--muted); text-decoration: line-through; }
+
 /* ---------- Historique des versions ---------- */
 
 .bouton-historique:hover { color: var(--accent); border-color: var(--accent); }

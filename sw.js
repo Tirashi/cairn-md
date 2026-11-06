@@ -37,6 +37,7 @@ const COQUILLE = [
   'js/suggestions.js',
   'js/supabase.js',
   'js/sync-dialogue.js',
+  'js/taches.js',
   'js/theme.js',
   'js/ui.js',
 ];

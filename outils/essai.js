@@ -778,6 +778,23 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       await page.keyboard.press('Control+z');
       verifier(true, 'annulation possible');
 
+      // Cases à cocher de l'aperçu : cliquer coche dans le Markdown et enregistre.
+      await page.fill('#note-contenu', '- [ ] un\n- [x] deux\n- [ ] \n```\n- [ ] code\n```\n> 1. [ ] cité\n- a\n  - [ ] imbriqué');
+      await page.click('.bascule [data-mode="split"]');
+      await page.waitForFunction(() => document.querySelectorAll('#note-apercu input[data-tache]').length === 4);
+      verifier(await page.evaluate(() => [...document.querySelectorAll('#note-apercu input[type="checkbox"]')].every((c) => !c.disabled)), 'cases de l\'aperçu cliquables (code et « - [ ] » vide exclus)');
+      await page.click('#note-apercu input[data-tache="0"]');
+      await page.waitForFunction(() => document.getElementById('note-contenu').value.startsWith('- [x] un'));
+      await page.click('#note-apercu input[data-tache="1"]');
+      await page.click('#note-apercu input[data-tache="3"]');
+      await page.click('#note-apercu input[data-tache="2"]');
+      await page.waitForFunction(() => /● enregistré \d/.test(document.getElementById('etat-sauvegarde').textContent));
+      const coche = await zone();
+      verifier(coche === '- [x] un\n- [ ] deux\n- [ ] \n```\n- [ ] code\n```\n> 1. [x] cité\n- a\n  - [x] imbriqué', 'cocher / décocher modifie la bonne ligne (' + JSON.stringify(coche) + ')');
+      verifier((await stockee())[0].content === coche, 'case cochée enregistrée aussitôt');
+      const barree = await page.evaluate(() => getComputedStyle(document.querySelector('#note-apercu input[data-tache="0"]').closest('li')).textDecorationLine);
+      verifier(barree === 'line-through', 'tâche faite barrée');
+
       // Deuxième clic : la même note est rouverte, pas de doublon.
       await page.evaluate(() => { location.hash = '#/'; });
       await page.waitForFunction(() => location.hash === '#/');

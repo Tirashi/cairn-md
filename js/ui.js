@@ -12,6 +12,7 @@ import { brancherPalette, ouvrirPalette } from './palette.js';
 import { enrichir, brancherCopie } from './rendu-avance.js';
 import { brancherDefilement } from './defilement.js';
 import { continuerListe } from './listes.js';
+import { positionsDesCases } from './taches.js';
 import { ouvrirHistorique, brancherHistorique } from './historique.js';
 import { demander } from './dialogue.js';
 import { slug } from './export.js';
@@ -206,6 +207,11 @@ function majApercu() {
     if (texte.trim()) {
       apercu.innerHTML = rendre(texte);       // rendre() passe toujours par DOMPurify
       apercu.classList.remove('apercu-vide');
+      // Cases à cocher cliquables, si elles correspondent une à une aux tâches du Markdown.
+      const cases = apercu.querySelectorAll('input[type="checkbox"]');
+      if (cases.length === positionsDesCases(texte).length) {
+        cases.forEach((c, i) => { c.disabled = false; c.dataset.tache = i; c.setAttribute('aria-label', 'Cocher la tâche'); });
+      }
       enrichir(apercu);                       // code coloré et diagrammes mermaid
     } else {
       apercu.textContent = '// note vide';
@@ -761,6 +767,19 @@ function brancher() {
   brancherDefilement(() => modeEffectif() === 'split');
   // Changer de thème redessine les diagrammes aux bonnes couleurs.
   document.addEventListener('cairn-theme', () => { if (etat.courante) majApercu(); });
+  // Cocher une case de l'aperçu : « - [ ] » ↔ « - [x] » dans le Markdown, enregistré aussitôt.
+  $('note-apercu').addEventListener('change', (e) => {
+    const c = e.target.closest('input[data-tache]');
+    if (!c) return;
+    const zone = $('note-contenu');
+    const p = positionsDesCases(zone.value)[Number(c.dataset.tache)];
+    if (p === undefined) { c.checked = !c.checked; return; }
+    const [debut, fin] = [zone.selectionStart, zone.selectionEnd];
+    zone.setRangeText(zone.value[p] === ' ' ? 'x' : ' ', p, p + 1);
+    zone.setSelectionRange(debut, fin);
+    zone.dispatchEvent(new Event('input', { bubbles: true }));
+    sauvegarder();
+  });
   $('note-apercu').addEventListener('click', (e) => {
     const a = e.target.closest('a.lien-absent');
     if (!a) return;

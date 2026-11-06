@@ -163,6 +163,48 @@
       "w": 390,
       "x": 2040,
       "y": 7550
+    },
+    "J-A-liste.dc.html": {
+      "h": 844,
+      "title": "Jour A · bouton « aujourd'hui » + filtre tâches",
+      "w": 390,
+      "x": 1100,
+      "y": 8800
+    },
+    "J-A-taches.dc.html": {
+      "h": 844,
+      "title": "Jour A · filtre ☐ tâches (groupées par note)",
+      "w": 390,
+      "x": 1570,
+      "y": 8800
+    },
+    "J-B-journal.dc.html": {
+      "h": 844,
+      "title": "Jour B · bande de la semaine (journal/)",
+      "w": 390,
+      "x": 2200,
+      "y": 8800
+    },
+    "J-B-todo.dc.html": {
+      "h": 844,
+      "title": "Jour B · écran $ todo (par date)",
+      "w": 390,
+      "x": 2670,
+      "y": 8800
+    },
+    "J-C-accueil.dc.html": {
+      "h": 844,
+      "title": "Jour C · accueil « aujourd’hui » + à faire ailleurs",
+      "w": 390,
+      "x": 3300,
+      "y": 8800
+    },
+    "J-note.dc.html": {
+      "h": 844,
+      "title": "Commun · cases cliquables dans l’aperçu",
+      "w": 390,
+      "x": 3830,
+      "y": 8800
     }
   },
   "createdOnFiles": {
@@ -246,6 +288,13 @@
       "text": "Historique des versions",
       "x": 1100,
       "y": 7250
+    },
+    "tJ": {
+      "kind": "title1",
+      "maxW": 3120,
+      "text": "Note du jour et cases à cocher",
+      "x": 1100,
+      "y": 8500
     }
   },
   "order": [
@@ -271,7 +320,13 @@
     "H-file.dc.html",
     "V-panneau.dc.html",
     "V-frise.dc.html",
-    "V-log.dc.html"
+    "V-log.dc.html",
+    "J-A-liste.dc.html",
+    "J-A-taches.dc.html",
+    "J-B-journal.dc.html",
+    "J-B-todo.dc.html",
+    "J-C-accueil.dc.html",
+    "J-note.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

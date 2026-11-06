@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Jour A · filtre ☐ tâches (groupées par note)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #2a2d33;">
+    <span style="font-size: 16px; font-weight: 800;"><span style="color:#f0b45a">▲</span> cairn<span style="color:#f0b45a">_</span></span>
+    <span style="flex-grow: 1;"></span><span style="height: 40px; padding: 0 12px; border-radius: 6px; display: flex; align-items: center; font-size: 12px; border: 1px solid #2a2d33; color: #e6e6e6;">◷ aujourd'hui</span><span style="height: 40px; padding: 0 12px; border-radius: 6px; display: flex; align-items: center; font-size: 12px; background: #f0b45a; color: #121212; font-weight: 800; border: 0;">+ nouvelle</span>
+    <span style="width: 40px; height: 40px; border: 1px solid #2a2d33; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #9aa0a8;">⋯</span>
+  </header>
+  <div style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #2a2d33;">
+    <span style="font-size: 14px; font-weight: 800;">☐ tâches ouvertes</span><span style="font-size: 12px; color: #9aa0a8;">7 dans 3 notes</span>
+    <span style="flex-grow: 1;"></span><span style="font-size: 12px; color: #9aa0a8;">afficher faites ○</span>
+  </div>
+  <div style="padding: 6px 16px 0;">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #9aa0a8; padding: 10px 0 2px;">◷ 2026-11-06.md</div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">appeler le garage</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">finir la maquette des tâches</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">relire [[Cairn — plan V1]]</span></div>
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #9aa0a8; padding: 14px 0 2px;">2026-11-05.md</div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">tester le mode avion</span></div>
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #9aa0a8; padding: 14px 0 2px;">courses.md</div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">lait</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">pain</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">œufs</span></div>
+  </div>
+  <div style="flex-grow: 1;"></div>
+  <div style="padding: 10px 16px; font-size: 11px; color: #4a4e55; line-height: 1.6;">cocher ici coche dans la note (- [ ] → - [x]) ; toucher le texte ouvre la note</div>
+  <footer style="display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 44px; border-top: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;"><span><span style="color:#7fc48f">●</span> enregistré</span><span style="flex-grow:1"></span><span>7 ouvertes · 12 faites</span></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

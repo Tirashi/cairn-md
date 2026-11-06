@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Jour B · écran $ todo (par date)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+  <header style="display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 4px; border-bottom: 1px solid #2a2d33;">
+    <span style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; font-size: 18px;">←</span>
+    <span style="flex-grow: 1; font-size: 14px; font-weight: 800;"><span style="color: #9aa0a8;">$</span> todo</span>
+    <span style="font-size: 12px; color: #9aa0a8;">7 ouvertes</span>
+  </header>
+  <div style="display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #2a2d33; font-size: 12px;">
+    <span style="padding: 6px 10px; background:#f0b45a; color:#121212; font-weight: 800; border-radius: 6px;">ouvertes</span>
+    <span style="padding: 6px 10px; border: 1px solid #2a2d33; border-radius: 6px;">faites</span>
+    <span style="padding: 6px 10px; border: 1px solid #2a2d33; border-radius: 6px;">par note</span>
+    <span style="padding: 6px 10px; border: 1px solid #2a2d33; border-radius: 6px;">par date</span>
+  </div>
+  <div style="padding: 0 16px;">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #9aa0a8; padding: 12px 0 4px;">AUJOURD'HUI</div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="color:#9aa0a8;">[ ]</span><span style="flex-grow: 1;">appeler le garage</span><span style="font-size: 11px; color: #4a4e55; text-align: right;">2026-11-06<br></span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="color:#9aa0a8;">[ ]</span><span style="flex-grow: 1;">finir la maquette des tâches</span><span style="font-size: 11px; color: #4a4e55; text-align: right;">2026-11-06<br></span></div>
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #9aa0a8; padding: 12px 0 4px;">PLUS ANCIENNES</div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="color:#9aa0a8;">[ ]</span><span style="flex-grow: 1;">tester le mode avion</span><span style="font-size: 11px; color: #4a4e55; text-align: right;">2026-11-05<br>hier</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="color:#9aa0a8;">[ ]</span><span style="flex-grow: 1;">lait</span><span style="font-size: 11px; color: #4a4e55; text-align: right;">courses<br>4 nov.</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="color:#9aa0a8;">[ ]</span><span style="flex-grow: 1;">pain</span><span style="font-size: 11px; color: #4a4e55; text-align: right;">courses<br>4 nov.</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #2a2d33; font-size: 13px;"><span style="color:#9aa0a8;">[ ]</span><span style="flex-grow: 1;">relire le chapitre 3</span><span style="font-size: 11px; color: #4a4e55; text-align: right;">lectures<br>28 oct.</span></div>
+  </div>
+  <div style="flex-grow: 1;"></div>
+  <div style="padding: 10px 16px 16px; display: flex; gap: 8px;">
+    <span style="flex: 1; height: 44px; border: 1px solid #2a2d33; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px;">reporter à aujourd'hui</span>
+  </div>
+  <footer style="display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 44px; border-top: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;"><span>[ ] → [x] en touchant</span><span style="flex-grow:1"></span><span>date = celle de la note</span></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

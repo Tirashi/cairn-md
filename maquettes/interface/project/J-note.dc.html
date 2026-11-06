@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Commun · cases cliquables dans l’aperçu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+  <header style="display: flex; align-items: center; gap: 6px; padding: 6px 8px 6px 4px; border-bottom: 1px solid #2a2d33;">
+    <span style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; font-size: 18px;">←</span>
+    <span style="flex-grow: 1; font-size: 13px; color: #9aa0a8;">journal/<span style="color:#e6e6e6; font-weight:700;">2026-11-06</span></span>
+    <div style="display: flex; border: 1px solid #2a2d33; border-radius: 6px; overflow: hidden;"><span style="height: 38px; padding: 0 12px; display:flex; align-items:center; font-size: 12px; color: #9aa0a8;">edit</span><span style="height: 38px; padding: 0 12px; display:flex; align-items:center; font-size: 12px; background:#f0b45a; color:#121212; font-weight:800;">view</span></div>
+  </header>
+  <div style="padding: 16px 18px; font-size: 14px; line-height: 1.7;">
+    <div style="font-size: 20px; font-weight: 800; margin-bottom: 12px;">jeudi 6 novembre</div>
+    <div style="font-size: 15px; font-weight: 800; margin: 6px 0;">À faire</div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">appeler le garage</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">finir la maquette des tâches</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #7fc48f; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: #7fc48f;">✓</span><span style="text-decoration: line-through; color: #6b7078;">café avec Léa</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 13px;"><span style="flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #9aa0a8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #121212; background: transparent;"></span><span style="">relire <span style="color:#f0b45a">Cairn — plan V1</span></span></div>
+    <div style="font-size: 15px; font-weight: 800; margin: 16px 0 6px;">Notes</div>
+    <p style="margin: 0; color: #9aa0a8;">Idée : la vue tâches pourrait aussi montrer les cases des notes de projet.</p>
+  </div>
+  <div style="flex-grow: 1;"></div>
+  <div style="margin: 0 16px 12px; padding: 10px 12px; border: 1px dashed #2a2d33; border-radius: 6px; font-size: 11px; color: #9aa0a8; line-height: 1.6;">Commun aux trois : dans l'aperçu, toucher une case coche la tâche (<span style="color:#e6e6e6">- [ ]</span> → <span style="color:#e6e6e6">- [x]</span> dans le Markdown, enregistré aussitôt) ; une tâche faite est barrée.</div>
+  <footer style="display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 44px; border-top: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;"><span><span style="color:#7fc48f">●</span> enregistré</span><span style="flex-grow:1"></span><span>3/4 · 1 faite</span></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

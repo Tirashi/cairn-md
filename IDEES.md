@@ -18,7 +18,7 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - **Recherche avancée** : filtres combinables, ex. `tag:dev dossier:travail "mot exact"`.
 - **Imprimer / PDF** : une note avec une mise en page propre de l'aperçu.
 
-## À voir (utilité pas encore claire)
+## Mises de côté (06/11, à reprendre si le besoin se fait sentir)
 - **Plan de la note** : liste cliquable des titres `#` de la note ouverte, pour les longues notes.
 - **Palette de commandes** (`Ctrl+P`) : aller à une note ou lancer une action (nouvelle note, export, thème…) au clavier, en réutilisant la fenêtre « lier une note ».
 

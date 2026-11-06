@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Jour A · bouton « aujourd'hui » + filtre tâches</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #2a2d33;">
+    <span style="font-size: 16px; font-weight: 800;"><span style="color:#f0b45a">▲</span> cairn<span style="color:#f0b45a">_</span></span>
+    <span style="flex-grow: 1;"></span><span style="height: 40px; padding: 0 12px; border-radius: 6px; display: flex; align-items: center; font-size: 12px; border: 1px solid #2a2d33; color: #e6e6e6;">◷ aujourd'hui</span><span style="height: 40px; padding: 0 12px; border-radius: 6px; display: flex; align-items: center; font-size: 12px; background: #f0b45a; color: #121212; font-weight: 800; border: 0;">+ nouvelle</span>
+    <span style="width: 40px; height: 40px; border: 1px solid #2a2d33; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #9aa0a8;">⋯</span>
+  </header>  <div style="margin: 10px 12px 4px; height: 40px; border: 1px solid #2a2d33; border-radius: 6px; display: flex; align-items: center; padding: 0 12px; font-size: 13px; color: #9aa0a8;"><span style="color:#f0b45a; margin-right: 8px;">&gt;</span>grep notes…</div>
+  <div style="display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid #2a2d33; font-size: 12px;">
+    <span style="padding: 6px 10px; border: 1px solid #2a2d33; border-radius: 6px;">~/</span>
+    <span style="padding: 6px 10px; border: 1px solid #2a2d33; border-radius: 6px;">journal/</span>
+    <span style="padding: 6px 10px; border: 1px solid #f0b45a; border-radius: 6px; color: #f0b45a;">☐ tâches 7</span>
+    <span style="padding: 6px 10px; border: 1px solid #2a2d33; border-radius: 6px;">#dev</span>
+  </div>
+  <div style="padding: 10px 14px; border-left: 2px solid #f0b45a; background: rgba(240,180,90,0.08); border-bottom: 1px solid #2a2d33;">
+    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;"><span><span style="color:#f0b45a">◷ </span>2026-11-06.md</span><span style="font-size: 11px; font-weight: 400; color: #9aa0a8;">09:12</span></div>
+    <div style="font-size: 12px; color: #9aa0a8; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">## À faire · appeler le garage · finir la maquette</div>
+  </div>
+  <div style="padding: 10px 14px; border-left: 2px solid transparent; border-bottom: 1px solid #2a2d33;">
+    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;"><span>cairn-plan-v1.md</span><span style="font-size: 11px; font-weight: 400; color: #9aa0a8;">hier</span></div>
+    <div style="font-size: 12px; color: #9aa0a8; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Front statique sur GitHub Pages, Supabase…</div>
+  </div>
+  <div style="padding: 10px 14px; border-left: 2px solid transparent; border-bottom: 1px solid #2a2d33;">
+    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;"><span>2026-11-05.md</span><span style="font-size: 11px; font-weight: 400; color: #9aa0a8;">hier</span></div>
+    <div style="font-size: 12px; color: #9aa0a8; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">- [x] PWA · - [ ] tester le mode avion</div>
+  </div>
+  <div style="padding: 10px 14px; border-left: 2px solid transparent; border-bottom: 1px solid #2a2d33;">
+    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;"><span>courses.md</span><span style="font-size: 11px; font-weight: 400; color: #9aa0a8;">4 nov.</span></div>
+    <div style="font-size: 12px; color: #9aa0a8; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">- [ ] lait · - [ ] pain · - [x] café</div>
+  </div>
+  <div style="padding: 14px 16px; font-size: 12px; color: #9aa0a8; line-height: 1.7;">
+    <span style="color:#f0b45a">◷ aujourd'hui</span> ouvre <span style="color:#e6e6e6">journal/2026-11-06</span>, ou la crée depuis le modèle :<br>
+    <span style="color: #4a4e55;"># jeudi 6 novembre<br>## À faire<br>- [ ] <br>## Notes</span>
+  </div>
+  <div style="flex-grow: 1;"></div>
+  <footer style="display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 44px; border-top: 1px solid #2a2d33; font-size: 11px; color: #9aa0a8;"><span><span style="color:#7fc48f">●</span> 4 notes</span><span style="flex-grow:1"></span><span>Alt+J aujourd'hui</span></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

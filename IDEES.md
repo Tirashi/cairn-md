@@ -11,7 +11,7 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - ✅ PWA : installable, hors ligne, synchronisation et conflits (premier point du « plus tard » du plan) → [suivi](specs/suivi.md#pwa-et-hors-ligne-0511).
 
 ## À travailler (« plus tard » du plan)
-- **Accès MCP** : petit serveur local pour que Claude Code lise et modifie les notes directement, sans passer par l'export / import. Doit respecter le point d'accès unique aux données et ne jamais utiliser la clé `service_role`.
+- ⏸️ **Accès MCP** (reporté le 06/11 : à faire quand Cairn sera sur un VPS) : petit serveur local pour que Claude Code lise et modifie les notes directement, sans passer par l'export / import. Doit respecter le point d'accès unique aux données et ne jamais utiliser la clé `service_role`.
 - **Table `note_links`** alimentée par trigger : liens calculés côté base. Utile seulement avec des milliers de notes ; en attendant, calcul dans le navigateur.
 
 ## Préférences relevées

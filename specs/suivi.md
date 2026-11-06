@@ -51,4 +51,4 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - ✅ Testé avec le faux backend. `supabase/versions.sql` exécuté sur Supabase ; affichage validé et RLS revérifiée avec le second compte (06/11).
 
 ## Prochains chantiers possibles
-Voir [`IDEES.md`](../IDEES.md) : accès MCP, table `note_links`.
+Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.

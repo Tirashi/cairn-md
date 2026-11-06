@@ -59,5 +59,11 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Premier essai réel raté : le téléphone mélangeait anciens et nouveaux fichiers (cache de 10 min de GitHub Pages). Correctif : `sw.js` demande les fichiers de Cairn en `no-cache` et met le cache à jour même après le délai de 3 s.
 - ✅ Validé sur le vrai site, téléphone + PC (06/11).
 
+## Note du jour et listes (06/11)
+- Première maquette (J-*) trop chargée : elle mélangeait note du jour, vue des tâches, bande de la semaine, écran d'accueil ; l'utilisateur n'a pas compris. **Leçon** : une maquette par idée, et sans ajouts non demandés.
+- Fait sans maquette (un seul bouton) : « ◷ aujourd'hui » à côté de « + nouvelle » (sur téléphone : ◷ seul). Titre `AAAA-MM-JJ` (date locale), dossier `journal/` (casse d'un dossier existant reprise), modèle `## À faire / - [ ] / ## Notes`, curseur sur la première case. Si la note existe, elle est rouverte.
+- Demande ajoutée : Entrée dans une liste (`-`, `*`, `+`, `- [ ]`, `1.`) continue la puce ; Entrée sur un élément vide la termine ; pas dans un bloc de code. `js/listes.js` (pure), branché sur `beforeinput` (marche aussi avec les claviers de téléphone), `execCommand` pour garder Ctrl+Z.
+- ⏳ Testé avec le faux backend, **essai réel à faire**.
+
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.

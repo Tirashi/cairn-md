@@ -833,7 +833,7 @@ button.historique-version:hover { background: var(--surface); }
 @media (max-width: 760px) {
   .recherche { order: 3; flex-basis: 100%; max-width: none; }
   .barre-haut .espace { display: none; }
-  .barre-haut .bouton-principal { margin-left: auto; }
+  .barre-haut .bouton-jour { margin-left: auto; min-width: 44px; }
 
   .colonnes { grid-template-columns: minmax(0, 1fr); }
   .col-dossiers { display: none; }

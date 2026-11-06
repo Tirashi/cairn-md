@@ -23,6 +23,7 @@ const COQUILLE = [
   'js/import-dialogue.js',
   'js/installation.js',
   'js/liens.js',
+  'js/listes.js',
   'js/local.js',
   'js/main.js',
   'js/markdown.js',

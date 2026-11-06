@@ -12,7 +12,7 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - ✅ PWA : installable, hors ligne, synchronisation et conflits (premier point du « plus tard » du plan) → [suivi](specs/suivi.md#pwa-et-hors-ligne-0511).
 
 ## À faire (retenues le 06/11)
-- **Note du jour** : un raccourci qui ouvre ou crée la note du jour (ex. `journal/2026-11-06`), pour noter sans réfléchir où ranger.
+- ✅ **Note du jour** (06/11) → [suivi](specs/suivi.md#note-du-jour-et-listes-0611). Avec : listes continuées à Entrée.
 - **Déplacer une note** dans un autre dossier : déjà possible par le champ `~/…` sous le titre ; à rendre plus évident (glisser-déposer sur ordinateur, action `mv`, plusieurs notes d'un coup ?). À préciser.
 - **Cases à cocher** : `- [ ]` cliquables dans l'aperçu, et une vue « tâches ouvertes » qui les regroupe toutes notes confondues.
 - **Recherche avancée** : filtres combinables, ex. `tag:dev dossier:travail "mot exact"`.

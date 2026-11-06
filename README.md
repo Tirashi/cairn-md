@@ -14,6 +14,8 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 
 ## Utilisation
 
+- **◷ aujourd'hui** ouvre la note du jour (titre `2026-11-06`, dossier `journal/`), ou la crée avec un petit modèle (`## À faire`, `- [ ]`, `## Notes`).
+- **Listes** : Entrée après une ligne `- …`, `- [ ] …` ou `1. …` continue la liste ; Entrée sur un élément vide la termine.
 - **+ nouvelle** crée une note « sans titre » : taper le titre, Entrée, puis le contenu en Markdown.
 - Enregistrement automatique une seconde après la dernière frappe (barre d'état : `○ modifié`, `● enregistré`) ; `Ctrl+S` force l'enregistrement.
 - `edit | split | view` : éditeur, les deux côte à côte (ordinateur), ou aperçu. En `split`, faire défiler l'un fait défiler l'autre, section par section. Sur téléphone, un seul panneau à la fois et ← pour revenir à la liste.

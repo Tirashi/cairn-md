@@ -11,6 +11,7 @@ import { brancherMeta, afficherMeta, majNomFichier } from './meta.js';
 import { brancherPalette, ouvrirPalette } from './palette.js';
 import { enrichir, brancherCopie } from './rendu-avance.js';
 import { brancherDefilement } from './defilement.js';
+import { continuerListe } from './listes.js';
 import { ouvrirHistorique, brancherHistorique } from './historique.js';
 import { demander } from './dialogue.js';
 import { slug } from './export.js';
@@ -418,7 +419,7 @@ function titreLibre() {
   return 'sans titre ' + i;
 }
 
-async function ouvrirNouvelle(champs, { focusTitre }) {
+async function ouvrirNouvelle(champs, { focusTitre, curseur = null }) {
   await sauvegarder();
   const r = await creerNote({ content: '', ...champs }).catch(() => ({ erreur: 'reseau' }));
   if (r.erreur) {
@@ -426,13 +427,36 @@ async function ouvrirNouvelle(champs, { focusTitre }) {
     return;
   }
   remplacerNote(r.note);
-  if (etat.mode === 'view') { etat.mode = 'edit'; ecrireMode('edit'); }
+  if (modeEffectif() === 'view') { etat.mode = 'edit'; ecrireMode('edit'); }
   location.hash = '#/note/' + r.note.id;
   requestAnimationFrame(() => {
     const champ = focusTitre ? $('note-titre') : $('note-contenu');
     champ.focus();
     if (focusTitre) champ.select();
+    else if (curseur !== null) champ.setSelectionRange(curseur, curseur);
   });
+}
+
+// ---------- Note du jour ----------
+
+const MODELE_JOUR = '## À faire\n- [ ] \n\n## Notes\n';
+
+/** Date locale au format 2026-11-06. */
+function dateDuJour(d = new Date()) {
+  const deux = (n) => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + deux(d.getMonth() + 1) + '-' + deux(d.getDate());
+}
+
+/** Ouvre la note du jour (titre = date), ou la crée dans journal/ avec le petit modèle. */
+async function noteDuJour() {
+  const titre = dateDuJour();
+  const existante = parTitre(titre);
+  if (existante) { location.hash = '#/note/' + existante.id; return; }
+  await ouvrirNouvelle({
+    title: titre,
+    folder: dossierExistant('journal', etat.notes) || 'journal',
+    content: MODELE_JOUR,
+  }, { focusTitre: false, curseur: MODELE_JOUR.indexOf('- [ ] ') + 6 });
 }
 
 function nouvelleNote() {
@@ -629,6 +653,7 @@ function brancher() {
 
   window.addEventListener('hashchange', router);
   $('bouton-nouvelle').addEventListener('click', nouvelleNote);
+  $('bouton-jour').addEventListener('click', noteDuJour);
   $('bouton-supprimer').addEventListener('click', demanderSuppression);
   $('bouton-historique').addEventListener('click', ouvrirLog);
   brancherHistorique();
@@ -679,6 +704,20 @@ function brancher() {
   // Contenu. Taper [[ ouvre la palette « lier une note ».
   const zone = $('note-contenu');
   brancherPalette({ notes: () => etat.notes, courante: noteCourante });
+  // Entrée dans une liste (- , - [ ] , 1. ) : la puce continue à la ligne suivante.
+  zone.addEventListener('beforeinput', (e) => {
+    if (e.inputType !== 'insertLineBreak' && e.inputType !== 'insertParagraph') return;
+    const r = continuerListe(zone.value, zone.selectionStart, zone.selectionEnd);
+    if (!r) return;
+    e.preventDefault();
+    zone.setSelectionRange(r.debut, r.fin);
+    // execCommand garde l'annulation (Ctrl+Z) ; sinon, remplacement direct.
+    const fait = r.texte ? document.execCommand('insertText', false, r.texte) : document.execCommand('delete');
+    if (!fait) {
+      zone.setRangeText(r.texte, r.debut, r.fin, 'end');
+      zone.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
   zone.addEventListener('input', (e) => {
     etat.enAttente.content = zone.value;
     majEditeur();

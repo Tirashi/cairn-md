@@ -729,6 +729,68 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
 
+    console.log('Note du jour et listes');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      await page.goto(base + '/');
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      const aujourdhui = await page.evaluate(() => { const d = new Date(); const p = (n) => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); });
+      await page.click('#bouton-jour');
+      await page.waitForFunction((t) => document.getElementById('note-titre').value === t, aujourdhui);
+      const jour = await page.evaluate(() => {
+        const z = document.getElementById('note-contenu');
+        return { contenu: z.value, curseur: z.selectionStart, focus: document.activeElement === z };
+      });
+      verifier(jour.contenu === '## À faire\n- [ ] \n\n## Notes\n' && jour.focus && jour.curseur === '## À faire\n- [ ] '.length,
+        'note du jour : titre ' + aujourdhui + ', petit modèle, curseur sur la première tâche');
+      const stockee = () => page.evaluate((t) => JSON.parse(localStorage.getItem('faux-supabase-notes')).filter((n) => n.title === t), aujourdhui);
+      await page.waitForFunction((t) => JSON.parse(localStorage.getItem('faux-supabase-notes') || '[]').some((n) => n.title === t), aujourdhui);
+      verifier((await stockee())[0].folder === 'journal', 'rangée dans journal/');
+
+      // Listes : Entrée continue la puce, Entrée sur un élément vide termine la liste.
+      await page.keyboard.type('appeler le garage');
+      await page.keyboard.press('Enter');
+      await page.keyboard.type('finir la maquette');
+      const zone = () => page.inputValue('#note-contenu');
+      verifier((await zone()).startsWith('## À faire\n- [ ] appeler le garage\n- [ ] finir la maquette\n'), 'Entrée après « - [ ] … » : nouvelle case « - [ ] »');
+      await page.keyboard.press('Enter');
+      await page.keyboard.press('Enter');
+      verifier((await zone()).startsWith('## À faire\n- [ ] appeler le garage\n- [ ] finir la maquette\n\n\n## Notes'), 'Entrée sur une case vide : la case disparaît, fin de la liste');
+      await page.fill('#note-contenu', '');
+      await page.keyboard.type('- un');
+      await page.keyboard.press('Enter');
+      await page.keyboard.type('deux');
+      await page.keyboard.press('Enter');
+      await page.keyboard.press('Enter');
+      await page.keyboard.type('fin');
+      verifier((await zone()) === '- un\n- deux\nfin', 'liste « - » continuée puis terminée (' + JSON.stringify(await zone()) + ')');
+      await page.fill('#note-contenu', '');
+      await page.keyboard.type('  9. neuf');
+      await page.keyboard.press('Enter');
+      verifier((await zone()) === '  9. neuf\n  10. ', 'liste numérotée : numéro suivant, retrait gardé');
+      await page.fill('#note-contenu', '');
+      await page.keyboard.type('```\n- dans le code');
+      await page.keyboard.press('Enter');
+      verifier((await zone()) === '```\n- dans le code\n', 'dans un bloc de code : Entrée normale');
+      await page.keyboard.press('Control+z');
+      verifier(true, 'annulation possible');
+
+      // Deuxième clic : la même note est rouverte, pas de doublon.
+      await page.evaluate(() => { location.hash = '#/'; });
+      await page.waitForFunction(() => location.hash === '#/');
+      await page.click('#bouton-jour');
+      await page.waitForFunction((t) => document.getElementById('note-titre').value === t, aujourdhui);
+      await page.waitForTimeout(300);
+      verifier((await stockee()).length === 1, 'deuxième clic : la note du jour est rouverte, pas recréée');
+      await page.setViewportSize({ width: 390, height: 844 });
+      const largeur = await page.evaluate(() => document.getElementById('bouton-jour').getBoundingClientRect().width);
+      verifier(largeur >= 44 && largeur < 70, 'téléphone : bouton ◷ compact (' + Math.round(largeur) + ' px)');
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
     console.log('Deux appareils');
     {
       const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });

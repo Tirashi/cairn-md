@@ -11,6 +11,20 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - ✅ Plusieurs appareils : reprise des changements faits ailleurs, conflit au lieu d'écraser → [suivi](specs/suivi.md#plusieurs-appareils-0611).
 - ✅ PWA : installable, hors ligne, synchronisation et conflits (premier point du « plus tard » du plan) → [suivi](specs/suivi.md#pwa-et-hors-ligne-0511).
 
+## À faire (retenues le 06/11)
+- **Note du jour** : un raccourci qui ouvre ou crée la note du jour (ex. `journal/2026-11-06`), pour noter sans réfléchir où ranger.
+- **Déplacer une note** dans un autre dossier : déjà possible par le champ `~/…` sous le titre ; à rendre plus évident (glisser-déposer sur ordinateur, action `mv`, plusieurs notes d'un coup ?). À préciser.
+- **Cases à cocher** : `- [ ]` cliquables dans l'aperçu, et une vue « tâches ouvertes » qui les regroupe toutes notes confondues.
+- **Recherche avancée** : filtres combinables, ex. `tag:dev dossier:travail "mot exact"`.
+- **Imprimer / PDF** : une note avec une mise en page propre de l'aperçu.
+
+## À voir (utilité pas encore claire)
+- **Plan de la note** : liste cliquable des titres `#` de la note ouverte, pour les longues notes.
+- **Palette de commandes** (`Ctrl+P`) : aller à une note ou lancer une action (nouvelle note, export, thème…) au clavier, en réutilisant la fenêtre « lier une note ».
+
+## Autres idées proposées (06/11)
+- Modèles de notes (`{{date}}`) ; coller une image (stockage Supabase, 1 Go gratuit) ; épingler des notes ; notes orphelines et liens cassés ; graphe des notes ; partager une note en lecture par lien public (RLS à part).
+
 ## À travailler (« plus tard » du plan)
 - ⏸️ **Accès MCP** (reporté le 06/11 : à faire quand Cairn sera sur un VPS) : petit serveur local pour que Claude Code lise et modifie les notes directement, sans passer par l'export / import. Doit respecter le point d'accès unique aux données et ne jamais utiliser la clé `service_role`.
 - **Table `note_links`** alimentée par trigger : liens calculés côté base. Utile seulement avec des milliers de notes ; en attendant, calcul dans le navigateur.

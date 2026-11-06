@@ -19,7 +19,7 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 ## Étape 4 — dossiers, tags, liens (05/11)
 - Maquette : trois façons de changer dossier et tags (D-chemin, D-frontmatter, D-infos) ; **A « chemin éditable »** choisie.
 - Dossiers en chemin `A/B`, tags en minuscules, filtres, recherche dans le navigateur, liens `[[Titre]]` / `[[Titre|texte]]`, liens entrants, renommage de note (mise à jour des liens) et de dossier.
-- ⏳ Testée avec le faux backend, **essai réel à faire**.
+- ✅ Validée sur le vrai site (06/11).
 
 ## Liens et code (05/11)
 - Demande : choisir une note à lier parmi des centaines ; mermaid et coloration du code.
@@ -31,7 +31,7 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 ## Étape 6 — export / import (05/11)
 - Maquette : I-statut, I-dialogue, I-conflit ; **A avec le lien « voir le détail » de C** pour un conflit.
 - Export zip (un `.md` par note, en-tête YAML) ; import zip / `.md` / dossier, classement nouvelle / modifiée / conflit / identique, choix par conflit, sauvegarde zip avant import.
-- ⏳ **Essai réel à faire**.
+- ✅ Validée sur le vrai site (06/11).
 
 ## PWA et hors ligne (05/11)
 - Maquette : H-discret, H-bandeau, H-file ; **A + carte d'installation de B + conflit de C**.

@@ -102,3 +102,17 @@ export function compterMots(markdown) {
   const m = (markdown || '').match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu);
   return m ? m.length : 0;
 }
+
+/**
+ * Ligne (à partir de 0) où commence chaque bloc affiché de l'aperçu (titre, paragraphe,
+ * liste, code…), dans l'ordre : sert à faire défiler l'aperçu avec l'éditeur.
+ */
+export function debutsDesBlocs(markdown) {
+  const debuts = [];
+  let ligne = 0;
+  for (const jeton of marked.lexer(markdown || '')) {
+    if (jeton.type !== 'space' && jeton.type !== 'def') debuts.push(ligne);
+    ligne += (jeton.raw.match(/\n/g) || []).length;
+  }
+  return debuts;
+}

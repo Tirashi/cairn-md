@@ -16,7 +16,7 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 
 - **+ nouvelle** crée une note « sans titre » : taper le titre, Entrée, puis le contenu en Markdown.
 - Enregistrement automatique une seconde après la dernière frappe (barre d'état : `○ modifié`, `● enregistré`) ; `Ctrl+S` force l'enregistrement.
-- `edit | split | view` : éditeur, les deux côte à côte (ordinateur), ou aperçu. Sur téléphone, un seul panneau à la fois et ← pour revenir à la liste.
+- `edit | split | view` : éditeur, les deux côte à côte (ordinateur), ou aperçu. En `split`, faire défiler l'un fait défiler l'autre, section par section. Sur téléphone, un seul panneau à la fois et ← pour revenir à la liste.
 - `rm` supprime la note après confirmation.
 - **Code** : les blocs ```` ```js ```` (ou sans langage, deviné) sont colorés dans l'aperçu, avec un bouton *copier*. Les blocs ```` ```mermaid ```` deviennent des diagrammes aux couleurs de Cairn (le diagramme garde une taille lisible et défile s'il est trop large).
 - **Dossier** : le champ `~/…` sous le titre se tape comme un chemin (`travail/projets`) ; les dossiers existants sont proposés, Entrée valide, Échap annule. Les dossiers n'existent que par leurs notes.

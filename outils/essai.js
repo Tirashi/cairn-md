@@ -559,6 +559,26 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
         'lignes vides dans un bloc de code : hauteur gardée, éditeur aligné (' + JSON.stringify(alignement) + ')');
       await page.click('.bascule [data-mode="split"]');
 
+      // Défilement lié : la section en haut de l'éditeur est aussi en haut de l'aperçu, dans les deux sens.
+      const sections = [];
+      for (let i = 1; i <= 30; i++) sections.push('## Section ' + i, '', ('mot ' + i + ' ').repeat(i % 3 ? 8 : 60), '', '- a\n- b\n- c', '');
+      await page.fill('#note-contenu', sections.join('\n'));
+      await page.waitForFunction(() => document.querySelectorAll('#note-apercu h2').length === 30);
+      const decalage = async (depuis, numero) => page.evaluate(async ([depuis, numero]) => {
+        const ed = document.querySelector('.panneau-edition'), ap = document.querySelector('.panneau-apercu');
+        const haut = (el, p) => el.getBoundingClientRect().top - p.getBoundingClientRect().top;
+        const ligne = [...document.querySelectorAll('#editeur-fond .ed-ligne')].find((l) => l.textContent === '## Section ' + numero);
+        const titre = [...document.querySelectorAll('#note-apercu h2')].find((h) => h.textContent === 'Section ' + numero);
+        if (depuis === 'edition') ed.scrollTop += haut(ligne, ed); else ap.scrollTop += haut(titre, ap);
+        await new Promise((r) => setTimeout(r, 200));
+        return Math.round(depuis === 'edition' ? haut(titre, ap) : haut(ligne, ed));
+      }, [depuis, numero]);
+      const versApercu = await decalage('edition', 17);
+      await page.waitForTimeout(200);
+      const versEditeur = await decalage('apercu', 8);
+      verifier(Math.abs(versApercu) <= 4 && Math.abs(versEditeur) <= 4,
+        'split : l\'aperçu suit le défilement de l\'éditeur, et l\'inverse (écarts ' + versApercu + ' et ' + versEditeur + ' px)');
+
       await page.fill('#note-contenu', md);
       await page.waitForSelector('#note-apercu .hljs-keyword', { timeout: 15000 });
       verifier(true, 'code coloré (highlight.js chargé à la demande)');

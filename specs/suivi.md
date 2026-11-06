@@ -38,5 +38,10 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - `manifest.webmanifest`, icônes PNG, `sw.js` (réseau d'abord pour Cairn, cache d'abord pour le CDN, jamais Supabase), copie IndexedDB + file d'attente (`local.js`), synchronisation au retour du réseau, fenêtre de conflit, carte « Installer Cairn ? ».
 - ⏳ Testée avec le faux backend (service worker compris), **essai réel à faire** : installer sur le téléphone, mode avion, conflit entre deux appareils.
 
+## Défilement lié (06/11)
+- Demande : faire défiler le Markdown fait défiler l'aperçu. Pas de maquette (comportement, rien de nouveau à l'écran).
+- `js/defilement.js` : en split seulement, chaque bloc de l'aperçu est accroché à la ligne où il commence (`debutsDesBlocs`, lexer de `marked`), position interpolée entre deux blocs ; dans les deux sens. Si l'aperçu ne correspond pas bloc à bloc (HTML brut), défilement proportionnel. Points recalculés à chaque défilement (diagrammes et images qui changent de taille).
+- ⏳ Testé avec le faux backend, **essai réel à faire**.
+
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : historique des versions, accès MCP, table `note_links`.

@@ -6,6 +6,7 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - ✅ V1 du plan (étapes 1 à 6) : connexion, notes, dossiers, tags, recherche, liens `[[…]]`, export / import → [`specs/plan-v1.md`](specs/plan-v1.md), détail dans [`specs/suivi.md`](specs/suivi.md).
 - ✅ Fenêtre « lier une note » avec recherche, pour les centaines de notes (direction A) → [suivi](specs/suivi.md#liens-et-code-0511).
 - ✅ Code coloré et diagrammes mermaid dans l'aperçu → [suivi](specs/suivi.md#liens-et-code-0511).
+- ✅ Défilement lié éditeur ↔ aperçu en split → [suivi](specs/suivi.md#défilement-lié-0611).
 - ✅ PWA : installable, hors ligne, synchronisation et conflits (premier point du « plus tard » du plan) → [suivi](specs/suivi.md#pwa-et-hors-ligne-0511).
 
 ## À travailler (« plus tard » du plan)

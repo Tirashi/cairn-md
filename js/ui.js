@@ -10,6 +10,7 @@ import { afficherNavigation } from './navigation.js';
 import { brancherMeta, afficherMeta, majNomFichier } from './meta.js';
 import { brancherPalette, ouvrirPalette } from './palette.js';
 import { enrichir, brancherCopie } from './rendu-avance.js';
+import { brancherDefilement } from './defilement.js';
 import { demander } from './dialogue.js';
 import { slug } from './export.js';
 import { brancherImport, lancerImport, lancerExport } from './import-dialogue.js';
@@ -693,6 +694,8 @@ function brancher() {
 
   // Liens [[…]] de l'aperçu vers une note qui n'existe pas encore.
   brancherCopie($('note-apercu'));
+  // En split, l'aperçu suit le défilement de l'éditeur (et l'inverse).
+  brancherDefilement(() => modeEffectif() === 'split');
   // Changer de thème redessine les diagrammes aux bonnes couleurs.
   document.addEventListener('cairn-theme', () => { if (etat.courante) majApercu(); });
   $('note-apercu').addEventListener('click', (e) => {

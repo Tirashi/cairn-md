@@ -52,6 +52,8 @@
 ## Leçons apprises
 - **Éditeur aligné** (05/11) : chaque `.ed-ligne` doit garder une hauteur, même vide et même dans un bloc de code (caractère invisible `\u200b`). Une ligne de hauteur nulle décale tout le texte affiché par rapport au curseur réel. L'essai vérifie l'alignement sur une note plus haute que l'écran (sinon la mesure est faussée).
 
+- **Mise à jour de l'appli** (06/11) : GitHub Pages fait garder les fichiers 10 min par le navigateur ; le service worker les demande donc en `no-cache` (sinon un ancien `ui.js` peut côtoyer un nouveau `notes.js` et l'appli casse). Après « mets à jour main », dire à l'utilisateur de recharger (PC : Ctrl+Maj+R ; appli installée : fermer et rouvrir deux fois).
+
 ## En cours / à vérifier
 Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).
 - **Démarrage** (05/11) : `CLAUDE.md`, plan V1 (`specs/plan-v1.md`) et logos (`assets/`) en place. **Maquette** ([artefact](https://claude.ai/artifact/5bt29wqWkuZcnrFtcC32sZ)) : direction B choisie, desktop validé.
@@ -63,4 +65,4 @@ Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).
 - **PWA** (05/11) : application installable, hors ligne avec synchronisation et conflits, carte d'installation ; testée avec le faux backend (service worker compris), **essai réel à faire** (installer sur le téléphone, mode avion). Ensuite : historique des versions (fait) ; accès MCP reporté au passage sur un VPS.
 - **Défilement lié** (06/11) : en split, l'aperçu suit l'éditeur et l'inverse ; testé avec le faux backend, **essai réel à faire**.
 - **Historique des versions** (06/11) : direction A, table `note_versions` + trigger ; testé avec le faux backend ; `supabase/versions.sql` exécuté sur Supabase, affichage validé et **RLS revérifiée** avec le second compte (06/11).
-- **Plusieurs appareils** (06/11) : reprise des changements faits ailleurs (requête légère) et conflit au lieu d'écraser ; testé avec le faux backend, **essai réel à faire** (téléphone + PC).
+- **Plusieurs appareils** (06/11) : reprise des changements faits ailleurs (requête légère) et conflit au lieu d'écraser ; **validé sur le vrai site** (téléphone + PC, 06/11).

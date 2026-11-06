@@ -56,7 +56,8 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Reprise : au retour au premier plan et toutes les 60 s si visible, `id, updated_at` de toutes les notes (~15 Ko pour 200), puis contenu des seules notes changées ; notes supprimées ailleurs retirées. Note ouverte remplacée seulement sans frappe en attente, curseur gardé.
 - Sauvegarde conditionnelle : `eq('updated_at', base)` ; si la note a changé ailleurs, conflit dans la fenêtre existante (appareil / serveur / les deux). Même contenu avec une autre date : pas de faux conflit. Sans IndexedDB : message « recharger la page ».
 - Realtime de Supabase écarté (propre à Supabase, contraire à la portabilité).
-- ⏳ Testé avec le faux backend (scénario « Deux appareils »), **essai réel à faire**.
+- Premier essai réel raté : le téléphone mélangeait anciens et nouveaux fichiers (cache de 10 min de GitHub Pages). Correctif : `sw.js` demande les fichiers de Cairn en `no-cache` et met le cache à jour même après le délai de 3 s.
+- ✅ Validé sur le vrai site, téléphone + PC (06/11).
 
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.

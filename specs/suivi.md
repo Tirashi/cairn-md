@@ -48,7 +48,7 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Maquette : V-panneau, V-frise, V-log ; **A « liste + différences »** choisie.
 - Base : `supabase/versions.sql` (table `note_versions`, RLS, trigger `garder_version` after update, `trier_versions`). Les versions sont créées par la base, donc aussi pour les notes envoyées après un passage hors ligne.
 - Interface : bouton `log` (téléphone : menu `⋯`), fenêtre `$ cairn log` : versions groupées (aujourd'hui, hier, cette semaine, ce mois-ci, cette année, plus anciennes), `+a −b` par version, différences avec l'actuelle (contexte de 2 lignes), `voir` (rendu assaini), `restaurer` (contenu, dossier, tags ; l'état actuel est d'abord gardé). Messages : hors ligne, table absente, note en attente d'envoi.
-- ⏳ Testé avec le faux backend. `supabase/versions.sql` exécuté sur Supabase (06/11). **À faire** : revérifier la RLS avec le second compte, essai réel.
+- ✅ Testé avec le faux backend. `supabase/versions.sql` exécuté sur Supabase ; affichage validé et RLS revérifiée avec le second compte (06/11).
 
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP, table `note_links`.

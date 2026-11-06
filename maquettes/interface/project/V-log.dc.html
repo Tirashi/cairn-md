@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Historique C — façon git log</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121212}
+a{color:#f0b45a}a:hover{color:#f5c77f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+  <header style="display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 4px; border-bottom: 1px solid #2a2d33;">
+    <span style="width: 44px; height: 44px; color: #9aa0a8; display: flex; align-items: center; justify-content: center; font-size: 18px;">×</span>
+    <span style="flex-grow: 1; font-size: 14px; font-weight: 800; overflow: hidden; white-space: nowrap;"><span style="color:#9aa0a8">$</span> log cairn-plan-v1.md</span>
+    <span style="font-size: 11px; color: #9aa0a8;"></span>
+  </header>
+  <div style="padding: 8px 0; border-bottom: 1px solid #2a2d33;">
+    <div style="padding: 8px 16px; background: rgba(240,180,90,0.12); font-size: 12.5px; line-height: 1.6;">
+      <div><span style="color: #f0b45a;">▸ a3f2</span> <span style="color: #9aa0a8;">il y a 2 h</span> <span style="float:right"><span style="color:#7fc48f">+2</span> <span style="color:#ff8a80">−1</span></span></div>
+      <div style="padding-left: 14px; color: #c3c7cd;">« Export et import en zip »</div>
+    </div>
+    <div style="padding: 8px 16px;  font-size: 12.5px; line-height: 1.6;">
+      <div><span style="color: #f0b45a;">* 91c0</span> <span style="color: #9aa0a8;">11:40</span> <span style="float:right"><span style="color:#7fc48f">+5</span> <span style="color:#ff8a80">−1</span></span></div>
+      <div style="padding-left: 14px; color: #c3c7cd;">« ## Étapes »</div>
+    </div>
+    <div style="padding: 8px 16px;  font-size: 12.5px; line-height: 1.6;">
+      <div><span style="color: #f0b45a;">* 7be4</span> <span style="color: #9aa0a8;">hier 22:30</span> <span style="float:right"><span style="color:#7fc48f">+12</span> <span style="color:#ff8a80">−3</span></span></div>
+      <div style="padding-left: 14px; color: #c3c7cd;">« Dossiers et tags »</div>
+    </div>
+    <div style="padding: 8px 16px;  font-size: 12.5px; line-height: 1.6;">
+      <div><span style="color: #f0b45a;">* 0d18</span> <span style="color: #9aa0a8;">3 nov.</span> <span style="float:right"><span style="color:#7fc48f">+40</span> <span style="color:#ff8a80">−0</span></span></div>
+      <div style="padding-left: 14px; color: #c3c7cd;">création</div>
+    </div>
+    <div style="padding: 4px 16px 0; font-size: 11px; color: #9aa0a8;">-- 10 de plus · gardées : tout 24 h, 1/jour 30 j, 1/sem. ensuite --</div>
+  </div>
+  <div style="padding: 10px 16px 4px; font-size: 12px; color: #9aa0a8;"><span style="color:#e6e6e6">$</span> diff a3f2 HEAD</div>
+  <pre style="margin: 0; padding: 4px 16px; flex-grow: 1; overflow: hidden; font-family: inherit; font-size: 12px; line-height: 1.7; white-space: pre-wrap; color: #c3c7cd;"><span style="color: #9aa0a8;">@@ ## Étapes @@</span>
+  - CRUD et rendu Markdown
+<span style="color:#ff8a80">− - Dossiers et tags</span>
+<span style="color:#7fc48f">+ - Dossiers, tags, [[Liens entre notes]]</span>
+<span style="color:#7fc48f">+ - Export et import en zip</span>
+  - PWA</pre>
+  <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 16px 18px; border-top: 1px solid #2a2d33;">
+    <button type="button" style="height: 46px; border: 0; border-radius: 6px; background: #f0b45a; color: #121212; font: inherit; font-size: 13px; font-weight: 800;">$ restore a3f2</button>
+    <button type="button" style="height: 46px; border: 1px solid #2a2d33; border-radius: 6px; background: transparent; color: #e6e6e6; font: inherit; font-size: 13px;">copier comme nouvelle note</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

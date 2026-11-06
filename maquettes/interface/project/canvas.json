@@ -142,6 +142,27 @@
       "w": 390,
       "x": 2040,
       "y": 6300
+    },
+    "V-panneau.dc.html": {
+      "h": 844,
+      "title": "Historique A · liste + différences",
+      "w": 390,
+      "x": 1100,
+      "y": 7550
+    },
+    "V-frise.dc.html": {
+      "h": 844,
+      "title": "Historique B · frise dans la note",
+      "w": 390,
+      "x": 1570,
+      "y": 7550
+    },
+    "V-log.dc.html": {
+      "h": 844,
+      "title": "Historique C · façon git log",
+      "w": 390,
+      "x": 2040,
+      "y": 7550
     }
   },
   "createdOnFiles": {
@@ -218,6 +239,13 @@
       "text": "PWA · installer Cairn et écrire hors ligne",
       "x": 1100,
       "y": 6000
+    },
+    "tV": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Historique des versions",
+      "x": 1100,
+      "y": 7250
     }
   },
   "order": [
@@ -240,7 +268,10 @@
     "I-conflit.dc.html",
     "H-discret.dc.html",
     "H-bandeau.dc.html",
-    "H-file.dc.html"
+    "H-file.dc.html",
+    "V-panneau.dc.html",
+    "V-frise.dc.html",
+    "V-log.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

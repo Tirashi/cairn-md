@@ -36,12 +36,12 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 ## PWA et hors ligne (05/11)
 - Maquette : H-discret, H-bandeau, H-file ; **A + carte d'installation de B + conflit de C**.
 - `manifest.webmanifest`, icônes PNG, `sw.js` (réseau d'abord pour Cairn, cache d'abord pour le CDN, jamais Supabase), copie IndexedDB + file d'attente (`local.js`), synchronisation au retour du réseau, fenêtre de conflit, carte « Installer Cairn ? ».
-- ⏳ Testée avec le faux backend (service worker compris), **essai réel à faire** : installer sur le téléphone, mode avion, conflit entre deux appareils.
+- ✅ Validée sur le vrai site : installation, mode avion, synchronisation (06/11).
 
 ## Défilement lié (06/11)
 - Demande : faire défiler le Markdown fait défiler l'aperçu. Pas de maquette (comportement, rien de nouveau à l'écran).
 - `js/defilement.js` : en split seulement, chaque bloc de l'aperçu est accroché à la ligne où il commence (`debutsDesBlocs`, lexer de `marked`), position interpolée entre deux blocs ; dans les deux sens. Si l'aperçu ne correspond pas bloc à bloc (HTML brut), défilement proportionnel. Points recalculés à chaque défilement (diagrammes et images qui changent de taille).
-- ⏳ Testé avec le faux backend, **essai réel à faire**.
+- ✅ Validé sur le vrai site (06/11).
 
 ## Historique des versions (06/11)
 - Question de départ : le poids. Réponse : une version par séance d'écriture (au plus une toutes les 10 min), tri qui s'éclaircit avec le temps, 50 max par note ; quelques dizaines de Mo au pire après des années.

@@ -62,7 +62,7 @@ Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).
 - **Étape 4** (05/11) : dossiers, tags, filtres, recherche, liens `[[…]]`, liens entrants, suggestions `[[`, renommage de note (mise à jour des liens) et de dossier ; **validée sur le vrai site** (06/11). Ensuite : étape 5 (responsive, en grande partie fait) puis 6 (export / import).
 - **Liens et code** (05/11) : palette « lier une note » (direction A), code coloré, mermaid ; **validés sur le vrai site** (06/11).
 - **Étape 6** (05/11) : export zip, import zip / .md / dossier avec récapitulatif, conflits et sauvegarde avant import ; **validée sur le vrai site** (06/11). Ensuite : le « plus tard » du plan.
-- **PWA** (05/11) : application installable, hors ligne avec synchronisation et conflits, carte d'installation ; testée avec le faux backend (service worker compris), **essai réel à faire** (installer sur le téléphone, mode avion). Ensuite : historique des versions (fait) ; accès MCP reporté au passage sur un VPS.
-- **Défilement lié** (06/11) : en split, l'aperçu suit l'éditeur et l'inverse ; testé avec le faux backend, **essai réel à faire**.
+- **PWA** (05/11) : application installable, hors ligne avec synchronisation et conflits, carte d'installation ; **validée sur le vrai site** (installation, mode avion, synchronisation ; 06/11). Ensuite : historique des versions (fait) ; accès MCP reporté au passage sur un VPS.
+- **Défilement lié** (06/11) : en split, l'aperçu suit l'éditeur et l'inverse ; **validé sur le vrai site** (06/11).
 - **Historique des versions** (06/11) : direction A, table `note_versions` + trigger ; testé avec le faux backend ; `supabase/versions.sql` exécuté sur Supabase, affichage validé et **RLS revérifiée** avec le second compte (06/11).
 - **Plusieurs appareils** (06/11) : reprise des changements faits ailleurs (requête légère) et conflit au lieu d'écraser ; **validé sur le vrai site** (téléphone + PC, 06/11).

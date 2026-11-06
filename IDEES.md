@@ -8,6 +8,7 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - ✅ Code coloré et diagrammes mermaid dans l'aperçu → [suivi](specs/suivi.md#liens-et-code-0511).
 - ✅ Défilement lié éditeur ↔ aperçu en split → [suivi](specs/suivi.md#défilement-lié-0611).
 - ✅ Historique des versions (direction A, une version par séance, tri dans le temps) → [suivi](specs/suivi.md#historique-des-versions-0611).
+- ✅ Plusieurs appareils : reprise des changements faits ailleurs, conflit au lieu d'écraser → [suivi](specs/suivi.md#plusieurs-appareils-0611).
 - ✅ PWA : installable, hors ligne, synchronisation et conflits (premier point du « plus tard » du plan) → [suivi](specs/suivi.md#pwa-et-hors-ligne-0511).
 
 ## À travailler (« plus tard » du plan)

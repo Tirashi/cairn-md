@@ -50,5 +50,13 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Interface : bouton `log` (téléphone : menu `⋯`), fenêtre `$ cairn log` : versions groupées (aujourd'hui, hier, cette semaine, ce mois-ci, cette année, plus anciennes), `+a −b` par version, différences avec l'actuelle (contexte de 2 lignes), `voir` (rendu assaini), `restaurer` (contenu, dossier, tags ; l'état actuel est d'abord gardé). Messages : hors ligne, table absente, note en attente d'envoi.
 - ✅ Testé avec le faux backend. `supabase/versions.sql` exécuté sur Supabase ; affichage validé et RLS revérifiée avec le second compte (06/11).
 
+## Plusieurs appareils (06/11)
+- Constat de l'utilisateur : une note modifiée sur le PC n'apparaît pas sur le téléphone (PWA restée ouverte) ; pire, taper dessus écrasait la version du PC.
+- Contrainte : trafic sortant du palier gratuit de Supabase (~5 Go/mois) ; recharger toutes les notes toutes les 30 s aurait coûté ~70 Mo/h.
+- Reprise : au retour au premier plan et toutes les 60 s si visible, `id, updated_at` de toutes les notes (~15 Ko pour 200), puis contenu des seules notes changées ; notes supprimées ailleurs retirées. Note ouverte remplacée seulement sans frappe en attente, curseur gardé.
+- Sauvegarde conditionnelle : `eq('updated_at', base)` ; si la note a changé ailleurs, conflit dans la fenêtre existante (appareil / serveur / les deux). Même contenu avec une autre date : pas de faux conflit. Sans IndexedDB : message « recharger la page ».
+- Realtime de Supabase écarté (propre à Supabase, contraire à la portabilité).
+- ⏳ Testé avec le faux backend (scénario « Deux appareils »), **essai réel à faire**.
+
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.

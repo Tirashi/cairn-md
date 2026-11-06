@@ -7,6 +7,8 @@
 // ['faux-supabase-delai-version'] en ms pour l'essai), 50 au plus, supprimées avec la note.
 // localStorage['faux-supabase-sans-versions'] = '1' simule une base sans la table.
 // localStorage['faux-supabase-panne'] = '1' simule un serveur injoignable.
+// select('a, b') ne renvoie que ces colonnes ; in(col, valeurs) ; chaque lecture de notes est
+// notée dans localStorage['faux-supabase-lectures'] (colonnes, nombre de lignes) pour l'essai.
 const CLE = 'faux-supabase-session';
 const CLE_NOTES = 'faux-supabase-notes';
 const CLE_PANNE = 'faux-supabase-panne';
@@ -48,11 +50,12 @@ function garderVersion(l, champs) {
 
 class Requete {
   constructor(table) { this.table = table; this.op = 'select'; this.filtres = []; this.tri = null; this.unique = false; }
-  select() { if (this.op === 'select') this.op = 'select'; this.retour = true; return this; }
+  select(colonnes) { this.colonnes = colonnes; this.retour = true; return this; }
   insert(v) { this.op = 'insert'; this.valeur = v; return this; }
   update(v) { this.op = 'update'; this.valeur = v; return this; }
   delete() { this.op = 'delete'; return this; }
-  eq(col, val) { this.filtres.push([col, val]); return this; }
+  eq(col, val) { this.filtres.push([col, (v) => v === val]); return this; }
+  in(col, vals) { this.filtres.push([col, (v) => vals.includes(v)]); return this; }
   order(col, { ascending = true } = {}) { this.tri = [col, ascending]; return this; }
   single() { this.unique = true; return this; }
   then(ok, ko) { return this.executer().then(ok, ko); }
@@ -64,13 +67,16 @@ class Requete {
     const moi = session && session.user.id;
     if (this.table === 'note_versions') return this.versions(moi);
     let lignes = lireJSON(CLE_NOTES, []);
-    const miennes = (l) => l.user_id === moi && this.filtres.every(([c, v]) => l[c] === v);
+    const miennes = (l) => l.user_id === moi && this.filtres.every(([c, ok]) => ok(l[c]));
     const doublon = (titre, sauf) => lignes.some((l) => l.user_id === moi && l.id !== sauf && l.title.toLowerCase() === titre.toLowerCase());
     const erreurDoublon = { code: '23505', message: 'duplicate key value violates unique constraint "notes_user_title_uq"' };
     let resultat = [];
 
     if (this.op === 'select') {
       resultat = lignes.filter(miennes);
+      const journal = lireJSON('faux-supabase-lectures', []);
+      journal.push({ colonnes: this.colonnes || '*', lignes: resultat.length });
+      localStorage.setItem('faux-supabase-lectures', JSON.stringify(journal.slice(-50)));
     } else if (this.op === 'insert') {
       if (!moi) return { data: null, error: { code: '42501', message: 'new row violates row-level security policy' } };
       if (doublon(this.valeur.title, null)) return { data: null, error: erreurDoublon };
@@ -102,7 +108,7 @@ class Requete {
       return { data: null, error: { code: 'PGRST205', message: "Could not find the table 'public.note_versions' in the schema cache" } };
     }
     let versions = lireJSON(CLE_VERSIONS, []);
-    const miennes = (v) => v.user_id === moi && this.filtres.every(([c, val]) => v[c] === val);
+    const miennes = (v) => v.user_id === moi && this.filtres.every(([c, ok]) => ok(v[c]));
     let resultat = [];
     if (this.op === 'select') resultat = versions.filter(miennes);
     else if (this.op === 'insert') {
@@ -124,7 +130,11 @@ class Requete {
       const [c, asc] = this.tri;
       resultat = [...resultat].sort((a, b) => (a[c] < b[c] ? -1 : a[c] > b[c] ? 1 : 0) * (asc ? 1 : -1));
     }
-    const copie = JSON.parse(JSON.stringify(resultat));
+    let copie = JSON.parse(JSON.stringify(resultat));
+    if (this.retour && this.colonnes && this.colonnes !== '*') {
+      const cols = this.colonnes.split(',').map((c) => c.trim());
+      copie = copie.map((l) => Object.fromEntries(cols.map((c) => [c, l[c]])));
+    }
     if (this.unique) {
       return copie.length === 1 ? { data: copie[0], error: null }
         : { data: null, error: { code: 'PGRST116', message: 'JSON object requested, multiple (or no) rows returned' } };

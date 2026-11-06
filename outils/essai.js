@@ -729,6 +729,85 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
 
+    console.log('Deux appareils');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      const ids = ['0000000b-0000-4000-8000-00000000000b', '0000000c-0000-4000-8000-00000000000c', '0000000d-0000-4000-8000-00000000000d'];
+      await page.goto(base + '/');
+      await page.evaluate((ids) => {
+        const moi = '00000000-0000-0000-0000-000000000001';
+        localStorage.setItem('faux-supabase-notes', JSON.stringify(ids.map((id, i) => ({ id, user_id: moi, title: ['Courses', 'Projet', 'Lectures'][i],
+          folder: '', tags: [], content: 'version téléphone ' + i, created_at: '2026-11-01T10:00:00.000Z', updated_at: '2026-11-0' + (i + 1) + 'T10:00:00.000Z' }))));
+      }, ids);
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForFunction(() => document.querySelectorAll('#liste-notes .ln-nom').length === 3);
+      const ouvrirNote = async (id, titre) => {
+        await page.evaluate((id) => { location.hash = '#/note/' + id; }, id);
+        await page.waitForFunction((t) => document.getElementById('note-titre').value === t, titre);
+      };
+      // « Autre appareil » : écrit directement dans la base du faux backend.
+      const ailleurs = (id, champs) => page.evaluate(([id, champs]) => {
+        const l = JSON.parse(localStorage.getItem('faux-supabase-notes'));
+        const i = l.findIndex((n) => n.id === id);
+        if (champs) Object.assign(l[i], champs, { updated_at: new Date().toISOString() }); else l.splice(i, 1);
+        localStorage.setItem('faux-supabase-notes', JSON.stringify(l));
+      }, [id, champs]);
+      const revenir = async () => {
+        await page.waitForTimeout(2100);
+        await page.evaluate(() => { localStorage.setItem('faux-supabase-lectures', '[]'); window.dispatchEvent(new Event('focus')); });
+      };
+      const lectures = () => page.evaluate(() => JSON.parse(localStorage.getItem('faux-supabase-lectures')));
+
+      await ouvrirNote(ids[0], 'Courses');
+      await page.click('#note-contenu');
+      await ailleurs(ids[0], { content: 'version PC' });
+      await revenir();
+      await page.waitForFunction(() => document.getElementById('note-contenu').value === 'version PC');
+      verifier((await page.textContent('#etat-sauvegarde')).includes('autre appareil'), 'retour sur Cairn : la note ouverte reprend la version de l\'autre appareil');
+      const l1 = await lectures();
+      verifier(l1.length === 2 && l1[0].colonnes === 'id, updated_at' && l1[0].lignes === 3 && l1[1].lignes === 1,
+        'requête légère : id et dates de toutes les notes, contenu de la seule note changée (' + JSON.stringify(l1) + ')');
+      await revenir();
+      await page.waitForTimeout(300);
+      const l2 = await lectures();
+      verifier(l2.length === 1 && l2[0].colonnes === 'id, updated_at', 'rien n\'a changé : aucun contenu téléchargé');
+
+      await ailleurs(ids[1], { title: 'Projet PC' });
+      await revenir();
+      await page.waitForFunction(() => [...document.querySelectorAll('#liste-notes .ln-nom')].some((e) => e.textContent.includes('projet-pc')));
+      verifier(true, 'note modifiée ailleurs : la liste se met à jour');
+
+      // Frappe pas encore enregistrée : la note ouverte n'est pas remplacée ; la sauvegarde voit le conflit.
+      await ouvrirNote(ids[2], 'Lectures');
+      await page.click('#note-contenu');
+      await page.keyboard.press('Control+End');
+      await ailleurs(ids[2], { content: 'écrit sur le PC' });
+      await page.keyboard.type(' + ajout tel');
+      await page.waitForSelector('#dialogue-sync[open]');
+      const textes = await page.textContent('#sync-versions');
+      verifier(textes.includes('version téléphone 2 + ajout tel') && textes.includes('écrit sur le PC'), 'modifiée des deux côtés : fenêtre de conflit, rien d\'écrasé');
+      const stockee = await page.evaluate((id) => JSON.parse(localStorage.getItem('faux-supabase-notes')).find((n) => n.id === id).content, ids[2]);
+      verifier(stockee === 'écrit sur le PC', 'la version du PC est intacte sur le serveur');
+      await page.click('#sync-choix button:has-text("garder le serveur")');
+      await page.waitForFunction(() => !document.getElementById('dialogue-sync').open);
+      await page.waitForFunction(() => document.getElementById('note-contenu').value === 'écrit sur le PC');
+      verifier(true, '« garder le serveur » : la note ouverte affiche la version du PC');
+      await page.click('#note-contenu');
+      await page.keyboard.press('Control+End');
+      await page.keyboard.type(' !');
+      await page.waitForFunction(() => /● enregistré \d/.test(document.getElementById('etat-sauvegarde').textContent));
+      verifier(!(await page.evaluate(() => document.getElementById('dialogue-sync').open)), 'ensuite, enregistrement normal sans faux conflit');
+
+      await ouvrirNote(ids[0], 'Courses');
+      await ailleurs(ids[0], null);
+      await revenir();
+      await page.waitForFunction(() => location.hash === '#/' && document.querySelectorAll('#liste-notes .ln-nom').length === 2);
+      verifier(true, 'note supprimée ailleurs : retirée de la liste, retour à la liste');
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
     console.log('Export et import');
     {
       const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });

@@ -83,6 +83,10 @@ const serveur = {
   lire: (id) => client.from('notes').select(COLONNES).eq('id', id).single(),
   creer: (champs) => client.from('notes').insert(champs).select(COLONNES).single(),
   modifier: (id, champs) => client.from('notes').update(champs).eq('id', id).select(COLONNES).single(),
+  // Seulement si la note n'a pas changé depuis `base` (son updated_at connu) : sinon aucune ligne.
+  modifierSi: (id, champs, base) => client.from('notes').update(champs).eq('id', id).eq('updated_at', base).select(COLONNES).single(),
+  etats: () => client.from('notes').select('id, updated_at'),
+  lirePlusieurs: (ids) => client.from('notes').select(COLONNES).in('id', ids),
   supprimer: (id) => client.from('notes').delete().eq('id', id),
 };
 
@@ -160,15 +164,54 @@ export async function creerNote(champs) {
   return { note, local: true };
 }
 
-/** Modifie les champs donnés (title, content, folder, tags). */
-export async function modifierNote(id, champs) {
+const memesChamps = (a, b) => CHAMPS.every((k) => JSON.stringify(a[k] ?? null) === JSON.stringify(b[k] ?? null));
+
+/**
+ * Envoie une modification. Avec `base` (l'updated_at que l'appareil connaît), elle n'est
+ * appliquée que si la note n'a pas changé ailleurs depuis ; sinon renvoie { changee: note du serveur }.
+ * null si le réseau manque.
+ */
+async function envoyerModif(id, champs, base) {
+  if (!base) return essayer(() => serveur.modifier(id, champs));
+  const r = await essayer(() => serveur.modifierSi(id, champs, base));
+  if (!r || !r.error || codeErreur(r.error) !== 'introuvable') return r;
+  const actuelle = await essayer(() => serveur.lire(id));
+  if (!actuelle) return null;
+  if (actuelle.error) return actuelle;          // vraiment supprimée, ou autre erreur
+  return { changee: actuelle.data };
+}
+
+/** La note a changé sur le serveur pendant qu'on la modifiait ici : conflit, rien n'est écrasé. */
+async function conflitEnLigne(id, champs, base, surServeur) {
+  const ancienne = (await local.lireNotes()).find((n) => n.id === id) || surServeur;
+  const note = { ...ancienne, ...garder(champs), updated_at: maintenant() };
+  await local.ecrireNote(note);
+  await local.mettreEnAttente({ id, type: 'modifier', champs: garder(champs), base });
+  etat.attente.add(id);
+  etat.conflits.set(id, { id, local: note, serveur: surServeur });
+  annoncer();
+  return { note, local: true, conflit: true };
+}
+
+/**
+ * Modifie les champs donnés (title, content, folder, tags). `base` : updated_at de la note
+ * telle que l'appareil la connaît ; si elle a changé ailleurs depuis, c'est un conflit.
+ */
+export async function modifierNote(id, champs, { base } = {}) {
   if (!etat.copie) {
-    const r = await essayer(() => serveur.modifier(id, champs));
-    return r ? resultat(r) : reseauKo();
+    const r = await envoyerModif(id, champs, base);
+    if (!r) return reseauKo();
+    return r.changee ? { erreur: 'modifiee-ailleurs' } : resultat(r);
   }
   // Une note déjà en attente reste en attente : on ne double pas la file (et on ne contourne pas un conflit).
   if (!etat.attente.has(id)) {
-    const r = await essayer(() => serveur.modifier(id, champs));
+    let r = await envoyerModif(id, champs, base);
+    if (r && r.changee) {
+      // Même contenu que la copie de l'appareil (seule la date diffère) : pas un vrai conflit.
+      const ancienne = (await local.lireNotes()).find((n) => n.id === id);
+      if (ancienne && memesChamps(ancienne, r.changee)) r = await essayer(() => serveur.modifier(id, champs));
+      else return conflitEnLigne(id, champs, base, r.changee);
+    }
     if (r) {
       const res = resultat(r);
       if (res.note) await local.ecrireNote(res.note);
@@ -207,6 +250,32 @@ export async function supprimerNote(id) {
   passerHorsLigne();
   annoncer();
   return {};
+}
+
+// ---------- Changements faits ailleurs ----------
+
+/**
+ * Notes modifiées ou supprimées sur le serveur par rapport à `connues` (Map id → updated_at).
+ * Léger : seuls les id et dates sont lus, puis le contenu des seules notes qui ont changé.
+ * Les notes en attente d'envoi sont ignorées (la synchronisation s'en charge). null si hors ligne.
+ */
+export async function changementsServeur(connues) {
+  const r = await essayer(serveur.etats);
+  if (!r || r.error) return null;
+  const surServeur = new Set(r.data.map((n) => n.id));
+  const ids = r.data.filter((n) => !etat.attente.has(n.id) && connues.get(n.id) !== n.updated_at).map((n) => n.id);
+  const supprimees = [...connues.keys()].filter((id) => !surServeur.has(id) && !etat.attente.has(id));
+  let modifiees = [];
+  if (ids.length) {
+    const r2 = await essayer(() => serveur.lirePlusieurs(ids));
+    if (!r2 || r2.error) return null;
+    modifiees = r2.data;
+  }
+  if (etat.copie) {
+    for (const n of modifiees) await local.ecrireNote(n);
+    for (const id of supprimees) await local.effacerNote(id);
+  }
+  return { modifiees, supprimees };
 }
 
 // ---------- Synchronisation ----------

@@ -1,6 +1,6 @@
 // Interface de l'appli : liste, filtres, éditeur, aperçu, liens, sauvegarde automatique.
 // Routage par hash : #/ (liste) et #/note/<id>.
-import { listerNotes, creerNote, modifierNote, supprimerNote, ouvrirCopie, fermerCopie, modificationsEnAttente } from './notes.js';
+import { listerNotes, creerNote, modifierNote, supprimerNote, ouvrirCopie, fermerCopie, modificationsEnAttente, changementsServeur } from './notes.js';
 import { regler, brancherSync } from './sync-dialogue.js';
 import { brancherInstallation, proposerInstallation } from './installation.js';
 import { rendre, colorer, extrait, compterMots, definirResolveur } from './markdown.js';
@@ -17,6 +17,7 @@ import { slug } from './export.js';
 import { brancherImport, lancerImport, lancerExport } from './import-dialogue.js';
 
 const DELAI_SAUVEGARDE = 1000;
+const ACTUALISATION = 60000;   // vérification des changements faits ailleurs (ms)
 const CLE_MODE = 'cairn-mode';
 const etroit = window.matchMedia('(max-width: 760px)');
 
@@ -88,6 +89,7 @@ const MESSAGES = {
   'titre-vide': 'Le titre ne peut pas être vide.',
   'reseau': 'Serveur injoignable : la note sera enregistrée au retour du réseau.',
   'introuvable': 'Cette note n\'existe plus.',
+  'modifiee-ailleurs': 'Cette note a changé sur un autre appareil : copier votre texte, puis recharger la page.',
   'inconnue': 'Erreur inattendue du serveur.',
 };
 
@@ -278,7 +280,9 @@ async function sauvegarder() {
 
   etat.sauvegarde = (async () => {
     etatSauvegarde('<span class="accent">…</span> enregistrement');
-    const envoyer = (c) => modifierNote(id, c).catch(() => ({ erreur: 'reseau' }));
+    // base : la version que cet appareil connaît ; si la note a changé ailleurs depuis, conflit.
+    const base = etat.notes.find((n) => n.id === id)?.updated_at;
+    const envoyer = (c) => modifierNote(id, c, { base }).catch(() => ({ erreur: 'reseau' }));
     let r = await envoyer(champs);
     let titreRefuse = false;
 
@@ -317,6 +321,10 @@ async function sauvegarder() {
         afficherLiensEntrants();
       }
       if ('content' in champs) majApercu();        // les liens [[…]] peuvent avoir changé de cible
+    }
+    if (r.conflit) {
+      etatSauvegarde('<span class="erreur">!</span> modifiée ailleurs : à régler');
+      return;
     }
     if (Object.keys(etat.enAttente).length === 0) {
       etatSauvegarde(titreRefuse
@@ -738,8 +746,10 @@ function brancher() {
     if (k === 'l' && e.shiftKey) { e.preventDefault(); lierSelection(); }
     if (k === 'k') { e.preventDefault(); if (etroit.matches && etat.courante) location.hash = '#/'; recherche.focus(); recherche.select(); }
   });
-  // Ne rien perdre en quittant ou en changeant d'onglet.
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sauvegarder(); });
+  // Ne rien perdre en quittant ou en changeant d'onglet ; au retour, reprendre ce qui a changé ailleurs.
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sauvegarder(); else actualiser(); });
+  window.addEventListener('focus', actualiser);
+  setInterval(actualiser, ACTUALISATION);
   window.addEventListener('pagehide', () => { sauvegarder(); });
 }
 
@@ -773,6 +783,58 @@ function afficherReseau(extra = {}) {
   b.hidden = false;
 }
 
+/**
+ * Reprend les notes modifiées ou supprimées sur un autre appareil (au retour au premier plan,
+ * et toutes les 60 s tant que Cairn est affiché). Requête légère : id et dates, puis le contenu
+ * des seules notes changées. La note ouverte n'est remplacée que si rien n'attend d'être enregistré.
+ */
+/** Une frappe sur la note ouverte attend-elle d'être enregistrée ? */
+const frappeEnCours = () => Boolean(etat.sauvegarde || etat.minuteur || Object.keys(etat.enAttente).length);
+
+/** Réaffiche la note ouverte avec sa nouvelle version, en gardant le curseur. */
+function reafficherOuverte(note) {
+  const zone = $('note-contenu');
+  const avait = document.activeElement === zone;
+  const [debut, fin] = [zone.selectionStart, zone.selectionEnd];
+  afficherNote(note);
+  if (avait) { zone.focus(); zone.setSelectionRange(debut, fin); }
+}
+
+let actualisation = null;
+let derniereActualisation = 0;
+async function actualiser() {
+  if ($('ecran-appli').hidden || document.visibilityState !== 'visible' || navigator.onLine === false) return;
+  if (actualisation || Date.now() - derniereActualisation < 2000) return;
+  derniereActualisation = Date.now();
+  actualisation = (async () => {
+    const connues = new Map(etat.notes.map((n) => [n.id, n.updated_at]));
+    const r = await changementsServeur(connues).catch(() => null);
+    if (!r || (!r.modifiees.length && !r.supprimees.length)) return;
+    // Note ouverte avec une frappe pas encore enregistrée : on n'y touche pas (la sauvegarde verra le conflit).
+    const occupee = (id) => id === etat.courante && frappeEnCours();
+    let courante = null;
+    for (const n of r.modifiees) {
+      const ici = etat.notes.find((x) => x.id === n.id);
+      if ((ici && ici.updated_at !== connues.get(n.id)) || occupee(n.id)) continue;   // changée ici entre-temps
+      remplacerNote(n);
+      if (n.id === etat.courante) courante = n;
+    }
+    let ouverteSupprimee = false;
+    for (const id of r.supprimees) {
+      if (occupee(id)) continue;
+      etat.notes = etat.notes.filter((x) => x.id !== id);
+      if (id === etat.courante) ouverteSupprimee = true;
+    }
+    rafraichir();
+    if (ouverteSupprimee) { location.hash = '#/'; return; }
+    if (courante) {
+      reafficherOuverte(courante);
+      etatSauvegarde('<span class="accent">↻</span> mise à jour depuis un autre appareil');
+    }
+  })();
+  try { await actualisation; } finally { actualisation = null; }
+}
+
 /** Recharge les notes (après une synchronisation ou un conflit réglé) sans toucher à la saisie en cours. */
 async function recharger() {
   const r = await listerNotes().catch(() => ({ erreur: 'reseau' }));
@@ -782,10 +844,8 @@ async function recharger() {
   rafraichir();
   const note = noteCourante();
   if (etat.courante && !note) { location.hash = '#/'; return; }
-  // La note ouverte n'est remplacée que si rien n'est en cours de frappe.
-  if (note && !Object.keys(etat.enAttente).length && document.activeElement !== $('note-contenu') && document.activeElement !== $('note-titre')) {
-    afficherNote(note);
-  }
+  // La note ouverte n'est remplacée que si aucune frappe n'attend d'être enregistrée.
+  if (note && !frappeEnCours()) reafficherOuverte(note);
 }
 
 function surSynchro(e) {

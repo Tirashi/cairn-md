@@ -491,12 +491,17 @@ async function ouvrirNouvelle(champs, { focusTitre, curseur = null }) {
   remplacerNote(r.note);
   if (modeEffectif() === 'view') { etat.mode = 'edit'; ecrireMode('edit'); }
   location.hash = '#/note/' + r.note.id;
-  requestAnimationFrame(() => {
-    const champ = focusTitre ? $('note-titre') : $('note-contenu');
-    champ.focus();
-    if (focusTitre) champ.select();
-    else if (curseur !== null) champ.setSelectionRange(curseur, curseur);
+  // Attendre que le routeur ait affiché la note (sur un appareil lent, il passe après
+  // l'image suivante, et un champ encore caché ne prend pas le focus).
+  const id = r.note.id;
+  await new Promise((ok) => {
+    const essai = (n) => ((etat.courante === id && !$('note').hidden) || n > 300 ? ok() : requestAnimationFrame(() => essai(n + 1)));
+    essai(0);
   });
+  const champ = focusTitre ? $('note-titre') : $('note-contenu');
+  champ.focus();
+  if (focusTitre) champ.select();
+  else if (curseur !== null) champ.setSelectionRange(curseur, curseur);
 }
 
 // ---------- Note du jour ----------

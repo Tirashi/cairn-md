@@ -57,7 +57,7 @@ Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).
 - **Étape 2** (05/11) : connexion validée sur le vrai site (https://tirashi.github.io/cairn-md/) ; **RLS vérifiée** par l'utilisateur avec un second compte (05/11).
 - **Étape 3** (05/11) : CRUD, éditeur coloré, aperçu assaini, sauvegarde auto, suppression, mobile ; validée sur le vrai site.
 - **Étape 4** (05/11) : dossiers, tags, filtres, recherche, liens `[[…]]`, liens entrants, suggestions `[[`, renommage de note (mise à jour des liens) et de dossier ; **validée sur le vrai site** (06/11). Ensuite : étape 5 (responsive, en grande partie fait) puis 6 (export / import).
-- **Liens et code** (05/11) : palette « lier une note » (direction A), code coloré, mermaid ; testés avec le faux backend, **essai réel à faire**.
+- **Liens et code** (05/11) : palette « lier une note » (direction A), code coloré, mermaid ; **validés sur le vrai site** (06/11).
 - **Étape 6** (05/11) : export zip, import zip / .md / dossier avec récapitulatif, conflits et sauvegarde avant import ; **validée sur le vrai site** (06/11). Ensuite : le « plus tard » du plan.
 - **PWA** (05/11) : application installable, hors ligne avec synchronisation et conflits, carte d'installation ; testée avec le faux backend (service worker compris), **essai réel à faire** (installer sur le téléphone, mode avion). Ensuite : historique des versions (fait) ; accès MCP reporté au passage sur un VPS.
 - **Défilement lié** (06/11) : en split, l'aperçu suit l'éditeur et l'inverse ; testé avec le faux backend, **essai réel à faire**.

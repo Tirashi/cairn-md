@@ -26,7 +26,7 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Maquette : L-bulle, L-palette, L-explorateur, P-code ; **palette A** et couleurs validées.
 - Palette « lier une note » (`[[`, bouton `[[ ]]`, `Ctrl+Maj+L`, filtres partout / même dossier / récentes) ; highlight.js et mermaid chargés à la demande, SVG repassé par DOMPurify.
 - Correctif : décalage du curseur après des lignes vides dans un bloc de code (leçon dans `CLAUDE.md`).
-- ⏳ **Essai réel à faire**.
+- ✅ Validés sur le vrai site (06/11).
 
 ## Étape 6 — export / import (05/11)
 - Maquette : I-statut, I-dialogue, I-conflit ; **A avec le lien « voir le détail » de C** pour un conflit.

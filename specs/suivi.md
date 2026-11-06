@@ -67,5 +67,10 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Premier essai réel raté : la publication GitHub Pages avait échoué deux fois (incident GitHub), le site servait l'ancienne version ; relancée, elle est passée à la troisième.
 - ✅ Note du jour, listes et cases à cocher validées sur le vrai site (06/11).
 
+## Tâches ouvertes (06/11)
+- Maquette simple (T-A filtre, T-B page à part) ; **B choisie**.
+- Menu `⋯` › « ☐ tâches ouvertes N » ouvre `#/taches` dans la colonne de la note (← toujours visible). Liste : tâches non cochées de toutes les notes (`listerTaches`), notes les plus récentes d'abord, nom de la note à droite ; blocs de code ignorés. Cocher → `basculerCase` dans la note, `modifierNote` avec `base` (conflit si changée ailleurs), la tâche disparaît ; texte → ouvre la note.
+- ⏳ Testé avec le faux backend, **essai réel à faire**.
+
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.

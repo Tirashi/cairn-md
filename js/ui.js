@@ -12,7 +12,7 @@ import { brancherPalette, ouvrirPalette } from './palette.js';
 import { enrichir, brancherCopie } from './rendu-avance.js';
 import { brancherDefilement } from './defilement.js';
 import { continuerListe } from './listes.js';
-import { positionsDesCases } from './taches.js';
+import { positionsDesCases, listerTaches, basculerCase } from './taches.js';
 import { ouvrirHistorique, brancherHistorique } from './historique.js';
 import { demander } from './dialogue.js';
 import { slug } from './export.js';
@@ -166,6 +166,62 @@ function afficherListe() {
 function rafraichir() {
   afficherNavigation({ notes: etat.notes, filtre: etat.filtre, surFiltre: changerFiltre, surRenommer: renommerDossier });
   afficherListe();
+  const n = tachesOuvertes().length;
+  $('menu-taches-compte').textContent = n ? String(n) : '';
+  if (!$('vue-taches').hidden) afficherTaches();
+}
+
+// ---------- Tâches ouvertes (page à part) ----------
+
+/** Tâches non cochées de toutes les notes, notes les plus récentes d'abord. */
+function tachesOuvertes() {
+  const liste = [];
+  for (const note of etat.notes) {
+    listerTaches(note.content || '').forEach((t, index) => { if (!t.faite) liste.push({ note, index, texte: t.texte }); });
+  }
+  return liste;
+}
+
+function afficherTaches() {
+  const taches = tachesOuvertes();
+  const notes = new Set(taches.map((t) => t.note.id)).size;
+  $('taches-compte').textContent = taches.length ? pluriel(taches.length, 'tâche') + (notes > 1 ? ' · ' + notes + ' notes' : '') : '';
+  $('taches-vide').hidden = taches.length > 0;
+  $('taches-liste').replaceChildren(...taches.map(({ note, index, texte }) => {
+    const li = document.createElement('li');
+    li.className = 'tache';
+    const c = document.createElement('input');
+    c.type = 'checkbox';
+    c.setAttribute('aria-label', 'Cocher : ' + texte);
+    c.addEventListener('change', () => cocherTache(note.id, index, c));
+    const a = document.createElement('a');
+    a.className = 'tache-texte';
+    a.href = '#/note/' + note.id;
+    a.textContent = texte;
+    const n = document.createElement('span');
+    n.className = 'tache-note';
+    n.textContent = note.title;
+    li.append(c, a, n);
+    return li;
+  }));
+}
+
+/** Coche la tâche n° `index` de la note (dans son Markdown), enregistre, puis la retire de la liste. */
+async function cocherTache(id, index, caseCochee) {
+  $('taches-message').textContent = '';
+  const note = etat.notes.find((n) => n.id === id);
+  const contenu = note && basculerCase(note.content || '', index);
+  if (!contenu) { afficherTaches(); return; }
+  caseCochee.disabled = true;
+  const r = await modifierNote(id, { content: contenu }, { base: note.updated_at }).catch(() => ({ erreur: 'reseau' }));
+  if (r.erreur) {
+    caseCochee.disabled = false;
+    caseCochee.checked = false;
+    $('taches-message').textContent = MESSAGES[r.erreur] || MESSAGES.inconnue;
+    return;
+  }
+  remplacerNote(r.note);
+  setTimeout(rafraichir, 300);     // le temps de voir la case cochée
 }
 
 function changerFiltre(changement) {
@@ -615,6 +671,7 @@ function brancherMenu() {
     fermerMenu();
     const action = item.dataset.menu;
     if (action === 'export') exporter();
+    if (action === 'taches') location.hash = '#/taches';
     if (action === 'historique') ouvrirLog();
     if (action === 'import') $('import-fichier').click();
     if (action === 'import-dossier') $('import-dossier').click();
@@ -635,6 +692,7 @@ function brancherMenu() {
 async function router() {
   const m = location.hash.match(/^#\/note\/([0-9a-f-]+)$/i);
   const id = m ? m[1] : null;
+  const taches = location.hash === '#/taches';
 
   if (id !== etat.courante) {
     await sauvegarder();
@@ -645,7 +703,9 @@ async function router() {
     }
     afficherNote(noteCourante());
   }
-  $('ecran-appli').dataset.vue = etat.courante ? 'note' : 'liste';
+  $('vue-taches').hidden = !taches;
+  if (taches) { $('note-vide').hidden = true; afficherTaches(); } else if (!etat.courante) $('note-vide').hidden = false;
+  $('ecran-appli').dataset.vue = etat.courante || taches ? 'note' : 'liste';
   afficherListe();
 }
 

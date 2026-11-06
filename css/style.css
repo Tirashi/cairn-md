@@ -780,6 +780,20 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .apercu input[data-tache] { cursor: pointer; }
 .apercu li:has(> input[type="checkbox"]:checked) { color: var(--muted); text-decoration: line-through; }
 
+/* ---------- Page « tâches ouvertes » ---------- */
+
+.vue-taches { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.vue-taches[hidden] { display: none; }
+.bouton-retour-taches { display: flex; }
+.titre-taches { flex: 1 1 auto; margin: 0; padding-left: 4px; font-size: 14px; font-weight: 800; }
+.taches-liste { list-style: none; margin: 0; padding: 0 16px; overflow-y: auto; }
+.tache { display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.tache input { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: var(--ok); cursor: pointer; }
+.tache-texte { flex: 1 1 auto; min-width: 0; padding: 10px 0; color: var(--text); text-decoration: none; overflow-wrap: anywhere; }
+.tache-texte:hover { color: var(--accent); }
+.tache-note { flex: 0 1 auto; max-width: 40%; font-size: 11px; color: var(--faible); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tache input:checked + .tache-texte { color: var(--muted); text-decoration: line-through; }
+
 /* ---------- Historique des versions ---------- */
 
 .bouton-historique:hover { color: var(--accent); border-color: var(--accent); }

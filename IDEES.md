@@ -14,7 +14,7 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 ## À faire (retenues le 06/11)
 - ✅ **Note du jour** (06/11) → [suivi](specs/suivi.md#note-du-jour-et-listes-0611). Avec : listes continuées à Entrée.
 - **Déplacer une note** dans un autre dossier : déjà possible par le champ `~/…` sous le titre ; à rendre plus évident (glisser-déposer sur ordinateur, action `mv`, plusieurs notes d'un coup ?). À préciser.
-- ✅ Cases à cocher cliquables dans l'aperçu (06/11). Reste : une vue « tâches ouvertes » qui les regroupe toutes notes confondues (maquette simple).
+- ✅ Cases à cocher cliquables dans l'aperçu et page « tâches ouvertes » (06/11) → [suivi](specs/suivi.md#tâches-ouvertes-0611).
 - **Recherche avancée** : filtres combinables, ex. `tag:dev dossier:travail "mot exact"`.
 - **Imprimer / PDF** : une note avec une mise en page propre de l'aperçu.
 

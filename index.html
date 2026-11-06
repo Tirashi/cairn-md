@@ -94,6 +94,7 @@
         <button type="button" class="bouton-discret" id="bouton-menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-principal" aria-label="Plus d'actions : export, import">⋯</button>
         <div id="menu-principal" class="menu" role="menu" aria-label="Actions" hidden>
           <button type="button" role="menuitem" data-menu="installer" id="menu-installer" class="accent" hidden>⤓ installer Cairn</button>
+          <button type="button" role="menuitem" data-menu="taches">☐ tâches ouvertes <span id="menu-taches-compte" class="muet"></span></button>
           <button type="button" role="menuitem" data-menu="export">$ export <span class="muet">.zip</span></button>
           <button type="button" role="menuitem" data-menu="import">$ import <span class="muet">.zip ou .md</span></button>
           <button type="button" role="menuitem" data-menu="import-dossier">$ import <span class="muet">dossier</span></button>
@@ -132,6 +133,18 @@
 
       <main class="col-note" id="col-note">
         <p id="note-vide" class="muet vide">// choisir une note, ou « + nouvelle »</p>
+
+        <!-- Tâches ouvertes de toutes les notes (page à part, direction B) -->
+        <section id="vue-taches" class="vue-taches" aria-labelledby="taches-titre" hidden>
+          <div class="entete-note">
+            <a href="#/" class="bouton-retour bouton-retour-taches" aria-label="Retour à la liste">←</a>
+            <h2 id="taches-titre" class="titre-taches">☐ tâches ouvertes</h2>
+            <span id="taches-compte" class="muet"></span>
+          </div>
+          <p id="taches-message" class="message message-note" role="alert"></p>
+          <ul id="taches-liste" class="taches-liste" aria-label="Tâches ouvertes"></ul>
+          <p id="taches-vide" class="muet vide" hidden>// aucune tâche ouverte : tout est coché</p>
+        </section>
 
         <div id="note" class="note" hidden>
           <div class="entete-note">

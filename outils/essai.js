@@ -301,7 +301,7 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       verifier((await page.locator('.col-liste').isVisible()) && !(await page.locator('.col-note').isVisible()), 'téléphone : la liste seule');
       await page.click('.liste-notes a');
       await page.waitForSelector('#note:not([hidden])');
-      verifier(!(await page.locator('.col-liste').isVisible()) && (await page.locator('.bouton-retour').isVisible()), 'téléphone : la note seule, avec ←');
+      verifier(!(await page.locator('.col-liste').isVisible()) && (await page.locator('#note .bouton-retour').isVisible()), 'téléphone : la note seule, avec ←');
       verifier((await page.getAttribute('#note', 'data-mode')) === 'view', 'téléphone : split devient view');
       await page.click('.bascule [data-mode="edit"]');
       const ecart = await page.evaluate(() => Math.abs(document.getElementById('editeur-fond').offsetHeight - document.getElementById('note-contenu').scrollHeight));
@@ -312,7 +312,7 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
         const dossier = process.argv[process.argv.indexOf('--captures') + 1] || '.';
         await page.screenshot({ path: path.join(dossier, 'note-mobile.png') });
       }
-      await page.click('.bouton-retour');
+      await page.click('#note .bouton-retour');
       await page.waitForFunction(() => document.getElementById('ecran-appli').dataset.vue === 'liste');
       verifier(await page.locator('.col-liste').isVisible(), 'téléphone : ← revient à la liste');
 
@@ -826,6 +826,51 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       await page.tap('#note-apercu input[data-tache="0"]');
       await page.waitForFunction(() => document.getElementById('note-contenu').value.includes('- [x] appeler le garage\n- [ ] pain'));
       verifier(true, 'téléphone, mode view : toucher la case la coche');
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
+    console.log('Tâches ouvertes');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      const ids = ['0000000e-0000-4000-8000-00000000000e', '0000000f-0000-4000-8000-00000000000f', '00000010-0000-4000-8000-000000000010'];
+      await page.goto(base + '/');
+      await page.evaluate((ids) => {
+        const moi = '00000000-0000-0000-0000-000000000001';
+        const n = (id, title, content, jour) => ({ id, user_id: moi, title, folder: '', tags: [], content, created_at: '2026-11-01T10:00:00.000Z', updated_at: '2026-11-0' + jour + 'T10:00:00.000Z' });
+        localStorage.setItem('faux-supabase-notes', JSON.stringify([
+          n(ids[0], 'Courses', '- [ ] lait\n- [x] café\n- [ ] pain', 4),
+          n(ids[1], '2026-11-06', '## À faire\n- [ ] appeler le garage\n```\n- [ ] pas une tâche\n```', 6),
+          n(ids[2], 'Sans tâche', 'rien à faire', 5),
+        ]));
+      }, ids);
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForFunction(() => document.querySelectorAll('#liste-notes .ln-nom').length === 3);
+      verifier((await page.textContent('#menu-taches-compte')) === '3', 'menu ⋯ : nombre de tâches ouvertes');
+      await page.click('#bouton-menu');
+      await page.click('#menu-principal [data-menu="taches"]');
+      await page.waitForFunction(() => location.hash === '#/taches' && !document.getElementById('vue-taches').hidden);
+      const lignes = () => page.evaluate(() => [...document.querySelectorAll('#taches-liste .tache')].map((l) => l.querySelector('.tache-texte').textContent + ' | ' + l.querySelector('.tache-note').textContent));
+      const l1 = await lignes();
+      verifier(JSON.stringify(l1) === JSON.stringify(['appeler le garage | 2026-11-06', 'lait | Courses', 'pain | Courses']),
+        'page des tâches : non cochées seulement, notes récentes d\'abord, code ignoré (' + JSON.stringify(l1) + ')');
+      verifier((await page.textContent('#taches-compte')) === '3 tâches · 2 notes' && await page.isHidden('#note-vide'), 'compte des tâches affiché');
+      await page.click('#taches-liste .tache:nth-child(3) input');
+      await page.waitForFunction(() => document.querySelectorAll('#taches-liste .tache').length === 2);
+      const courses = await page.evaluate((id) => JSON.parse(localStorage.getItem('faux-supabase-notes')).find((n) => n.id === id).content, ids[0]);
+      verifier(courses === '- [ ] lait\n- [x] café\n- [x] pain', 'cocher : la bonne ligne cochée dans la note, enregistrée, retirée de la liste');
+      verifier((await page.textContent('#menu-taches-compte')) === '2', 'compte du menu mis à jour');
+      await page.click('#taches-liste .tache-texte:text-is("lait")');
+      await page.waitForFunction(() => document.getElementById('note-titre').value === 'Courses' && document.getElementById('vue-taches').hidden);
+      verifier(true, 'toucher le texte ouvre la note');
+      await page.evaluate(() => { location.hash = '#/taches'; });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.waitForSelector('#vue-taches:not([hidden])');
+      verifier(await page.isVisible('.bouton-retour-taches') && await page.isVisible('#taches-liste'), 'téléphone : page des tâches et ← visibles');
+      await page.click('.bouton-retour-taches');
+      await page.waitForFunction(() => location.hash === '#/' && document.getElementById('vue-taches').hidden);
+      verifier(await page.isVisible('#liste-notes'), '← : retour à la liste des notes');
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
 

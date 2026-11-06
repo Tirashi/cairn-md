@@ -5,9 +5,9 @@
 const TACHE = /^((?:[ \t]*>)*[ \t]*(?:[-*+]|\d+[.)])[ \t]+\[)([ xX])\][ \t]+\S/;
 const CLOTURE = /^[ \t]*(```|~~~)/;
 
-/** Position, dans `markdown`, du caractère entre crochets de chaque tâche, dans l'ordre. */
-export function positionsDesCases(markdown) {
-  const positions = [];
+/** Tâches de `markdown`, dans l'ordre : { position (caractère entre crochets), faite, texte }. */
+export function listerTaches(markdown) {
+  const taches = [];
   let dansCode = null;
   let debut = 0;
   for (const ligne of markdown.split('\n')) {
@@ -17,11 +17,22 @@ export function positionsDesCases(markdown) {
       else if (cloture[1] === dansCode) dansCode = null;
     } else if (!dansCode) {
       const m = ligne.match(TACHE);
-      if (m) positions.push(debut + m[1].length);
+      if (m) {
+        taches.push({
+          position: debut + m[1].length,
+          faite: m[2] !== ' ',
+          texte: ligne.slice(m[0].length - 1).trim(),
+        });
+      }
     }
     debut += ligne.length + 1;
   }
-  return positions;
+  return taches;
+}
+
+/** Position, dans `markdown`, du caractère entre crochets de chaque tâche, dans l'ordre. */
+export function positionsDesCases(markdown) {
+  return listerTaches(markdown).map((t) => t.position);
 }
 
 /** Coche ou décoche la n-ième tâche ; null si elle n'existe pas. */

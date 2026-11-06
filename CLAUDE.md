@@ -52,7 +52,7 @@
 ## Leçons apprises
 - **Éditeur aligné** (05/11) : chaque `.ed-ligne` doit garder une hauteur, même vide et même dans un bloc de code (caractère invisible `\u200b`). Une ligne de hauteur nulle décale tout le texte affiché par rapport au curseur réel. L'essai vérifie l'alignement sur une note plus haute que l'écran (sinon la mesure est faussée).
 
-- **Mise à jour de l'appli** (06/11) : GitHub Pages fait garder les fichiers 10 min par le navigateur ; le service worker les demande donc en `no-cache` (sinon un ancien `ui.js` peut côtoyer un nouveau `notes.js` et l'appli casse). Après « mets à jour main », dire à l'utilisateur de recharger (PC : Ctrl+Maj+R ; appli installée : fermer et rouvrir deux fois).
+- **Mise à jour de l'appli** (06/11) : GitHub Pages fait garder les fichiers 10 min par le navigateur ; le service worker les demande donc en `no-cache` (sinon un ancien `ui.js` peut côtoyer un nouveau `notes.js` et l'appli casse). Après « mets à jour main », dire à l'utilisateur de recharger (PC : Ctrl+Maj+R ; appli installée : fermer et rouvrir deux fois). Vérifier aussi que la publication **« pages build and deployment »** de `main` a réussi (06/11 : elle a échoué deux fois côté GitHub, « Deployment failed, try again later » ; le site servait l'ancienne version) ; sinon la relancer (`rerun_failed_jobs`).
 
 - **Maquettes** (06/11) : une maquette = **une** idée, avec seulement ce qui a été demandé ; les ajouts se proposent en texte, à part. Une maquette trop riche (note du jour + tâches + semaine + accueil) n'a pas été comprise.
 

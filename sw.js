@@ -67,10 +67,15 @@ function avecDelai(promesse, ms) {
 
 async function reseauDabord(requete) {
   const cache = await caches.open(CACHE_APP);
+  // « no-cache » : toujours demander au serveur si le fichier a changé (GitHub Pages fait garder
+  // les fichiers 10 min par le navigateur ; sans cela, un ancien ui.js pouvait côtoyer un nouveau
+  // notes.js). Le cache est mis à jour même si la réponse arrive après le délai.
+  const reseau = (requete.mode === 'navigate'
+    ? fetch(requete.url, { cache: 'no-cache', credentials: 'same-origin' })
+    : fetch(requete, { cache: 'no-cache' }))
+    .then((reponse) => { if (reponse.ok) cache.put(requete, reponse.clone()); return reponse; });
   try {
-    const reponse = await avecDelai(fetch(requete), 3000);
-    if (reponse.ok) cache.put(requete, reponse.clone());
-    return reponse;
+    return await avecDelai(reseau, 3000);
   } catch {
     const enCache = await cache.match(requete, { ignoreSearch: true })
       || (requete.mode === 'navigate' ? await cache.match('index.html') : null);

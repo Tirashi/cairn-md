@@ -30,6 +30,13 @@
       "w": 430,
       "x": 0,
       "y": 1350
+    },
+    "K4-carnets.dc.html": {
+      "h": 1120,
+      "title": "Icône · carnets à la place des galets (à choisir)",
+      "w": 430,
+      "x": 510,
+      "y": 1350
     }
   },
   "createdOnFiles": {
@@ -66,7 +73,8 @@
     "B-liste.dc.html",
     "B-note.dc.html",
     "B-desktop.dc.html",
-    "K3-icones.dc.html"
+    "K3-icones.dc.html",
+    "K4-carnets.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

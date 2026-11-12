@@ -732,6 +732,9 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 }
 .menu button:hover, .menu button:focus-visible { background: var(--accent-fond); color: var(--accent); outline: none; }
 .menu-mobile { display: none; }
+.menu-jour button { display: flex; justify-content: space-between; gap: 16px; }
+.menu-date { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px 8px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text); }
+.menu-date input { min-height: 40px; padding: 0 8px; border: 1px solid var(--border); border-radius: var(--rayon); background: var(--bg); color: var(--text); font: inherit; color-scheme: dark light; }
 
 /* ---------- Fenêtre d'import ---------- */
 
@@ -854,7 +857,9 @@ button.historique-version:hover { background: var(--surface); }
 @media (max-width: 760px) {
   .recherche { order: 3; flex-basis: 100%; max-width: none; }
   .barre-haut .espace { display: none; }
-  .barre-haut .bouton-jour { margin-left: auto; min-width: 44px; }
+  .barre-haut .zone-jour { margin-left: auto; }
+  .barre-haut .bouton-jour { min-width: 44px; }
+  .menu-jour { position: fixed; left: 12px; right: 12px; min-width: 0; }
 
   .colonnes { grid-template-columns: minmax(0, 1fr); }
   .col-dossiers { display: none; }

@@ -14,7 +14,7 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 
 ## Utilisation
 
-- **◷ aujourd'hui** ouvre la note du jour (titre `2026-11-06`, dossier `journal/`), ou la crée avec un petit modèle (`## À faire`, `- [ ]`, `## Notes`).
+- **◷ aujourd'hui** ouvre un petit menu : aujourd'hui, demain, après-demain ou une date choisie. La note de ce jour (titre `2026-11-06`, dossier `journal/`) s'ouvre, ou est créée avec un petit modèle (`## À faire`, `- [ ]`, `## Notes`) : pratique pour préparer ses tâches à l'avance.
 - **Listes** : Entrée après une ligne `- …`, `- [ ] …` ou `1. …` continue la liste ; Entrée sur un élément vide la termine.
 - **Cases à cocher** : `- [ ] tâche` devient une case dans l'aperçu ; la toucher coche la tâche (`- [x]`, barrée) et l'enregistre aussitôt.
 - **Tâches ouvertes** : menu `⋯` › « ☐ tâches ouvertes » (avec leur nombre) : toutes les cases non cochées de toutes les notes, les notes récentes d'abord, avec le nom de la note. Cocher la case coche dans la note ; toucher le texte ouvre la note ; ← pour revenir.

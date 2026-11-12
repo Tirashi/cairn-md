@@ -18,8 +18,8 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - **Recherche avancée** : filtres combinables, ex. `tag:dev dossier:travail "mot exact"`.
 - **Imprimer / PDF** : une note avec une mise en page propre de l'aperçu.
 
-- **Revoir l'icône de l'application** (12/11) : maquette K (même dessin, taille et couleurs).
-- **Note d'un autre jour** (12/11) : créer la note d'une date future pour préparer ses tâches ; maquette N (menu sous ◷ ou ‹ jour › dans la note).
+- **Revoir l'icône de l'application** (12/11) : maquette K (même dessin, autres tailles et couleurs) refusée, « il faudrait la retravailler complètement ». À reprendre : nouveau dessin.
+- ✅ **Note d'un autre jour** (12/11, direction A : menu sous ◷) → [suivi](specs/suivi.md#note-dun-autre-jour-1211).
 
 ## Mises de côté (06/11, à reprendre si le besoin se fait sentir)
 - **Plan de la note** : liste cliquable des titres `#` de la note ouverte, pour les longues notes.

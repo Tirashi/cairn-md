@@ -506,6 +506,40 @@ async function ouvrirNouvelle(champs, { focusTitre, curseur = null }) {
 
 // ---------- Note du jour ----------
 
+/** Menu sous ◷ : aujourd'hui, demain, après-demain, ou une date choisie. */
+function brancherMenuJour() {
+  const bouton = $('bouton-jour');
+  const menu = $('menu-jour');
+  const fermer = () => { menu.hidden = true; bouton.setAttribute('aria-expanded', 'false'); };
+  const dans = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d; };
+  bouton.addEventListener('click', () => {
+    const ouvrir = menu.hidden;
+    if (ouvrir) {
+      for (const b of menu.querySelectorAll('[data-decalage]')) b.querySelector('span').textContent = dateDuJour(dans(Number(b.dataset.decalage)));
+      $('jour-choisi').value = '';
+    }
+    menu.hidden = !ouvrir;
+    bouton.setAttribute('aria-expanded', String(ouvrir));
+    // Sur téléphone, le menu prend la largeur de l'écran sous le bouton (sinon il déborde à gauche).
+    menu.style.top = etroit.matches ? (bouton.getBoundingClientRect().bottom + 6) + 'px' : '';
+    if (ouvrir) menu.querySelector('button').focus();
+  });
+  menu.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-decalage]');
+    if (!b) return;
+    fermer();
+    noteDuJour(dans(Number(b.dataset.decalage)));
+  });
+  $('jour-choisi').addEventListener('change', (e) => {
+    const [a, m, j] = (e.target.value || '').split('-').map(Number);
+    if (!a || !m || !j) return;
+    fermer();
+    noteDuJour(new Date(a, m - 1, j));
+  });
+  menu.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); fermer(); bouton.focus(); } });
+  document.addEventListener('click', (e) => { if (!menu.hidden && !e.target.closest('.zone-jour')) fermer(); });
+}
+
 const MODELE_JOUR = '## À faire\n- [ ] \n\n## Notes\n';
 
 /** Date locale au format 2026-11-06. */
@@ -514,9 +548,9 @@ function dateDuJour(d = new Date()) {
   return d.getFullYear() + '-' + deux(d.getMonth() + 1) + '-' + deux(d.getDate());
 }
 
-/** Ouvre la note du jour (titre = date), ou la crée dans journal/ avec le petit modèle. */
-async function noteDuJour() {
-  const titre = dateDuJour();
+/** Ouvre la note d'un jour (titre = date, aujourd'hui par défaut), ou la crée dans journal/ avec le petit modèle. */
+async function noteDuJour(jour = new Date()) {
+  const titre = dateDuJour(jour);
   const existante = parTitre(titre);
   if (existante) { location.hash = '#/note/' + existante.id; return; }
   await ouvrirNouvelle({
@@ -724,7 +758,7 @@ function brancher() {
 
   window.addEventListener('hashchange', router);
   $('bouton-nouvelle').addEventListener('click', nouvelleNote);
-  $('bouton-jour').addEventListener('click', noteDuJour);
+  brancherMenuJour();
   $('bouton-supprimer').addEventListener('click', demanderSuppression);
   $('bouton-historique').addEventListener('click', ouvrirLog);
   brancherHistorique();

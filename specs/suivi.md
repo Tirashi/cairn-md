@@ -72,5 +72,11 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Menu `⋯` › « ☐ tâches ouvertes N » ouvre `#/taches` dans la colonne de la note (← toujours visible). Liste : tâches non cochées de toutes les notes (`listerTaches`), notes les plus récentes d'abord, nom de la note à droite ; blocs de code ignorés. Cocher → `basculerCase` dans la note, `modifierNote` avec `base` (conflit si changée ailleurs), la tâche disparaît ; texte → ouvre la note.
 - ⏳ Testé avec le faux backend, **essai réel à faire**.
 
+## Note d'un autre jour (12/11)
+- Demande : créer la note d'une date future pour préparer des listes de tâches. Maquette N-A (menu sous ◷) / N-B (‹ jour › dans la note) ; **A choisie**.
+- ◷ ouvre `#menu-jour` : aujourd'hui, demain, après-demain (avec leur date), « choisir une date… » (`<input type="date">`). `noteDuJour(jour)` : ouvre la note `AAAA-MM-JJ` ou la crée dans `journal/` avec le modèle. Échap ou clic ailleurs referme. Sur téléphone, le menu prend la largeur de l'écran sous le bouton.
+- Icône (même jour) : maquette K (A plus grande, B fond ambre, C fond ardoise) **refusée** : le dessin est à retravailler entièrement.
+- ⏳ Testé avec le faux backend, **essai réel à faire**.
+
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.

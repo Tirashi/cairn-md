@@ -23,20 +23,6 @@
       "w": 1440,
       "x": 940,
       "y": 0
-    },
-    "K4-carnets.dc.html": {
-      "h": 1120,
-      "title": "Icône · carnets à la place des galets (à choisir)",
-      "w": 430,
-      "x": 0,
-      "y": 1350
-    },
-    "K5-carnets.dc.html": {
-      "h": 1100,
-      "title": "Icône · autres idées avec des carnets (à choisir)",
-      "w": 430,
-      "x": 510,
-      "y": 1350
     }
   },
   "createdOnFiles": {
@@ -48,8 +34,7 @@
     "view": "canvas"
   },
   "noteOrder": [
-    "tB",
-    "tK"
+    "tB"
   ],
   "notes": {
     "tB": {
@@ -59,22 +44,12 @@
       "w": 240,
       "x": 0,
       "y": -300
-    },
-    "tK": {
-      "kind": "title1",
-      "maxW": 860,
-      "text": "En cours · icône de l'application",
-      "w": 240,
-      "x": 0,
-      "y": 1050
     }
   },
   "order": [
     "B-liste.dc.html",
     "B-note.dc.html",
-    "B-desktop.dc.html",
-    "K4-carnets.dc.html",
-    "K5-carnets.dc.html"
+    "B-desktop.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

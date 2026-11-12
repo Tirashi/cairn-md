@@ -18,10 +18,10 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - **Recherche avancée** : filtres combinables, ex. `tag:dev dossier:travail "mot exact"`.
 - **Imprimer / PDF** : une note avec une mise en page propre de l'aperçu.
 
-- **Revoir l'icône de l'application** (12/11) : maquette K (même dessin, autres tailles et couleurs) refusée, « il faudrait la retravailler complètement ». À reprendre : nouveau dessin.
 - ✅ **Note d'un autre jour** (12/11, direction A : menu sous ◷) → [suivi](specs/suivi.md#note-dun-autre-jour-1211).
 
 ## Mises de côté (06/11, à reprendre si le besoin se fait sentir)
+- **Nouvelle icône** (12/11) : quatre séries proposées (taille/couleurs de l'actuelle ; galets en relief, terminal, coucher de soleil ; mélanges ; carnets empilés, carnet au cairn, carnets terminal), rien n'a plu. Dessins dans `maquettes/interface/archive/` (K*). Préférences notées : A (galets en relief) et C (coucher de soleil) plutôt aimées ; les carnets « pas mal ».
 - **Plan de la note** : liste cliquable des titres `#` de la note ouverte, pour les longues notes.
 - **Palette de commandes** (`Ctrl+P`) : aller à une note ou lancer une action (nouvelle note, export, thème…) au clavier, en réutilisant la fenêtre « lier une note ».
 

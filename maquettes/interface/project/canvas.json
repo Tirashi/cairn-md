@@ -24,9 +24,9 @@
       "x": 940,
       "y": 0
     },
-    "K2-icones.dc.html": {
-      "h": 1100,
-      "title": "Icône · trois nouveaux dessins (à choisir)",
+    "K3-icones.dc.html": {
+      "h": 1180,
+      "title": "Icône · mélanges de A et C (à choisir)",
       "w": 430,
       "x": 0,
       "y": 1350
@@ -66,7 +66,7 @@
     "B-liste.dc.html",
     "B-note.dc.html",
     "B-desktop.dc.html",
-    "K2-icones.dc.html"
+    "K3-icones.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><linearGradient id="fb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f2228"/><stop offset="1" stop-color="#111214"/></linearGradient><linearGradient id="h1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8f98"/><stop offset="1" stop-color="#4a4e55"/></linearGradient><linearGradient id="h2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c3c7cd"/><stop offset="1" stop-color="#7a7f88"/></linearGradient><linearGradient id="h3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd590"/><stop offset="1" stop-color="#e0922c"/></linearGradient></defs>
+<rect width="128" height="128" fill="url(#fb)"/>
+<rect x="18" y="22" width="92" height="84" rx="10" fill="#17191d" stroke="#2f333a" stroke-width="2"/>
+<path d="M18 32 a10 10 0 0 1 10 -10 h72 a10 10 0 0 1 10 10 v4 h-92 z" fill="#23262c"/>
+<circle cx="29" cy="29" r="2.6" fill="#ff8a80"/><circle cx="37" cy="29" r="2.6" fill="#f0b45a"/><circle cx="45" cy="29" r="2.6" fill="#7fc48f"/>
+<g fill="none" stroke="#f0b45a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M38 50 h-8 v42 h8"/><path d="M47 50 h-8 v42 h8" opacity=".55"/><path d="M90 50 h8 v42 h-8"/><path d="M81 50 h8 v42 h-8" opacity=".55"/></g>
+<g transform="rotate(-3 64 82)"><path d="M51.4,77.0 C57.2,75.4 72.5,76.1 77.2,77.2 C81.9,79.2 81.4,85.3 76.4,87.5 C70.8,88.6 55.5,88.4 51.4,87.3 C46.1,84.8 46.6,79.8 51.4,77.0 Z" fill="url(#h1)"/><ellipse cx="57.9" cy="79.6" rx="7.5" ry="1.4" fill="#fff" opacity=".22"/></g>
+<g transform="rotate(4 64 69)"><path d="M55.0,64.5 C58.8,63.0 70.5,63.6 73.5,64.6 C77.8,66.5 77.4,72.0 72.8,74.0 C69.2,75.0 57.5,74.8 55.0,73.8 C50.2,71.5 50.6,67.0 55.0,64.5 Z" fill="url(#h2)"/><ellipse cx="59.3" cy="66.8" rx="5.7" ry="1.3" fill="#fff" opacity=".22"/></g>
+<g transform="rotate(-6 64 57)"><path d="M58.6,53.0 C60.4,51.6 68.5,52.1 69.8,53.0 C73.7,54.8 73.4,59.7 69.2,61.5 C67.6,62.4 59.5,62.2 58.6,61.3 C54.3,59.2 54.6,55.2 58.6,53.0 Z" fill="url(#h3)"/><ellipse cx="60.8" cy="55.0" rx="4.0" ry="1.2" fill="#fff" opacity=".22"/></g>
+</svg>

@@ -9,6 +9,14 @@
       "x": 470,
       "y": 0
     },
+    "B-desktop.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "title": "B · Terminal — desktop",
+      "w": 1440,
+      "x": 1100,
+      "y": 1300
+    },
     "B-liste.dc.html": {
       "h": 844,
       "title": "B · Terminal — liste",
@@ -37,21 +45,6 @@
       "x": 2670,
       "y": 0
     },
-    "Main.dc.html": {
-      "h": 844,
-      "title": "A · Pierre — liste",
-      "w": 390,
-      "x": 0,
-      "y": 0
-    },
-    "B-desktop.dc.html": {
-      "h": 900,
-      "title": "B · Terminal — desktop",
-      "w": 1440,
-      "x": 1100,
-      "y": 1300,
-      "expand": "fill"
-    },
     "D-chemin.dc.html": {
       "h": 844,
       "title": "Dossier A · chemin éditable",
@@ -73,33 +66,33 @@
       "x": 2040,
       "y": 2550
     },
-    "L-palette.dc.html": {
+    "H-bandeau.dc.html": {
       "h": 844,
-      "title": "Lien A · palette de recherche",
-      "w": 390,
-      "x": 1100,
-      "y": 3800
-    },
-    "L-explorateur.dc.html": {
-      "h": 844,
-      "title": "Lien B · explorateur de dossiers",
+      "title": "Hors ligne B · bandeau",
       "w": 390,
       "x": 1570,
-      "y": 3800
+      "y": 6300
     },
-    "L-bulle.dc.html": {
+    "H-discret.dc.html": {
       "h": 844,
-      "title": "Lien C · bulle sous le curseur",
+      "title": "Hors ligne A · discret (barre d'état)",
+      "w": 390,
+      "x": 1100,
+      "y": 6300
+    },
+    "H-file.dc.html": {
+      "h": 844,
+      "title": "Hors ligne C · file d'attente + conflit",
       "w": 390,
       "x": 2040,
-      "y": 3800
+      "y": 6300
     },
-    "P-code.dc.html": {
-      "h": 900,
-      "title": "Aperçu · code coloré et mermaid",
-      "w": 760,
-      "x": 2510,
-      "y": 3800
+    "I-conflit.dc.html": {
+      "h": 844,
+      "title": "Import C · conflits un par un",
+      "w": 390,
+      "x": 2040,
+      "y": 5050
     },
     "I-dialogue.dc.html": {
       "h": 844,
@@ -114,55 +107,6 @@
       "w": 390,
       "x": 1570,
       "y": 5050
-    },
-    "I-conflit.dc.html": {
-      "h": 844,
-      "title": "Import C · conflits un par un",
-      "w": 390,
-      "x": 2040,
-      "y": 5050
-    },
-    "H-discret.dc.html": {
-      "h": 844,
-      "title": "Hors ligne A · discret (barre d'état)",
-      "w": 390,
-      "x": 1100,
-      "y": 6300
-    },
-    "H-bandeau.dc.html": {
-      "h": 844,
-      "title": "Hors ligne B · bandeau",
-      "w": 390,
-      "x": 1570,
-      "y": 6300
-    },
-    "H-file.dc.html": {
-      "h": 844,
-      "title": "Hors ligne C · file d'attente + conflit",
-      "w": 390,
-      "x": 2040,
-      "y": 6300
-    },
-    "V-panneau.dc.html": {
-      "h": 844,
-      "title": "Historique A · liste + différences",
-      "w": 390,
-      "x": 1100,
-      "y": 7550
-    },
-    "V-frise.dc.html": {
-      "h": 844,
-      "title": "Historique B · frise dans la note",
-      "w": 390,
-      "x": 1570,
-      "y": 7550
-    },
-    "V-log.dc.html": {
-      "h": 844,
-      "title": "Historique C · façon git log",
-      "w": 390,
-      "x": 2040,
-      "y": 7550
     },
     "J-A-liste.dc.html": {
       "h": 844,
@@ -206,26 +150,40 @@
       "x": 3830,
       "y": 8800
     },
-    "T-A-filtre.dc.html": {
-      "h": 844,
-      "title": "Tâches A · un filtre de plus",
-      "w": 390,
-      "x": 1100,
-      "y": 10050
-    },
-    "T-B-page.dc.html": {
-      "h": 844,
-      "title": "Tâches B · une page à part (menu ⋯)",
-      "w": 390,
-      "x": 1570,
-      "y": 10050
-    },
     "K-icones.dc.html": {
       "h": 1000,
       "title": "Icône · actuelle et trois propositions",
       "w": 430,
       "x": 1100,
       "y": 11300
+    },
+    "L-bulle.dc.html": {
+      "h": 844,
+      "title": "Lien C · bulle sous le curseur",
+      "w": 390,
+      "x": 2040,
+      "y": 3800
+    },
+    "L-explorateur.dc.html": {
+      "h": 844,
+      "title": "Lien B · explorateur de dossiers",
+      "w": 390,
+      "x": 1570,
+      "y": 3800
+    },
+    "L-palette.dc.html": {
+      "h": 844,
+      "title": "Lien A · palette de recherche",
+      "w": 390,
+      "x": 1100,
+      "y": 3800
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "title": "A · Pierre — liste",
+      "w": 390,
+      "x": 0,
+      "y": 0
     },
     "N-A-menu.dc.html": {
       "h": 844,
@@ -240,6 +198,55 @@
       "w": 390,
       "x": 1570,
       "y": 12700
+    },
+    "P-code.dc.html": {
+      "h": 900,
+      "title": "Aperçu · code coloré et mermaid",
+      "w": 760,
+      "x": 2510,
+      "y": 3800
+    },
+    "T-A-filtre.dc.html": {
+      "h": 844,
+      "title": "Tâches A · un filtre de plus",
+      "w": 390,
+      "x": 1100,
+      "y": 10050
+    },
+    "T-B-page.dc.html": {
+      "h": 844,
+      "title": "Tâches B · une page à part (menu ⋯)",
+      "w": 390,
+      "x": 1570,
+      "y": 10050
+    },
+    "V-frise.dc.html": {
+      "h": 844,
+      "title": "Historique B · frise dans la note",
+      "w": 390,
+      "x": 1570,
+      "y": 7550
+    },
+    "V-log.dc.html": {
+      "h": 844,
+      "title": "Historique C · façon git log",
+      "w": 390,
+      "x": 2040,
+      "y": 7550
+    },
+    "V-panneau.dc.html": {
+      "h": 844,
+      "title": "Historique A · liste + différences",
+      "w": 390,
+      "x": 1100,
+      "y": 7550
+    },
+    "K2-icones.dc.html": {
+      "h": 1100,
+      "title": "Icône · trois nouveaux dessins",
+      "w": 430,
+      "x": 1600,
+      "y": 11300
     }
   },
   "createdOnFiles": {
@@ -250,6 +257,22 @@
   "launch": {
     "view": "canvas"
   },
+  "noteOrder": [
+    "tA",
+    "tB",
+    "tC",
+    "tD",
+    "tE",
+    "tF",
+    "tG",
+    "tH",
+    "tI",
+    "tV",
+    "tJ",
+    "tT",
+    "tK",
+    "tN"
+  ],
   "notes": {
     "tA": {
       "kind": "title1",
@@ -279,6 +302,7 @@
       "kind": "title1",
       "maxW": 1440,
       "text": "B · Terminal — desktop (retenue)",
+      "w": 240,
       "x": 1100,
       "y": 1000
     },
@@ -286,6 +310,7 @@
       "kind": "title1",
       "maxW": 1330,
       "text": "Étape 4 · changer le dossier et les tags d'une note",
+      "w": 240,
       "x": 1100,
       "y": 2250
     },
@@ -293,6 +318,7 @@
       "kind": "title1",
       "maxW": 1330,
       "text": "Choisir une note à lier (centaines de notes)",
+      "w": 240,
       "x": 1100,
       "y": 3500
     },
@@ -300,6 +326,7 @@
       "kind": "title1",
       "maxW": 760,
       "text": "Code coloré et mermaid",
+      "w": 240,
       "x": 2510,
       "y": 3500
     },
@@ -307,6 +334,7 @@
       "kind": "title1",
       "maxW": 1330,
       "text": "Étape 6 · export et import (vérifier avant d'importer)",
+      "w": 240,
       "x": 1100,
       "y": 4750
     },
@@ -314,34 +342,23 @@
       "kind": "title1",
       "maxW": 1330,
       "text": "PWA · installer Cairn et écrire hors ligne",
+      "w": 240,
       "x": 1100,
       "y": 6000
-    },
-    "tV": {
-      "kind": "title1",
-      "maxW": 1330,
-      "text": "Historique des versions",
-      "x": 1100,
-      "y": 7250
     },
     "tJ": {
       "kind": "title1",
       "maxW": 3120,
       "text": "Note du jour et cases à cocher",
+      "w": 240,
       "x": 1100,
       "y": 8500
-    },
-    "tT": {
-      "kind": "title1",
-      "maxW": 860,
-      "text": "Vue « tâches ouvertes »",
-      "x": 1100,
-      "y": 9750
     },
     "tK": {
       "kind": "title1",
       "maxW": 860,
       "text": "Icône de l'application",
+      "w": 240,
       "x": 1100,
       "y": 11000
     },
@@ -349,8 +366,25 @@
       "kind": "title1",
       "maxW": 860,
       "text": "Note d'un autre jour (tâches à l'avance)",
+      "w": 240,
       "x": 1100,
       "y": 12400
+    },
+    "tT": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Vue « tâches ouvertes »",
+      "w": 240,
+      "x": 1100,
+      "y": 9750
+    },
+    "tV": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Historique des versions",
+      "w": 240,
+      "x": 1100,
+      "y": 7250
     }
   },
   "order": [
@@ -387,7 +421,8 @@
     "T-B-page.dc.html",
     "K-icones.dc.html",
     "N-A-menu.dc.html",
-    "N-B-fleches.dc.html"
+    "N-B-fleches.dc.html",
+    "K2-icones.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

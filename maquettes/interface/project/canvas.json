@@ -24,16 +24,16 @@
       "x": 940,
       "y": 0
     },
-    "K3-icones.dc.html": {
-      "h": 1180,
-      "title": "Icône · mélanges de A et C (à choisir)",
+    "K4-carnets.dc.html": {
+      "h": 1120,
+      "title": "Icône · carnets à la place des galets (à choisir)",
       "w": 430,
       "x": 0,
       "y": 1350
     },
-    "K4-carnets.dc.html": {
-      "h": 1120,
-      "title": "Icône · carnets à la place des galets (à choisir)",
+    "K5-carnets.dc.html": {
+      "h": 1100,
+      "title": "Icône · autres idées avec des carnets (à choisir)",
       "w": 430,
       "x": 510,
       "y": 1350
@@ -73,8 +73,8 @@
     "B-liste.dc.html",
     "B-note.dc.html",
     "B-desktop.dc.html",
-    "K3-icones.dc.html",
-    "K4-carnets.dc.html"
+    "K4-carnets.dc.html",
+    "K5-carnets.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

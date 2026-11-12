@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Autre jour A · menu sous ◷</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#121212}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121212; color: #e6e6e6; font-family: 'JetBrains Mono', ui-monospace, monospace; display: flex; flex-direction: column; overflow: hidden;">
+<header style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-bottom:1px solid #2a2d33;">
+<span style="font-size:16px; font-weight:800;"><span style="color:#f0b45a">▲</span> cairn<span style="color:#f0b45a">_</span></span><span style="flex-grow:1"></span>
+<span style="height:40px; min-width:40px; padding:0 10px; box-sizing:border-box; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px; border:1px solid #f0b45a; color:#f0b45a;">◷</span>
+<span style="height:40px; padding:0 10px; border-radius:6px; display:flex; align-items:center; font-size:12px; background:#f0b45a; color:#121212; font-weight:800;">+ nouvelle</span>
+<span style="height:40px; width:40px; border:1px solid #2a2d33; border-radius:6px; display:flex; align-items:center; justify-content:center; color: #9aa0a8;">⋯</span></header>
+<div style="position:relative;"><div style="position:absolute; right:110px; top:-4px; width:250px; background:#1b1d21; border:1px solid #2a2d33; border-radius:6px; font-size:13px; box-shadow:0 8px 24px rgba(0,0,0,.5);">
+<div style="display:flex; justify-content:space-between; padding:13px 14px; color:#f0b45a; background:rgba(240,180,90,.10);"><span>aujourd'hui</span><span style="color: #9aa0a8;">2026-11-12</span></div><div style="display:flex; justify-content:space-between; padding:13px 14px; "><span>demain</span><span style="color: #9aa0a8;">2026-11-13</span></div><div style="display:flex; justify-content:space-between; padding:13px 14px; "><span>après-demain</span><span style="color: #9aa0a8;">2026-11-14</span></div>
+<div style="border-top:1px solid #2a2d33; padding:12px 14px;">choisir une date…</div>
+<div style="padding:0 14px 14px;"><div style="height:40px; border:1px solid #2a2d33; border-radius:6px; display:flex; align-items:center; padding:0 10px; color: #9aa0a8;">jj / mm / aaaa &nbsp;📅</div></div>
+</div></div>
+<div style="flex-grow:1"></div>
+<div style="margin:0 14px 14px; padding:10px 12px; border:1px dashed #2a2d33; border-radius:6px; font-size:11px; color: #9aa0a8; line-height:1.6;">Toucher ◷ ouvre ce petit menu. « aujourd'hui » fait comme maintenant ; « demain », « après-demain » ou une date choisie ouvrent la note de ce jour-là, ou la créent avec le même modèle (journal/2026-11-14).</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

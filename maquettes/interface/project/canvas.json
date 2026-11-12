@@ -219,6 +219,27 @@
       "w": 390,
       "x": 1570,
       "y": 10050
+    },
+    "K-icones.dc.html": {
+      "h": 1000,
+      "title": "Icône · actuelle et trois propositions",
+      "w": 430,
+      "x": 1100,
+      "y": 11300
+    },
+    "N-A-menu.dc.html": {
+      "h": 844,
+      "title": "Autre jour A · menu sous ◷",
+      "w": 390,
+      "x": 1100,
+      "y": 12700
+    },
+    "N-B-fleches.dc.html": {
+      "h": 844,
+      "title": "Autre jour B · ‹ jour › dans la note",
+      "w": 390,
+      "x": 1570,
+      "y": 12700
     }
   },
   "createdOnFiles": {
@@ -316,6 +337,20 @@
       "text": "Vue « tâches ouvertes »",
       "x": 1100,
       "y": 9750
+    },
+    "tK": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Icône de l'application",
+      "x": 1100,
+      "y": 11000
+    },
+    "tN": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Note d'un autre jour (tâches à l'avance)",
+      "x": 1100,
+      "y": 12400
     }
   },
   "order": [
@@ -349,7 +384,10 @@
     "J-C-accueil.dc.html",
     "J-note.dc.html",
     "T-A-filtre.dc.html",
-    "T-B-page.dc.html"
+    "T-B-page.dc.html",
+    "K-icones.dc.html",
+    "N-A-menu.dc.html",
+    "N-B-fleches.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

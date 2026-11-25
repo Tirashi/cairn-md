@@ -2,24 +2,24 @@
   "v": 3,
   "attachments": {},
   "boards": {
-    "PDF-A-menu.dc.html": {
+    "R-A-syntaxe.dc.html": {
       "h": 844,
-      "title": "PDF A · dans le menu ⋯",
+      "title": "Recherche A · syntaxe + puces + aide",
       "w": 390,
       "x": 0,
       "y": 0
     },
-    "PDF-B-bouton.dc.html": {
+    "R-B-panneau.dc.html": {
       "h": 844,
-      "title": "PDF B · bouton ⎙ dans la note",
+      "title": "Recherche B · panneau de filtres ⚲",
       "w": 390,
       "x": 470,
       "y": 0
     },
-    "PDF-page.dc.html": {
-      "h": 880,
-      "title": "Commun · la page imprimée (A4)",
-      "w": 570,
+    "R-C-suggestions.dc.html": {
+      "h": 844,
+      "title": "Recherche C · syntaxe proposée à la frappe",
+      "w": 390,
       "x": 940,
       "y": 0
     }
@@ -33,22 +33,22 @@
     "view": "canvas"
   },
   "noteOrder": [
-    "tP"
+    "tR"
   ],
   "notes": {
-    "tP": {
+    "tR": {
       "kind": "title1",
-      "maxW": 1510,
-      "text": "En cours · imprimer une note / PDF",
+      "maxW": 1330,
+      "text": "En cours · recherche avancée",
       "w": 240,
       "x": 0,
       "y": -300
     }
   },
   "order": [
-    "PDF-A-menu.dc.html",
-    "PDF-B-bouton.dc.html",
-    "PDF-page.dc.html"
+    "R-A-syntaxe.dc.html",
+    "R-B-panneau.dc.html",
+    "R-C-suggestions.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

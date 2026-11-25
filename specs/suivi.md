@@ -83,7 +83,7 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - Maquette PDF-A (menu ⋯) / PDF-B (bouton ⎙ dans la note) + page imprimée ; **A choisie**. Ménage de l'artefact : planches de la direction B Terminal archivées.
 - Menu `⋯` › « ⎙ imprimer / PDF » visible seulement quand une note est ouverte : aperçu rendu (même en mode edit), 0,8 s pour le code et mermaid, en-tête rempli, `window.print()`. Ctrl+P remplit aussi l'en-tête (`beforeprint`).
 - `@media print` : variables du thème clair, seul `#note-apercu` + `#impression-entete` (dossier, tags, « modifiée le … », titre), sans bouton copier ; blocs de code et diagrammes non coupés ; diagrammes mermaid sur fond sombre si le thème d'écran est sombre (leurs couleurs sont celles de l'écran).
-- ⏳ Testé avec le faux backend (et un PDF produit par Chromium), **essai réel à faire**.
+- ✅ Validé sur le vrai site (25/11).
 
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.

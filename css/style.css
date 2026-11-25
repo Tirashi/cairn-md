@@ -909,3 +909,33 @@ button.historique-version:hover { background: var(--surface); }
   .choix-conflit button { min-height: 44px; }
   .carte-installation { right: 12px; left: 12px; width: auto; }
 }
+
+/* ---------- Impression / PDF : seulement la note, fond blanc ---------- */
+
+.impression-entete { display: none; }
+
+@media print {
+  :root, :root[data-theme] {
+    --bg: #ffffff; --surface: #ffffff; --text: #1b1d21; --muted: #555a62; --faible: #6b7078;
+    --accent: #8a5a12; --accent-fond: rgba(138, 90, 18, 0.10); --border: #d6d8dc;
+    --code-bg: #f3f4f6; --ok: #2e7d45; --erreur: #b3261e;
+    --code-mot: #8a5a12; --code-fonction: #2f5f86; --code-chaine: #3f6b2c; --code-nombre: #a14a28; --code-commentaire: #6b7078;
+  }
+  @page { margin: 18mm 16mm; }
+  html, body, .appli, .colonnes, .col-note, .note, .panneaux, .panneau-apercu {
+    display: block !important; height: auto !important; min-height: 0 !important; overflow: visible !important; position: static !important; background: #fff !important;
+  }
+  .barre-haut, .col-dossiers, .col-liste, .entete-note, .meta-note, .barre-etat, .panneau-edition,
+  #liens-entrants, #note-renommage, #note-message, #note-vide, #vue-taches, .carte-installation, dialog, .menu, .bouton-copier {
+    display: none !important;
+  }
+  .impression-entete { display: block; padding: 0 0 4mm; }
+  .impression-infos { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 5mm; padding-bottom: 2mm; border-bottom: 1px solid #d6d8dc; font-size: 9pt; color: #6b7078; }
+  .impression-titre { margin: 0 0 4mm; font-size: 20pt; font-weight: 800; }
+  .apercu { padding: 0 !important; font-size: 11pt; color: #1b1d21; }
+  .apercu a { color: inherit; border-bottom: 1px solid #c9a46a; }
+  .apercu pre, .apercu table, .apercu img, .bloc-mermaid { break-inside: avoid; }
+  /* Les diagrammes gardent leurs couleurs d'écran : fond conservé à l'impression. */
+  .bloc-mermaid, .mermaid-svg { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  html:not([data-theme="light"]) .apercu .bloc-mermaid { background: #121212; border-color: #121212; }
+}

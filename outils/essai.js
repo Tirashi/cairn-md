@@ -896,6 +896,47 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
 
+    console.log('Imprimer une note');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      const ID = '00000011-0000-4000-8000-000000000011';
+      await page.goto(base + '/');
+      await page.evaluate((id) => {
+        localStorage.setItem('faux-supabase-notes', JSON.stringify([{ id, user_id: '00000000-0000-0000-0000-000000000001', title: 'Crêpes', folder: 'cuisine', tags: ['recette'],
+          content: '## Ingrédients\n- 250 g de farine\n- [ ] acheter du lait\n\n```js\nconst repos = 1;\n```', created_at: '2026-11-20T10:00:00.000Z', updated_at: '2026-11-25T10:00:00.000Z' }]));
+      }, ID);
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForSelector('#ecran-appli:not([hidden])');
+      await page.evaluate(() => { window.imprime = 0; window.print = () => { window.imprime++; }; });
+      await page.click('#bouton-menu');
+      verifier(await page.isHidden('#menu-imprimer'), 'menu ⋯ : pas d\'impression sans note ouverte');
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => document.querySelector('#liste-notes .ln-nom'));
+      await page.evaluate((id) => { location.hash = '#/note/' + id; }, ID);
+      await page.waitForFunction(() => document.getElementById('note-titre').value === 'Crêpes');
+      await page.click('.bascule [data-mode="edit"]');
+      await page.click('#bouton-menu');
+      await page.click('#menu-principal [data-menu="imprimer"]');
+      await page.waitForFunction(() => window.imprime === 1, null, { timeout: 5000 });
+      verifier(true, 'menu ⋯ › « imprimer / PDF » lance l\'impression');
+      await page.emulateMedia({ media: 'print' });
+      const imp = await page.evaluate(() => {
+        const vis = (s) => { const e = document.querySelector(s); return !!e && getComputedStyle(e).display !== 'none' && e.getBoundingClientRect().height > 0; };
+        return { barre: vis('.barre-haut'), liste: vis('.col-liste'), editeur: vis('.panneau-edition'), apercu: vis('#note-apercu'),
+          titre: document.querySelector('.impression-titre')?.textContent, infos: document.querySelector('.impression-infos')?.textContent,
+          code: !!document.querySelector('#note-apercu .hljs, #note-apercu .bloc-code'), fond: getComputedStyle(document.body).backgroundColor,
+          texte: getComputedStyle(document.getElementById('note-apercu')).color };
+      });
+      verifier(!imp.barre && !imp.liste && !imp.editeur && imp.apercu, 'page imprimée : seulement l\'aperçu, même depuis le mode edit (' + JSON.stringify(imp) + ')');
+      verifier(imp.titre === 'Crêpes' && imp.infos.includes('~/cuisine') && imp.infos.includes('#recette') && imp.infos.includes('modifiée le 25 novembre 2026'), 'en-tête : titre, dossier, tags, date');
+      verifier(imp.fond === 'rgb(255, 255, 255)' && imp.texte === 'rgb(27, 29, 33)', 'fond blanc, texte noir (thème sombre à l\'écran)');
+      if (process.argv.includes('--captures')) await page.pdf({ path: path.join(process.argv[process.argv.indexOf('--captures') + 1] || '.', 'note.pdf'), format: 'A4' });
+      await page.emulateMedia({ media: 'screen' });
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
     console.log('Deux appareils');
     {
       const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });

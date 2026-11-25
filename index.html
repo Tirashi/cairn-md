@@ -104,6 +104,7 @@
         <button type="button" class="bouton-discret" id="bouton-menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-principal" aria-label="Plus d'actions : export, import">⋯</button>
         <div id="menu-principal" class="menu" role="menu" aria-label="Actions" hidden>
           <button type="button" role="menuitem" data-menu="installer" id="menu-installer" class="accent" hidden>⤓ installer Cairn</button>
+          <button type="button" role="menuitem" data-menu="imprimer" id="menu-imprimer" hidden>⎙ imprimer / PDF</button>
           <button type="button" role="menuitem" data-menu="taches">☐ tâches ouvertes <span id="menu-taches-compte" class="muet"></span></button>
           <button type="button" role="menuitem" data-menu="export">$ export <span class="muet">.zip</span></button>
           <button type="button" role="menuitem" data-menu="import">$ import <span class="muet">.zip ou .md</span></button>
@@ -211,6 +212,7 @@
               </div>
             </div>
             <div class="panneau-apercu">
+              <header id="impression-entete" class="impression-entete" aria-hidden="true"></header>
               <article class="apercu" id="note-apercu" aria-label="Aperçu"></article>
               <section id="liens-entrants" class="liens-entrants" aria-label="Liens entrants" hidden>
                 <h2 class="titre-section" id="liens-entrants-titre">← LIENS ENTRANTS</h2>

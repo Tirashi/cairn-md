@@ -258,6 +258,12 @@ function majApercu() {
   apercuDemande = true;
   requestAnimationFrame(() => {
     apercuDemande = false;
+    rendreApercu();
+  });
+}
+
+function rendreApercu() {
+  {
     const texte = $('note-contenu').value;
     const apercu = $('note-apercu');
     if (texte.trim()) {
@@ -273,7 +279,41 @@ function majApercu() {
       apercu.textContent = '// note vide';
       apercu.classList.add('apercu-vide');
     }
-  });
+  }
+}
+
+// ---------- Impression / PDF ----------
+
+const fmtDateLongue = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+/** En-tête de la page imprimée : dossier, tags, date, puis le titre. */
+function preparerImpression() {
+  const note = noteCourante();
+  const entete = $('impression-entete');
+  if (!note) { entete.replaceChildren(); return; }
+  const infos = ['~/' + normaliserDossier(note.folder || ''), (note.tags || []).map((t) => '#' + t).join(' ')]
+    .filter((x) => x && x !== '~/');
+  const ligne = document.createElement('p');
+  ligne.className = 'impression-infos';
+  const gauche = document.createElement('span');
+  gauche.textContent = infos.join(' · ');
+  const droite = document.createElement('span');
+  droite.textContent = note.updated_at ? 'modifiée le ' + fmtDateLongue.format(new Date(note.updated_at)) : '';
+  ligne.append(gauche, droite);
+  const titre = document.createElement('h1');
+  titre.className = 'impression-titre';
+  titre.textContent = $('note-titre').value || note.title;
+  entete.replaceChildren(ligne, titre);
+}
+
+/** Imprime la note ouverte (le navigateur propose aussi « Enregistrer en PDF »). */
+async function imprimerNote() {
+  if (!noteCourante()) return;
+  rendreApercu();                                  // aperçu à jour, même en mode edit
+  // Laisser le temps au code coloré et aux diagrammes (chargés à la demande) de s'afficher.
+  if ($('note-contenu').value.includes('```')) await new Promise((ok) => setTimeout(ok, 800));
+  preparerImpression();
+  window.print();
 }
 
 function afficherLiensEntrants() {
@@ -710,6 +750,7 @@ function brancherMenu() {
     fermerMenu();
     const action = item.dataset.menu;
     if (action === 'export') exporter();
+    if (action === 'imprimer') imprimerNote();
     if (action === 'taches') location.hash = '#/taches';
     if (action === 'historique') ouvrirLog();
     if (action === 'import') $('import-fichier').click();
@@ -743,6 +784,7 @@ async function router() {
     afficherNote(noteCourante());
   }
   $('vue-taches').hidden = !taches;
+  $('menu-imprimer').hidden = !etat.courante;
   if (taches) { $('note-vide').hidden = true; afficherTaches(); } else if (!etat.courante) $('note-vide').hidden = false;
   $('ecran-appli').dataset.vue = etat.courante || taches ? 'note' : 'liste';
   afficherListe();
@@ -759,6 +801,7 @@ function brancher() {
   window.addEventListener('hashchange', router);
   $('bouton-nouvelle').addEventListener('click', nouvelleNote);
   brancherMenuJour();
+  window.addEventListener('beforeprint', preparerImpression);   // aussi pour Ctrl+P
   $('bouton-supprimer').addEventListener('click', demanderSuppression);
   $('bouton-historique').addEventListener('click', ouvrirLog);
   brancherHistorique();

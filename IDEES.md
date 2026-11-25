@@ -29,6 +29,7 @@ Cycle : une **idée** tient en quelques lignes ici ; dès qu'on la travaille (ma
 - Modèles de notes (`{{date}}`) ; coller une image (stockage Supabase, 1 Go gratuit) ; épingler des notes ; notes orphelines et liens cassés ; graphe des notes ; partager une note en lecture par lien public (RLS à part).
 
 ## À travailler (« plus tard » du plan)
+- ⏸️ **Images dans les notes** (25/11, reporté au passage sur un VPS) : coller / glisser / bouton photo, image réduite (1600 px, WebP) avant l'envoi, lien relatif `images/…` dans le Markdown, dossier `images/` dans le zip d'export, ménage des images orphelines. Sur Supabase ce serait Storage (1 Go gratuit) ; sur le VPS, un dossier du serveur. Déjà possible : `![](https://…)` vers une image en ligne.
 - ⏸️ **Accès MCP** (reporté le 06/11 : à faire quand Cairn sera sur un VPS) : petit serveur local pour que Claude Code lise et modifie les notes directement, sans passer par l'export / import. Doit respecter le point d'accès unique aux données et ne jamais utiliser la clé `service_role`.
 - **Table `note_links`** alimentée par trigger : liens calculés côté base. Utile seulement avec des milliers de notes ; en attendant, calcul dans le navigateur.
 

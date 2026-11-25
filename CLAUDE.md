@@ -54,7 +54,7 @@
 
 - **Mise à jour de l'appli** (06/11) : GitHub Pages fait garder les fichiers 10 min par le navigateur ; le service worker les demande donc en `no-cache` (sinon un ancien `ui.js` peut côtoyer un nouveau `notes.js` et l'appli casse). Après « mets à jour main », dire à l'utilisateur de recharger (PC : Ctrl+Maj+R ; appli installée : fermer et rouvrir deux fois). Vérifier aussi que la publication **« pages build and deployment »** de `main` a réussi (06/11 : elle a échoué deux fois côté GitHub, « Deployment failed, try again later » ; le site servait l'ancienne version) ; sinon la relancer (`rerun_failed_jobs`).
 
-- **Maquettes** (06/11) : une maquette = **une** idée, avec seulement ce qui a été demandé ; les ajouts se proposent en texte, à part. Une maquette trop riche (note du jour + tâches + semaine + accueil) n'a pas été comprise. **Ménage** (12/11) : l'artefact ne garde que la direction retenue (B Terminal) et les choix **en cours** ; une fois un chantier décidé, ses planches vont dans `maquettes/interface/archive/` (retirées de l'artefact avec `files: {chemin: null}`).
+- **Maquettes** (06/11) : une maquette = **une** idée, avec seulement ce qui a été demandé ; les ajouts se proposent en texte, à part. Une maquette trop riche (note du jour + tâches + semaine + accueil) n'a pas été comprise. **Ménage** (12/11, 25/11) : l'artefact ne garde que les choix **en cours** (les planches de la direction B Terminal sont aussi dans l'archive) ; une fois un chantier décidé, ses planches vont dans `maquettes/interface/archive/` (retirées de l'artefact avec `files: {chemin: null}`).
 
 ## En cours / à vérifier
 Une phrase par chantier ; le détail va dans [`specs/suivi.md`](specs/suivi.md).

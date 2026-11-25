@@ -2,25 +2,24 @@
   "v": 3,
   "attachments": {},
   "boards": {
-    "B-liste.dc.html": {
+    "PDF-A-menu.dc.html": {
       "h": 844,
-      "title": "Téléphone · liste",
+      "title": "PDF A · dans le menu ⋯",
       "w": 390,
       "x": 0,
       "y": 0
     },
-    "B-note.dc.html": {
+    "PDF-B-bouton.dc.html": {
       "h": 844,
-      "title": "Téléphone · note",
+      "title": "PDF B · bouton ⎙ dans la note",
       "w": 390,
       "x": 470,
       "y": 0
     },
-    "B-desktop.dc.html": {
-      "expand": "fill",
-      "h": 900,
-      "title": "Ordinateur",
-      "w": 1440,
+    "PDF-page.dc.html": {
+      "h": 880,
+      "title": "Commun · la page imprimée (A4)",
+      "w": 570,
       "x": 940,
       "y": 0
     }
@@ -34,22 +33,22 @@
     "view": "canvas"
   },
   "noteOrder": [
-    "tB"
+    "tP"
   ],
   "notes": {
-    "tB": {
+    "tP": {
       "kind": "title1",
-      "maxW": 2380,
-      "text": "Direction retenue · B « Terminal »",
+      "maxW": 1510,
+      "text": "En cours · imprimer une note / PDF",
       "w": 240,
       "x": 0,
       "y": -300
     }
   },
   "order": [
-    "B-liste.dc.html",
-    "B-note.dc.html",
-    "B-desktop.dc.html"
+    "PDF-A-menu.dc.html",
+    "PDF-B-bouton.dc.html",
+    "PDF-page.dc.html"
   ],
   "pages": [],
   "title": "Cairn — maquette"

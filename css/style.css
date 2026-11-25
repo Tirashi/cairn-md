@@ -192,6 +192,25 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   border-bottom: 1px solid var(--border);
 }
 .recherche { flex: 1 1 240px; max-width: 560px; height: 40px; }
+.barre-haut { position: relative; }
+.bouton-filtres { flex: 0 0 auto; min-width: 36px; height: 32px; margin-right: -6px; border: 1px solid transparent; border-radius: var(--rayon); background: transparent; color: var(--muted); font: inherit; font-size: 15px; cursor: pointer; }
+.bouton-filtres:hover, .bouton-filtres[aria-expanded="true"] { color: var(--accent); border-color: var(--border); }
+.bouton-filtres.actif { color: var(--accent); border-color: var(--accent); }
+.panneau-filtres { position: absolute; z-index: 25; top: calc(100% - 4px); left: 16px; width: min(440px, calc(100vw - 24px)); padding: 6px 14px 10px; border: 1px solid var(--border); border-radius: var(--rayon); background: var(--surface); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); }
+.panneau-filtres[hidden] { display: none; }
+.pf-ligne { display: flex; align-items: center; gap: 10px; min-height: 46px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.pf-nom { flex: 0 0 72px; font-size: 12px; color: var(--muted); }
+.pf-ligne select { flex: 1 1 auto; min-width: 0; min-height: 36px; padding: 0 8px; border: 1px solid var(--border); border-radius: var(--rayon); background: var(--bg); color: var(--text); font: inherit; font-size: 13px; }
+.pf-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; flex: 1 1 auto; padding: 6px 0; }
+.pf-tags select { flex: 0 1 auto; }
+.pf-puce { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 4px 0 9px; border: 1px solid var(--accent); border-radius: var(--rayon); background: transparent; color: var(--accent); font: inherit; font-size: 12px; cursor: pointer; }
+.pf-case { display: flex; align-items: center; gap: 8px; min-height: 40px; cursor: pointer; }
+.pf-case input { width: 18px; height: 18px; accent-color: var(--accent); }
+.pf-choix { display: flex; flex-wrap: wrap; gap: 4px; }
+.pf-choix button { min-height: 34px; padding: 0 9px; border: 1px solid var(--border); border-radius: var(--rayon); background: transparent; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; }
+.pf-choix button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-fond); }
+.pf-pied { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; font-size: 12px; }
+.pf-pied button { min-height: 40px; }
 .espace { flex: 1 1 0; }
 
 .colonnes {
@@ -860,6 +879,8 @@ button.historique-version:hover { background: var(--surface); }
   .barre-haut .zone-jour { margin-left: auto; }
   .barre-haut .bouton-jour { min-width: 44px; }
   .menu-jour { position: fixed; left: 12px; right: 12px; min-width: 0; }
+  .panneau-filtres { left: 12px; right: 12px; width: auto; }
+  .recherche kbd { display: none; }
 
   .colonnes { grid-template-columns: minmax(0, 1fr); }
   .col-dossiers { display: none; }

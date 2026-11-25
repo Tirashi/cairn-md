@@ -80,11 +80,24 @@ export function compterTags(notes) {
   return [...compte.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([tag, total]) => ({ tag, total }));
 }
 
-/** Filtre { dossier, tag, recherche } appliqué aux notes. */
-export function filtrer(notes, { dossier = '', tag = null, recherche = '' } = {}) {
+/**
+ * Notes qui passent les filtres : dossier (sous-dossiers compris), tags (tous requis),
+ * recherche (tous les mots, ou l'expression exacte), dans le titre seul ou titre + contenu,
+ * modifiées depuis 7 ou 30 jours.
+ */
+export function filtrer(notes, { dossier = '', tags = [], recherche = '', exact = false, titreSeul = false, periode = '' } = {}, maintenant = Date.now()) {
   const q = plier(recherche.trim());
-  return notes.filter((n) =>
-    dansDossier(normaliserDossier(n.folder), dossier)
-    && (!tag || (n.tags || []).includes(tag))
-    && (!q || plier(n.title).includes(q) || plier(n.content).includes(q)));
+  const mots = exact ? (q ? [q] : []) : q.split(/\s+/).filter(Boolean);
+  const depuis = periode === 'semaine' ? maintenant - 7 * 864e5 : periode === 'mois' ? maintenant - 30 * 864e5 : 0;
+  return notes.filter((n) => {
+    if (!dansDossier(normaliserDossier(n.folder), dossier)) return false;
+    if (tags.some((t) => !(n.tags || []).includes(t))) return false;
+    if (depuis && Date.parse(n.updated_at || 0) < depuis) return false;
+    if (!mots.length) return true;
+    const texte = titreSeul ? plier(n.title) : plier(n.title) + '\n' + plier(n.content || '');
+    return mots.every((m) => texte.includes(m));
+  });
 }
+
+/** Des filtres du panneau sont-ils actifs (en plus du dossier et de la recherche) ? */
+export const filtresAvances = (f) => Boolean(f.tags.length || f.exact || f.titreSeul || f.periode);

@@ -61,7 +61,7 @@ export function afficherNavigation({ notes, filtre, surFiltre, surRenommer }) {
   for (const { tag, total } of tags) {
     const li = element('li');
     li.append(boutonFiltre([element('span', '', '#' + tag), element('span', 'nav-compte', String(total))],
-      filtre.tag === tag, () => surFiltre({ tag: filtre.tag === tag ? null : tag }), 'puce-tag'));
+      filtre.tags.includes(tag), () => surFiltre({ tags: filtre.tags.includes(tag) ? filtre.tags.filter((t) => t !== tag) : [tag] }), 'puce-tag'));
     nuage.append(li);
   }
 
@@ -94,15 +94,16 @@ export function afficherNavigation({ notes, filtre, surFiltre, surRenommer }) {
   tm.replaceChildren();
   for (const { tag } of tags) {
     const li = element('li');
-    li.append(boutonFiltre([element('span', '', '#' + tag)], filtre.tag === tag,
-      () => surFiltre({ tag: filtre.tag === tag ? null : tag }), 'puce-tag'));
+    li.append(boutonFiltre([element('span', '', '#' + tag)], filtre.tags.includes(tag),
+      () => surFiltre({ tags: filtre.tags.includes(tag) ? filtre.tags.filter((t) => t !== tag) : [tag] }), 'puce-tag'));
     tm.append(li);
   }
 
   // ---------- En-tête de la liste ----------
   const morceaux = ['~/' + (filtre.dossier ? filtre.dossier + '/' : '')];
-  if (filtre.tag) morceaux.push('#' + filtre.tag);
-  if (filtre.recherche.trim()) morceaux.push('« ' + filtre.recherche.trim() + ' »');
+  for (const t of filtre.tags) morceaux.push('#' + t);
+  if (filtre.recherche.trim()) morceaux.push((filtre.exact ? '« ' : '') + filtre.recherche.trim() + (filtre.exact ? ' »' : '') + (filtre.titreSeul ? ' (titre)' : ''));
+  if (filtre.periode) morceaux.push(filtre.periode === 'semaine' ? '7 derniers jours' : '30 derniers jours');
   $('filtre-actif').textContent = morceaux.join(' · ');
-  $('bouton-effacer-filtres').hidden = !(filtre.dossier || filtre.tag || filtre.recherche.trim());
+  $('bouton-effacer-filtres').hidden = !(filtre.dossier || filtre.tags.length || filtre.recherche.trim() || filtre.periode);
 }

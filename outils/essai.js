@@ -896,6 +896,63 @@ const visible = (page, id) => page.locator('#' + id).isVisible();
       verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
     }
 
+    console.log('Recherche avancée');
+    {
+      const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });
+      await page.goto(base + '/');
+      await page.evaluate(() => {
+        const moi = '00000000-0000-0000-0000-000000000001';
+        const il = (j) => new Date(Date.now() - j * 864e5).toISOString();
+        const n = (i, title, folder, tags, content, jours) => ({ id: '0000002' + i + '-0000-4000-8000-00000000002' + i, user_id: moi, title, folder, tags, content, created_at: il(90), updated_at: il(jours) });
+        localStorage.setItem('faux-supabase-notes', JSON.stringify([
+          n(1, 'API Cairn', 'travail', ['dev'], 'la sauvegarde auto passe par notes.js', 1),
+          n(2, 'Supabase', 'travail/projets', ['dev', 'base'], 'auto : sauvegarde des notes', 12),
+          n(3, 'Recettes', 'perso', ['cuisine'], 'sauvegarde auto du four', 60),
+          n(4, 'Sauvegarde', 'perso', [], 'rien', 3),
+        ]));
+      });
+      await page.fill('#connexion-email', 'essai@cairn.local');
+      await page.fill('#connexion-mdp', 'secret');
+      await page.click('#connexion-bouton');
+      await page.waitForFunction(() => document.querySelectorAll('#liste-notes .ln-nom').length === 4);
+      const noms = () => page.evaluate(() => [...document.querySelectorAll('#liste-notes .ln-nom')].map((e) => e.textContent).sort().join(','));
+      await page.fill('#recherche', 'sauvegarde auto');
+      await page.waitForTimeout(200);
+      verifier((await noms()) === 'api-cairn.md,recettes.md,supabase.md', 'recherche : tous les mots, dans n\'importe quel ordre (' + await noms() + ')');
+      await page.click('#bouton-filtres');
+      await page.waitForSelector('#panneau-filtres:not([hidden])');
+      await page.check('#pf-exact');
+      await page.waitForTimeout(100);
+      verifier((await noms()) === 'api-cairn.md,recettes.md', 'expression exacte');
+      await page.selectOption('#pf-dossier', 'travail');
+      await page.waitForTimeout(100);
+      verifier((await noms()) === 'api-cairn.md', 'dossier (sous-dossiers compris)');
+      verifier((await page.textContent('#pf-compte')) === '1 note', 'le panneau compte les notes trouvées');
+      await page.uncheck('#pf-exact');
+      await page.selectOption('#pf-tag-ajout', 'dev');
+      await page.selectOption('#pf-tag-ajout', 'base');
+      await page.waitForTimeout(100);
+      verifier((await noms()) === 'supabase.md' && (await page.locator('#pf-tags-choisis .pf-puce').count()) === 2, 'plusieurs tags : tous requis');
+      await page.click('#pf-tags-choisis .pf-puce:has-text("base")');
+      await page.click('#pf-periode button[data-valeur="semaine"]');
+      await page.waitForTimeout(100);
+      verifier((await noms()) === 'api-cairn.md', 'modifiée cette semaine');
+      verifier(/7 derniers jours/.test(await page.textContent('#filtre-actif')) && await page.evaluate(() => document.getElementById('bouton-filtres').classList.contains('actif')), 'filtres rappelés au-dessus de la liste, bouton ⚲ allumé');
+      await page.click('#pf-effacer');
+      await page.fill('#recherche', 'sauvegarde');
+      await page.click('#pf-dans button[data-valeur="titre"]');
+      await page.waitForTimeout(100);
+      verifier((await noms()) === 'sauvegarde.md', 'titre seul');
+      await page.keyboard.press('Escape');
+      verifier(await page.isHidden('#panneau-filtres'), 'Échap referme le panneau');
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.click('#bouton-filtres');
+      const bords = await page.evaluate(() => { const r = document.getElementById('panneau-filtres').getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; });
+      verifier(bords[0] >= 0 && bords[1] <= 390, 'téléphone : panneau dans l\'écran (' + bords + ')');
+      if (process.argv.includes('--captures')) await page.screenshot({ path: path.join(process.argv[process.argv.indexOf('--captures') + 1] || '.', 'filtres-mobile.png') });
+      verifier(erreurs.length === 0, 'aucune erreur JS ' + erreurs.join(' | '));
+    }
+
     console.log('Imprimer une note');
     {
       const { page, erreurs } = await nouvellePage(navigateur, base, { configure: true });

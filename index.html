@@ -84,7 +84,16 @@
         <span class="accent" aria-hidden="true">&gt;</span>
         <input id="recherche" type="search" placeholder="grep notes…" aria-label="Rechercher dans les titres et le contenu" autocomplete="off" spellcheck="false">
         <kbd>Ctrl K</kbd>
+        <button type="button" id="bouton-filtres" class="bouton-filtres" aria-haspopup="dialog" aria-expanded="false" aria-controls="panneau-filtres" aria-label="Filtres de recherche" title="Filtres de recherche">⚲</button>
       </label>
+      <div id="panneau-filtres" class="panneau-filtres" role="dialog" aria-label="Filtres de recherche" hidden>
+        <div class="pf-ligne"><span class="pf-nom">dossier</span><select id="pf-dossier" aria-label="Dossier"></select></div>
+        <div class="pf-ligne"><span class="pf-nom">tags</span><div class="pf-tags"><span id="pf-tags-choisis"></span><select id="pf-tag-ajout" aria-label="Ajouter un tag"></select></div></div>
+        <div class="pf-ligne"><span class="pf-nom">texte</span><label class="pf-case"><input type="checkbox" id="pf-exact"> expression exacte</label></div>
+        <div class="pf-ligne"><span class="pf-nom">dans</span><div class="pf-choix" id="pf-dans" role="group" aria-label="Chercher dans"><button type="button" data-valeur="">titre et contenu</button><button type="button" data-valeur="titre">titre seul</button></div></div>
+        <div class="pf-ligne"><span class="pf-nom">modifiée</span><div class="pf-choix" id="pf-periode" role="group" aria-label="Modifiée"><button type="button" data-valeur="">toujours</button><button type="button" data-valeur="mois">ce mois</button><button type="button" data-valeur="semaine">cette semaine</button></div></div>
+        <div class="pf-pied"><button type="button" id="pf-effacer" class="bouton-lien">effacer les filtres</button><button type="button" id="pf-fermer" class="bouton-lien accent"><span id="pf-compte"></span> ✓</button></div>
+      </div>
       <span class="espace"></span>
       <div class="menu-zone zone-jour">
         <button type="button" class="bouton-discret bouton-petit bouton-jour" id="bouton-jour" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-jour" aria-label="Note du jour" title="Note du jour (journal/)">◷<span class="mode-large"> aujourd'hui</span></button>

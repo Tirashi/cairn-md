@@ -4,7 +4,7 @@ import { listerNotes, creerNote, modifierNote, supprimerNote, ouvrirCopie, ferme
 import { regler, brancherSync } from './sync-dialogue.js';
 import { brancherInstallation, proposerInstallation } from './installation.js';
 import { rendre, colorer, extrait, compterMots, definirResolveur } from './markdown.js';
-import { normaliserDossier, dossierExistant, dansDossier, listerDossiers, compterTags, filtrer } from './arbre.js';
+import { normaliserDossier, dossierExistant, dansDossier, listerDossiers, compterTags, filtrer, filtresAvances } from './arbre.js';
 import { cite, remplacerLien, liensEntrants } from './liens.js';
 import { afficherNavigation } from './navigation.js';
 import { brancherMeta, afficherMeta, majNomFichier } from './meta.js';
@@ -29,7 +29,7 @@ const etat = {
   notes: [],          // toutes les notes, triées par updated_at décroissant
   courante: null,     // id de la note ouverte
   titreOuverture: '', // titre de la note à son ouverture (pour proposer de mettre à jour les liens)
-  filtre: { dossier: '', tag: null, recherche: '' },
+  filtre: { dossier: '', tags: [], recherche: '', exact: false, titreSeul: false, periode: '' },
   enAttente: {},      // champs modifiés pas encore envoyés
   minuteur: null,
   sauvegarde: null,   // promesse de la sauvegarde en cours
@@ -166,9 +166,69 @@ function afficherListe() {
 function rafraichir() {
   afficherNavigation({ notes: etat.notes, filtre: etat.filtre, surFiltre: changerFiltre, surRenommer: renommerDossier });
   afficherListe();
+  $('bouton-filtres').classList.toggle('actif', filtresAvances(etat.filtre) || Boolean(etat.filtre.dossier));
+  if (!$('panneau-filtres').hidden) afficherPanneauFiltres();
   const n = tachesOuvertes().length;
   $('menu-taches-compte').textContent = n ? String(n) : '';
   if (!$('vue-taches').hidden) afficherTaches();
+}
+
+// ---------- Panneau de filtres de la recherche (direction B) ----------
+
+function option(valeur, texte, choisie) {
+  const o = document.createElement('option');
+  o.value = valeur;
+  o.textContent = texte;
+  o.selected = choisie;
+  return o;
+}
+
+function afficherPanneauFiltres() {
+  const f = etat.filtre;
+  $('pf-dossier').replaceChildren(option('', 'tous', !f.dossier),
+    ...listerDossiers(etat.notes).map((d) => option(d, '~/' + d, d === f.dossier)));
+  $('pf-tags-choisis').replaceChildren(...f.tags.map((t) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pf-puce';
+    b.setAttribute('aria-label', 'Retirer le tag ' + t);
+    b.textContent = '#' + t + ' ×';
+    b.addEventListener('click', () => changerFiltre({ tags: f.tags.filter((x) => x !== t) }));
+    return b;
+  }));
+  const restants = compterTags(etat.notes).map((t) => t.tag).filter((t) => !f.tags.includes(t));
+  $('pf-tag-ajout').replaceChildren(option('', restants.length ? '+ tag' : '—', true), ...restants.map((t) => option(t, '#' + t, false)));
+  $('pf-tag-ajout').disabled = !restants.length;
+  $('pf-exact').checked = f.exact;
+  for (const b of document.querySelectorAll('#pf-dans button')) b.setAttribute('aria-pressed', String((b.dataset.valeur === 'titre') === f.titreSeul));
+  for (const b of document.querySelectorAll('#pf-periode button')) b.setAttribute('aria-pressed', String(b.dataset.valeur === f.periode));
+  $('pf-compte').textContent = pluriel(filtrer(etat.notes, f).length, 'note');
+}
+
+function brancherPanneauFiltres() {
+  const bouton = $('bouton-filtres');
+  const panneau = $('panneau-filtres');
+  const fermer = () => { panneau.hidden = true; bouton.setAttribute('aria-expanded', 'false'); };
+  bouton.addEventListener('click', (e) => {
+    e.preventDefault();
+    const ouvrir = panneau.hidden;
+    if (ouvrir) afficherPanneauFiltres();
+    panneau.hidden = !ouvrir;
+    bouton.setAttribute('aria-expanded', String(ouvrir));
+    if (ouvrir) $('pf-dossier').focus();
+  });
+  $('pf-dossier').addEventListener('change', (e) => changerFiltre({ dossier: e.target.value }));
+  $('pf-tag-ajout').addEventListener('change', (e) => { if (e.target.value) changerFiltre({ tags: [...etat.filtre.tags, e.target.value] }); });
+  $('pf-exact').addEventListener('change', (e) => changerFiltre({ exact: e.target.checked }));
+  $('pf-dans').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) changerFiltre({ titreSeul: b.dataset.valeur === 'titre' }); });
+  $('pf-periode').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) changerFiltre({ periode: b.dataset.valeur }); });
+  $('pf-effacer').addEventListener('click', () => changerFiltre({ dossier: '', tags: [], exact: false, titreSeul: false, periode: '' }));
+  $('pf-fermer').addEventListener('click', () => { fermer(); bouton.focus(); });
+  panneau.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); fermer(); bouton.focus(); } });
+  document.addEventListener('click', (e) => {
+    // (un élément du panneau peut avoir été redessiné entre-temps : il n'est plus dans la page)
+    if (!panneau.hidden && e.target.isConnected && !e.target.closest('#panneau-filtres, #bouton-filtres')) fermer();
+  });
 }
 
 // ---------- Tâches ouvertes (page à part) ----------
@@ -228,7 +288,7 @@ function changerFiltre(changement) {
   Object.assign(etat.filtre, changement);
   rafraichir();
   // Sur téléphone, choisir un dossier ou un tag ramène à la liste.
-  if (etroit.matches && etat.courante && ('dossier' in changement || 'tag' in changement)) location.hash = '#/';
+  if (etroit.matches && etat.courante && ('dossier' in changement || 'tags' in changement)) location.hash = '#/';
 }
 
 // ---------- Note ouverte ----------
@@ -605,7 +665,7 @@ function nouvelleNote() {
   return ouvrirNouvelle({
     title: titreLibre(),
     folder: etat.filtre.dossier,
-    tags: etat.filtre.tag ? [etat.filtre.tag] : [],
+    tags: [...etat.filtre.tags],
   }, { focusTitre: true });
 }
 
@@ -801,6 +861,7 @@ function brancher() {
   window.addEventListener('hashchange', router);
   $('bouton-nouvelle').addEventListener('click', nouvelleNote);
   brancherMenuJour();
+  brancherPanneauFiltres();
   window.addEventListener('beforeprint', preparerImpression);   // aussi pour Ctrl+P
   $('bouton-supprimer').addEventListener('click', demanderSuppression);
   $('bouton-historique').addEventListener('click', ouvrirLog);
@@ -812,7 +873,7 @@ function brancher() {
   });
   $('bouton-effacer-filtres').addEventListener('click', () => {
     $('recherche').value = '';
-    changerFiltre({ dossier: '', tag: null, recherche: '' });
+    changerFiltre({ dossier: '', tags: [], recherche: '', exact: false, titreSeul: false, periode: '' });
   });
 
   // Menu ⋯ : export, import (et, sur téléphone, thème et déconnexion).
@@ -1086,7 +1147,7 @@ export async function demarrerAppli(utilisateur) {
   await ouvrirCopie(utilisateur.id);
   etat.courante = null;
   etat.enAttente = {};
-  etat.filtre = { dossier: '', tag: null, recherche: '' };
+  etat.filtre = { dossier: '', tags: [], recherche: '', exact: false, titreSeul: false, periode: '' };
   $('recherche').value = '';
   $('liste-message').hidden = false;
   $('liste-message').innerHTML = 'chargement<span class="curseur">_</span>';

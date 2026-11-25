@@ -27,7 +27,7 @@ En local : servir le dossier avec n'importe quel serveur statique (les modules E
 - **Dossier** : le champ `~/…` sous le titre se tape comme un chemin (`travail/projets`) ; les dossiers existants sont proposés, Entrée valide, Échap annule. Les dossiers n'existent que par leurs notes.
 - **Tags** : `+ tag`, puis Entrée ou virgule ; `×` pour retirer.
 - **Filtrer** : clic sur un dossier (sous-dossiers compris) ou un tag dans la colonne de gauche (sur téléphone : fil d'Ariane et puces au-dessus de la liste). `mv` renomme le dossier choisi.
-- **Rechercher** : `Ctrl+K`, dans les titres et le contenu, sans tenir compte des accents ni des majuscules.
+- **Rechercher** : `Ctrl+K`, dans les titres et le contenu, sans tenir compte des accents ni des majuscules ; tous les mots tapés doivent s'y trouver, dans n'importe quel ordre. Le bouton **⚲** au bout du champ ouvre les filtres : dossier, un ou plusieurs tags, expression exacte, titre seul, modifiée ce mois ou cette semaine (« effacer les filtres » pour tout remettre).
 - **Liens** : `[[Titre]]` ou `[[Titre|texte affiché]]`. Taper `[[` (ou le bouton `[[ ]]`, ou `Ctrl+Maj+L`) ouvre une fenêtre de recherche : titres, dossiers et contenu, filtres *partout*, *même dossier* et *récentes* ; un texte sélectionné sert de recherche. Un lien vers une note qui n'existe pas (marqué `+`) propose de la créer. Les notes qui citent la note ouverte sont listées sous l'aperçu (liens entrants). Après avoir renommé une note, Cairn propose de mettre à jour les liens des autres notes.
 - **Exporter** : menu `⋯` › `$ export` télécharge `cairn-AAAA-MM-JJ.zip`, un fichier `.md` par note rangé dans ses dossiers, avec un en-tête :
   ```markdown

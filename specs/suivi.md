@@ -85,5 +85,11 @@ Détail des chantiers ; `CLAUDE.md` n'en garde qu'une ligne dans « En cours ».
 - `@media print` : variables du thème clair, seul `#note-apercu` + `#impression-entete` (dossier, tags, « modifiée le … », titre), sans bouton copier ; blocs de code et diagrammes non coupés ; diagrammes mermaid sur fond sombre si le thème d'écran est sombre (leurs couleurs sont celles de l'écran).
 - ✅ Validé sur le vrai site (25/11).
 
+## Recherche avancée (25/11)
+- Maquette R-A (syntaxe `tag:` + puces + aide), R-B (panneau de filtres), R-C (syntaxe proposée à la frappe) ; **B choisie** (« plus simple »).
+- Recherche simple : désormais **tous les mots** (dans n'importe quel ordre) au lieu de la phrase exacte.
+- Bouton ⚲ au bout du champ de recherche → `#panneau-filtres` : dossier (liste), tags (puces × + liste « + tag », tous requis), « expression exacte », « titre et contenu / titre seul », « modifiée toujours / ce mois (30 j) / cette semaine (7 j) », « effacer les filtres » et nombre de notes trouvées. Bouton allumé quand un filtre est actif ; filtres rappelés au-dessus de la liste. Les tags de la colonne de gauche remplissent le même `tags[]` (un seul tag par clic).
+- ⏳ Testé avec le faux backend, **essai réel à faire**.
+
 ## Prochains chantiers possibles
 Voir [`IDEES.md`](../IDEES.md) : accès MCP (reporté au passage sur un VPS), table `note_links`.
